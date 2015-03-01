@@ -1,6 +1,10 @@
 # node modules
 node_modules
 
+# Eclipse project
+.settings
+.project
+
 
 # Windows image file caches
 Thumbs.db
