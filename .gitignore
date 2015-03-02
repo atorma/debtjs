@@ -4,6 +4,7 @@ node_modules
 # Eclipse project
 .settings
 .project
+.tern-project
 
 
 # Windows image file caches
