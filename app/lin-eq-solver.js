@@ -1,6 +1,6 @@
 linEqSolver = (function() {
 
-"use strict"
+"use strict";
 
 return {
 	solve: solve
@@ -33,7 +33,7 @@ function solve(A, b, options) {
 		rank: rank,
 		numberOfFreeVariables: n - rank,
 		numberOfSolutions: numberOfSolutions
-	}
+	};
 	
 	/////////////////////////////////////////////////////////////
 	

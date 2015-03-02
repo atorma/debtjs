@@ -1,6 +1,6 @@
 (function () {
 
-"use strict"
+"use strict";
 
 describe("Linear equation solver", function () {
 
