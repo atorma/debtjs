@@ -40,7 +40,7 @@ describe("Balance sheet", function () {
 			var expense = sheet.createExpense({});
 			var person = sheet.createPerson({});
 			
-			expect(expense.cost).toBe(0);
+			expect(expense.getCost()).toBe(0);
 			
 			/*
 			var payment = {person: person, expense: expense, amount: 23};
