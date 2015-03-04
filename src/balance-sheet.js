@@ -1,5 +1,3 @@
-BalanceSheet = (function() {
-
 "use strict";
 
 var BalanceSheet = function() {
@@ -61,9 +59,4 @@ var BalanceSheet = function() {
 	}
 };
 
-return BalanceSheet;
-
-
-
-
-})();
+module.exports = BalanceSheet;

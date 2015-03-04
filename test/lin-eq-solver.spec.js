@@ -1,6 +1,6 @@
-(function () {
-
 "use strict";
+
+var linEqSolver = require('../src/lin-eq-solver');
 
 describe("Linear equation solver", function () {
 
@@ -106,5 +106,3 @@ describe("Linear equation solver", function () {
 	});
 
 });
-
-})();

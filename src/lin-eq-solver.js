@@ -1,10 +1,5 @@
-linEqSolver = (function() {
-
 "use strict";
 
-return {
-	solve: solve
-};
 
 function solve(A, b, options) {
 	// Internal copies of the linear system and its dimensions
@@ -261,4 +256,7 @@ function copyMatrix(input) {
 	return copy;
 }
 	
-})();
+
+module.exports = {
+	solve: solve
+};
