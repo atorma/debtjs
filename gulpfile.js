@@ -6,29 +6,62 @@ var buffer = require('vinyl-buffer');
 var watchify = require('watchify');
 var browserify = require('browserify');
 var karma = require('karma').server;
+var del = require('del');
 
-var bundler = watchify(browserify('./src/debt.js', watchify.args));
-// add any other browserify options or transforms here
-// bundler.transform('brfs');
 
-gulp.task('js', bundle); // so you can run `gulp js` to build the file
-bundler.on('update', bundle); // on any dep update, runs the bundler
-bundler.on('log', gutil.log); // output build logs to terminal
+var paths = {
+	main: './src/debt.js',
+	resources: ['./src/**/*.html'],
+	tests: './test',
+	testresources: ['./test/**/*.html'],
+	build: './app'
+};
 
-function bundle() {
-  return bundler.bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-    .pipe(source('debt.js'))
-	// optional, remove if you dont want sourcemaps
-      .pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-      .pipe(sourcemaps.write('./')) // writes .map file
-    //
-    .pipe(gulp.dest('./app'));
-}
 
-// Run tests once and exit
-gulp.task('test', function (done) {
+var appBundler = watchify(browserify(paths.main, watchify.args));
+appBundler.on('update', bundleApp);
+appBundler.on('log', gutil.log);
+
+var testBundler = watchify(browserify([paths.tests], watchify.args));
+testBundler.on('update', bundleTests); 
+testBundler.on('log', gutil.log); 
+
+
+// Builds the application
+gulp.task('build', ['js', 'resources', 'watch:resources']);
+
+gulp.task('js', bundleApp);
+
+gulp.task('resources', function() {
+	gulp.src(paths.resources)
+	.pipe(gulp.dest(paths.build));
+});
+
+gulp.task('watch:resources', function() {
+	gulp.watch(paths.resources, ['resources']);
+});
+
+gulp.task('clean', function(cb) {
+	del([paths.build], cb);
+});
+
+// Builds the application + Jasmine tests for running in browser
+gulp.task('build:test', ['js:test', 'resources', 'resources:test', 'watch:resources', 'watch:resources:test']); 
+
+gulp.task('js:test', bundleTests); 
+
+gulp.task('resources:test', function() {
+	gulp.src(paths.testresources)
+	.pipe(gulp.dest(paths.build));
+});
+
+gulp.task('watch:resources:test', function() {
+	gulp.watch(paths.testresources, ['resources:test']);
+});
+
+
+//Run tests once and exit
+gulp.task('test', function(done) {
 	karma.start({
 		configFile : __dirname + '/karma.conf.js',
 		singleRun : true
@@ -36,11 +69,32 @@ gulp.task('test', function (done) {
 });
 
 // Watch for file changes and re-run tests on each change
-gulp.task('tdd', function (done) {
+gulp.task('tdd', function(done) {
 	karma.start({
 		configFile : __dirname + '/karma.conf.js'
 	}, done);
 });
 
 
-gulp.task('default', ['tdd']);
+
+function bundleApp() {
+	return appBundler.bundle()
+	.on('error', gutil.log.bind(gutil, 'Browserify Error'))
+	.pipe(source('debt.js'))
+	// optional, remove if you don't want sourcemaps
+	.pipe(buffer())
+	.pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
+	.pipe(sourcemaps.write('./')) // writes .map file
+	//
+	.pipe(gulp.dest(paths.build));
+}
+
+function bundleTests() {
+	return testBundler.bundle()
+	.on('error', gutil.log.bind(gutil, 'Browserify Error'))
+	.pipe(source('debt.spec.js'))
+	.pipe(buffer())
+	.pipe(sourcemaps.init({loadMaps: true})) 
+	.pipe(sourcemaps.write('./')) 
+	.pipe(gulp.dest(paths.build));
+}
