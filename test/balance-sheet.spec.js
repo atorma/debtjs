@@ -36,18 +36,53 @@ describe("Balance sheet", function () {
 			expect(sheet.expenses).toEqual([food, gas]);
 		});
 		
-		xit("cost is updated when payments are created", function() {
-			var expense = sheet.createExpense({});
-			var person = sheet.createPerson({});
+		describe("cost", function() {
 			
-			expect(expense.getCost()).toBe(0);
+			var expense, person1, person2;
 			
-			/*
-			var payment = {person: person, expense: expense, amount: 23};
-			sheet.setPayment(payment);
-			*/
+			beforeEach(function() {
+				expense = sheet.createExpense({});
+				person1 = sheet.createPerson({});
+				person2 = sheet.createPerson({});
+			});
 			
+			it("is initially zero", function() {
+				expect(expense.getCost()).toBe(0);
+			});
+			
+			it("is updated when payment is created", function() {
+				var payment1 = sheet.createPayment({person: person1, expense: expense, amount: 11});
+				expect(expense.getCost()).toBe(11);
+				
+				var payment2 = sheet.createPayment({person: person2, expense: expense, amount: 22});
+				expect(expense.getCost()).toBe(11 + 22);
+			});
+			
+			it("is updated when payment is updated", function() {
+				var payment1 = sheet.createPayment({person: person1, expense: expense, amount: 10});
+				payment1.amount = 200;
+				expect(expense.getCost()).toBe(200);
+			});
+			
+			it("is updated when payment is deleted", function() {
+				var payment1 = sheet.createPayment({person: person1, expense: expense, amount: 10});
+				var payment2 = sheet.createPayment({person: person1, expense: expense, amount: 15});
+				expect(expense.getCost()).toBe(25);
+				sheet.removePayment(payment2);
+				expect(expense.getCost()).toBe(10);
+			});
+			
+			it("is computed over correct expenses", function() {
+				var expense2 = sheet.createExpense({});
+				sheet.createPayment({person: person1, expense: expense, amount: 10});
+				expect(expense.getCost()).toBe(10);
+				
+				sheet.createPayment({person: person1, expense: expense2, amount: 999});
+				expect(expense.getCost()).toBe(10);
+			});
 		});
+
+		
 		
 	});
 

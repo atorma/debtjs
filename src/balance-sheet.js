@@ -1,5 +1,7 @@
 "use strict";
 
+var angular = require("angular");
+
 var BalanceSheet = function() {
 
 	var persons = [];
@@ -18,6 +20,8 @@ var BalanceSheet = function() {
 	
 	this.createPerson = createPerson;
 	this.createExpense = createExpense;
+	this.createPayment = createPayment;
+	this.removePayment = removePayment;
 
 	/////////////////////////////////////
 	
@@ -35,28 +39,74 @@ var BalanceSheet = function() {
 		if (data.id === undefined) {
 			data.id = idSequence;
 			idSequence = idSequence + 1;
-			
 		}
 		var expense = new Expense(data);
 		expenses.push(expense);
 		return expense;
 	}
 
+	function createPayment(data) {
+		var payment = new Payment(data);
+		payments.push(payment);
+		return payment;
+	}
+	
+	function removePayment(toRemove) {
+		if (!toRemove) return;
+		angular.forEach(payments, function(p, i) {
+			if (p.equals(toRemove)) {
+				payments.splice(i, 1);
+			}
+		});
+	}
 	
 	
 	function Person(data) {
 		this.id = data.id;
 	}
 
+	
 	function Expense(data) {
+		var _this = this;
 		this.id = data.id;
 		
 		this.getCost = getCost;
 		
 		function getCost() {
-			
+			var cost = 0;
+			angular.forEach(payments, function(p) {
+				if (p.expense == _this) {
+					cost = cost + p.amount;
+				}
+			});
+			return cost;
 		}
 	}
+	
+	function Payment(data) {
+		var _this = this; 
+		
+		if (!data || !data.person || !data.expense) {
+			throw "Undefined payment";
+		}
+		this.person = data.person;
+		this.expense = data.expense;
+		
+		if (!angular.isDefined(data.amount)) {
+			this.amount = 0;
+		} else if (!angular.isNumber(data.amount)) {
+			throw "Amount is not a number";
+		} else {
+			this.amount = data.amount;
+		}
+		
+		this.equals = equals;
+		
+		function equals(other) {
+			return angular.equals(_this, other);
+		}
+	}
+
 };
 
 module.exports = BalanceSheet;
