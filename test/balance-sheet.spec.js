@@ -81,8 +81,44 @@ describe("Balance sheet", function () {
 				expect(expense.getCost()).toBe(10);
 			});
 		});
+		
+		it("can return payments of it", function() {
+			var expense1 = sheet.createExpense({});
+			var expense2 = sheet.createExpense({});
+			var person1 = sheet.createPerson({});
+			var person2 = sheet.createPerson({});
+			
+			var p1To1 = sheet.createPayment({person: person1, expense: expense1, amount: 10});
+			var p2To1 = sheet.createPayment({person: person2, expense: expense1, amount: 11});
+			var p1To2 = sheet.createPayment({person: person1, expense: expense2, amount: 20});
+			
+			expect(expense1.getPayments().length).toBe(2);
+			expect(expense1.getPayments()[0].equals(p1To1)).toBe(true);
+			expect(expense1.getPayments()[1].equals(p2To1)).toBe(true);
+			expect(expense2.getPayments().length).toBe(1);
+			expect(expense2.getPayments()[0].equals(p1To2)).toBe(true);
+		});
 
 		
+		it("removing removes all payments of it", function() {
+			var expense1 = sheet.createExpense({});
+			var expense2 = sheet.createExpense({});
+			var person1 = sheet.createPerson({});
+			var person2 = sheet.createPerson({});
+			
+			sheet.createPayment({person: person1, expense: expense1, amount: 10});
+			sheet.createPayment({person: person2, expense: expense1, amount: 11});
+			var p1To2 = sheet.createPayment({person: person1, expense: expense2, amount: 20});
+			var p2To2 = sheet.createPayment({person: person2, expense: expense2, amount: 21});
+			
+			sheet.removeExpense(expense1);
+			expect(sheet.expenses.length).toBe(1);
+			expect(sheet.expenses[0].equals(expense2)).toBe(true);
+			expect(sheet.payments.length).toBe(2);
+			expect(sheet.payments[0].equals(p1To2)).toBe(true);
+			expect(sheet.payments[1].equals(p2To2)).toBe(true);
+			
+		});
 		
 	});
 

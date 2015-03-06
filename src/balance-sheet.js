@@ -20,6 +20,7 @@ var BalanceSheet = function() {
 	
 	this.createPerson = createPerson;
 	this.createExpense = createExpense;
+	this.removeExpense = removeExpense;
 	this.createPayment = createPayment;
 	this.removePayment = removePayment;
 
@@ -44,13 +45,25 @@ var BalanceSheet = function() {
 		expenses.push(expense);
 		return expense;
 	}
+	
+	function removeExpense(toRemove) {
+		if (!toRemove) return;
+		angular.forEach(expenses, function(e, i) {
+			if (e.equals(toRemove)) {
+				expenses.splice(i, 1);
+			}
+		});
+		angular.forEach(toRemove.getPayments(), function(p) {
+			removePayment(p);
+		});
+	}
 
 	function createPayment(data) {
 		var payment = new Payment(data);
 		payments.push(payment);
 		return payment;
 	}
-	
+
 	function removePayment(toRemove) {
 		if (!toRemove) return;
 		angular.forEach(payments, function(p, i) {
@@ -71,15 +84,29 @@ var BalanceSheet = function() {
 		this.id = data.id;
 		
 		this.getCost = getCost;
+		this.getPayments = getPayments;
+		this.equals = equals;
 		
 		function getCost() {
 			var cost = 0;
-			angular.forEach(payments, function(p) {
-				if (p.expense == _this) {
-					cost = cost + p.amount;
-				}
+			angular.forEach(getPayments(), function(p) {
+				cost = cost + p.amount;
 			});
 			return cost;
+		}
+		
+		function getPayments() {
+			var myPayments = [];
+			angular.forEach(payments, function(p) {
+				if (_this.equals(p.expense)) {
+					myPayments.push(p);
+				}
+			});
+			return myPayments;
+		}
+		
+		function equals(other) {
+			return angular.equals(_this, other);
 		}
 	}
 	
