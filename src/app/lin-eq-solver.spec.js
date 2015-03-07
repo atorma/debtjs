@@ -1,6 +1,6 @@
 "use strict";
 
-var linEqSolver = require('../src/lin-eq-solver');
+var linEqSolver = require('./lin-eq-solver');
 
 describe("Linear equation solver", function () {
 

@@ -1,6 +1,6 @@
 # application
-app
-node_modules
+build/
+node_modules/
 
 # Eclipse project
 .settings

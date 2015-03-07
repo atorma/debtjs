@@ -1,6 +1,6 @@
 "use strict";
 
-var BalanceSheet = require('../src/balance-sheet');
+var BalanceSheet = require('./balance-sheet');
 
 describe("Balance sheet", function () {
 	

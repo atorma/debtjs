@@ -10,17 +10,17 @@ var del = require('del');
 
 
 var paths = {
-	main: './src/debt.js',
-	resources: ['./src/**/*.html'],
-	tests: './test',
-	testresources: ['./test/**/*.html'],
-	build: './app'
+	main: './src/app/debt.js',
+	resources: ['./src/app/**/*.html', '!/src/app/**/*.spec.*', '!/src/app/test-index.js'],
+	tests: './src/app/test-index.js',
+	testresources: ['./src/app/jasmine.spec.html'],
+	build: './build'
 };
-
 
 var appBundler = watchify(browserify(paths.main, watchify.args));
 appBundler.on('update', bundleApp);
 appBundler.on('log', gutil.log);
+
 
 var testBundler = watchify(browserify([paths.tests], watchify.args));
 testBundler.on('update', bundleTests); 
@@ -78,6 +78,18 @@ gulp.task('tdd', function(done) {
 
 
 function bundleApp() {
+	return appBundler.bundle()
+	.on('error', gutil.log.bind(gutil, 'Browserify Error'))
+	.pipe(source('debt.js'))
+	// optional, remove if you don't want sourcemaps
+	.pipe(buffer())
+	.pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
+	.pipe(sourcemaps.write('./')) // writes .map file
+	//
+	.pipe(gulp.dest(paths.build));
+}
+
+function bundleApp2() {
 	return appBundler.bundle()
 	.on('error', gutil.log.bind(gutil, 'Browserify Error'))
 	.pipe(source('debt.js'))

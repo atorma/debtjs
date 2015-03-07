@@ -2,7 +2,7 @@
 
 var angular = require("angular");
 require("angular-mocks/ngMock");
-require("../src/debt");
+require("./debt");
 
 describe("dummyService", function() {
 
