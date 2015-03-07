@@ -10,24 +10,28 @@
 
 <body ng-app="debtApp">
 	
-<ons-tabbar position="top">
- <ons-tab page="greeting.html" active="true">
-   <ons-icon icon="ion-home"></ons-icon>
-   <span style="font-size: 14px">Greeting</span>
+	
+<ons-tabbar position="top" var="tabs">
+	<ons-tab page="greeting.html" active="true">
+	<ons-icon icon="ion-home"></ons-icon>
+	<span style="font-size: 14px">Greeting</span>
 </ons-tab>
-<ons-tab page="test.html" active="true">
-  	<ons-icon icon="ion-star"></ons-icon>
-  	<span style="font-size: 14px">Test</span>
+	<ons-tab page="test.html" active="true">
+	<ons-icon icon="ion-star"></ons-icon>
+	<span style="font-size: 14px">Test</span>
 </ons-tab>
 </ons-tabbar>
 	
-	
 <ons-template id="greeting.html">
-	<div ng-controller="DummyCtrl">{{greeting}}</div>
+	<ons-page>
+		<div ng-controller="DummyCtrl">{{greeting}}</div>
+	</ons-page>
 </ons-template>
 	
 <ons-template id="test.html">
-	<div>TEsti</div>
+	<ons-page>
+		<div>TEsti</div>
+	</ons-page>
 </ons-template>	
 	
 </body>
