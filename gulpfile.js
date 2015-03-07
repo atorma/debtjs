@@ -11,9 +11,11 @@ var del = require('del');
 
 var paths = {
 	main: './src/app/debt.js',
-	resources: ['./src/app/**/*.html', '!/src/app/**/*.spec.*', '!/src/app/test-index.js'],
+	html: ['./src/app/**/*.html', '!/src/app/**/*.spec.*'],
+	resources: [],
+	libResources: ['./src/lib/**/*.*', '!./src/lib/**/*.js', '!./src/lib/onsen/stylus/**/*.*'],
 	tests: './src/app/test-index.js',
-	testresources: ['./src/app/jasmine.spec.html'],
+	testHtml: ['./src/app/jasmine.spec.html'],
 	build: './build'
 };
 
@@ -28,35 +30,48 @@ testBundler.on('log', gutil.log);
 
 
 // Builds the application
-gulp.task('build', ['js', 'resources', 'watch:resources']);
+gulp.task('build', ['js', 'html', 'watch:html', 'resources', 'watch:resources', 'lib-resources']);
 
 gulp.task('js', bundleApp);
 
+gulp.task('html', function() {
+	gulp.src(paths.html)
+	.pipe(gulp.dest(paths.build));
+});
+
+gulp.task('watch:html', function() {
+	gulp.watch(paths.html, ['html']);
+});
+
 gulp.task('resources', function() {
 	gulp.src(paths.resources)
-	.pipe(gulp.dest(paths.build));
+	.pipe(gulp.dest(paths.build + '/resources'));
 });
 
 gulp.task('watch:resources', function() {
 	gulp.watch(paths.resources, ['resources']);
 });
 
+gulp.task('lib-resources', function() {
+	gulp.src(paths.libResources)
+	.pipe(gulp.dest(paths.build + '/resources'));
+});
+
+
+
 gulp.task('clean', function(cb) {
 	del([paths.build], cb);
 });
 
+
 // Builds the application + Jasmine tests for running in browser
-gulp.task('build:test', ['js:test', 'resources', 'resources:test', 'watch:resources', 'watch:resources:test']); 
+gulp.task('build:test', ['js:test', 'html:test']); 
 
 gulp.task('js:test', bundleTests); 
 
-gulp.task('resources:test', function() {
-	gulp.src(paths.testresources)
+gulp.task('html:test', function() {
+	gulp.src(paths.testHtml)
 	.pipe(gulp.dest(paths.build));
-});
-
-gulp.task('watch:resources:test', function() {
-	gulp.watch(paths.testresources, ['resources:test']);
 });
 
 

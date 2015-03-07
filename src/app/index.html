@@ -3,12 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <title>Debt.js</title>
+<link rel="stylesheet" type="text/css" href="resources/onsen/css/onsen-css-components.css" />
+<link rel="stylesheet" type="text/css" href="resources/onsen/css/css/onsenui.css" /> 
 <script src="debt.js"></script>
 </head>
 
 <body ng-app="debtApp">
 	
+<ons-tabbar position="top">
+ <ons-tab page="greeting.html" active="true">
+   <ons-icon icon="ion-home"></ons-icon>
+   <span style="font-size: 14px">Greeting</span>
+</ons-tab>
+<ons-tab page="test.html" active="true">
+  	<ons-icon icon="ion-star"></ons-icon>
+  	<span style="font-size: 14px">Test</span>
+</ons-tab>
+</ons-tabbar>
+	
+	
+<ons-template id="greeting.html">
 	<div ng-controller="DummyCtrl">{{greeting}}</div>
+</ons-template>
+	
+<ons-template id="test.html">
+	<div>TEsti</div>
+</ons-template>	
 	
 </body>
 
