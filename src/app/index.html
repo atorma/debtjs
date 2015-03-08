@@ -8,31 +8,18 @@
 <script src="debt.js"></script>
 </head>
 
-<body ng-app="debtApp">
-	
+<body ng-app="debtApp" ng-controller="ShellCtrl">
 	
 <ons-tabbar position="top" var="tabs">
-	<ons-tab page="greeting.html" active="true">
+	<ons-tab page="participants/participant-list.html" active="true">
 	<ons-icon icon="ion-home"></ons-icon>
-	<span style="font-size: 14px">Greeting</span>
+	<span style="font-size: 14px">Participants</span>
 </ons-tab>
-	<ons-tab page="test.html" active="true">
+	<ons-tab page="expenses/expense-list.html">
 	<ons-icon icon="ion-star"></ons-icon>
-	<span style="font-size: 14px">Test</span>
+	<span style="font-size: 14px">Expenses</span>
 </ons-tab>
 </ons-tabbar>
-	
-<ons-template id="greeting.html">
-	<ons-page>
-		<div ng-controller="DummyCtrl">{{greeting}}</div>
-	</ons-page>
-</ons-template>
-	
-<ons-template id="test.html">
-	<ons-page>
-		<div>TEsti</div>
-	</ons-page>
-</ons-template>	
 	
 </body>
 

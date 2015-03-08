@@ -11,7 +11,7 @@ var del = require('del');
 
 var paths = {
 	main: './src/app/debt.js',
-	html: ['./src/app/**/*.html', '!/src/app/**/*.spec.*'],
+	html: ['./src/app/**/*.html', '!./src/app/**/*.spec.*'],
 	resources: [],
 	libResources: ['./src/lib/**/*.*', '!./src/lib/**/*.js', '!./src/lib/onsen/stylus/**/*.*'],
 	tests: './src/app/test-index.js',

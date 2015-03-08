@@ -75,13 +75,13 @@ var BalanceSheet = function() {
 	
 	
 	function Person(data) {
-		this.id = data.id;
+		angular.extend(this, data);
 	}
 
 	
 	function Expense(data) {
+		angular.extend(this, data);
 		var _this = this;
-		this.id = data.id;
 		
 		this.getCost = getCost;
 		this.getPayments = getPayments;
