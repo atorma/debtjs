@@ -40,6 +40,7 @@ gulp.task('html', function() {
 });
 
 gulp.task('watch:html', function() {
+	// TODO use gulp-watch to include new files - or relative path?
 	gulp.watch(paths.html, ['html']);
 });
 

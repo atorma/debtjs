@@ -27,9 +27,15 @@ var BalanceSheet = function() {
 	/////////////////////////////////////
 	
 	function createPerson(data) {
+		if (!data) {
+			data = {};
+		}
 		if (data.id === undefined) {
 			data.id = idSequence;
 			idSequence = idSequence + 1;	
+		}
+		if (data.name === undefined) {
+			data.name = "Person " + (persons.length + 1);
 		}
 		var person = new Person(data);
 		persons.push(person);
@@ -37,9 +43,15 @@ var BalanceSheet = function() {
 	}
 
 	function createExpense(data) {
+		if (!data) {
+			data = {};
+		}
 		if (data.id === undefined) {
 			data.id = idSequence;
 			idSequence = idSequence + 1;
+		}
+		if (data.name === undefined) {
+			data.name = "Expense " + (expenses.length + 1);
 		}
 		var expense = new Expense(data);
 		expenses.push(expense);

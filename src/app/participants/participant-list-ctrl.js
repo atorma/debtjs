@@ -3,5 +3,9 @@ require("angular").module("debtApp")
 
 function ParticipantListCtrl($scope) {
 
+	$scope.createNew = createNew;
 	
+	function createNew() {
+		var person = $scope.balanceSheet.createPerson();
+	}
 }

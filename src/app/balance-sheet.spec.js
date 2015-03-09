@@ -17,9 +17,22 @@ describe("Balance sheet", function () {
 			var malla = sheet.createPerson({name: "Malla"});
 
 			expect(anssi.id).toBeDefined();
+			expect(anssi.name).toBe("Anssi");
 			expect(malla.id).toBeDefined();
+			expect(malla.name).toBe("Malla");
 			expect(anssi.id).not.toEqual(malla.id);
 			expect(sheet.persons).toEqual([anssi, malla]);
+		});
+		
+		it("creates person with numbered name when no name given", function() {
+			var person1 = sheet.createPerson();
+			expect(person1.name).toBe("Person 1");
+			
+			sheet.createPerson({name: "Defined"});
+			sheet.createExpense({name: "Defined"});
+			
+			var person3 = sheet.createPerson();
+			expect(person3.name).toBe("Person 3");
 		});
 		
 	});
@@ -31,9 +44,22 @@ describe("Balance sheet", function () {
 			var gas = sheet.createExpense({name: "Gas"});
 			
 			expect(food.id).toBeDefined();
+			expect(food.name).toBe("Food");
 			expect(gas.id).toBeDefined();
+			expect(gas.name).toBe("Gas");
 			expect(food.id).not.toEqual(gas.id);
 			expect(sheet.expenses).toEqual([food, gas]);
+		});
+		
+		it("creates expense with numbered name when no name given", function() {
+			var expense1 = sheet.createExpense();
+			expect(expense1.name).toBe("Expense 1");
+			
+			sheet.createPerson({name: "Defined"});
+			sheet.createExpense({name: "Defined"});
+			
+			var expense3 = sheet.createExpense();
+			expect(expense3.name).toBe("Expense 3");
 		});
 		
 		describe("cost", function() {
