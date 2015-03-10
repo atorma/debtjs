@@ -1,5 +1,6 @@
 <ons-page ng-controller="ParticipantListCtrl">
 	<ons-toolbar>
+		<div class="left"><ons-back-button>Back</ons-back-button></div>
 		<div class="right">
 			<ons-toolbar-button>
             	<ons-icon ng-click="createNew()" icon="ion-plus" fixed-width="false" style="vertical-align: -4px;"></ons-icon>
@@ -8,9 +9,6 @@
 	</ons-toolbar>
 	
 	<ons-list>
-		<ons-list-item modifier="chevron" 
-			ng-repeat="person in balanceSheet.persons">
-				{{person.name}}
-		</ons-list-item>
+		<ons-list-item modifier="chevron" ng-repeat="person in persons" ng-click="viewDetails(person)">{{person.name}}</ons-list-item>
 	</ons-list>
 </ons-page>

@@ -2,9 +2,10 @@
 
 var angular = require("angular");
 require("onsen");
-var debtApp = angular.module("debtApp", ["onsen"]);
 
-require("./layout");
+angular.module("debtApp", ["onsen"]);
+
+require("./state");
 require("./participants");
 require("./expenses");
 

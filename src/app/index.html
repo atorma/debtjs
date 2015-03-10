@@ -8,19 +8,24 @@
 <script src="debt.js"></script>
 </head>
 
-<body ng-app="debtApp" ng-controller="ShellCtrl">
+<body ng-app="debtApp">
 	
-<ons-tabbar position="top" var="tabs">
-	<ons-tab page="participants/participant-list.html" active="true">
-	<ons-icon icon="ion-home"></ons-icon>
-	<span style="font-size: 14px">Participants</span>
-</ons-tab>
-	<ons-tab page="expenses/expense-list.html">
-	<ons-icon icon="ion-star"></ons-icon>
-	<span style="font-size: 14px">Expenses</span>
-</ons-tab>
-</ons-tabbar>
-	
+<ons-navigator animation="slide" var="app.navi">
+	<ons-page>
+		<ons-toolbar>
+			<div class="center">Home</div>
+		</ons-toolbar>
+		
+		<ons-list>
+			<ons-list-item modifier="chevron" 
+				ng-click="app.navi.pushPage('participants/participant-list.html')">Participants</ons-list-item>
+			<ons-list-item modifier="chevron"
+				ng-click="app.navi.pushPage('expenses/expense-list.html')">Expenses</ons-list-item>
+		</ons-list>
+		
+	</ons-page>
+</ons-navigator>	
+		
 </body>
 
 </html> 
