@@ -1,9 +1,11 @@
 "use strict";
 
 var angular = require("angular");
-require("onsen");
+require("angular-material");
+require("angular-animate");
+require("angular-aria");
 
-angular.module("debtApp", ["onsen"]);
+angular.module("debtApp", ["ngMaterial"]);
 
 require("./state");
 require("./participants");

@@ -3,28 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <title>Debt.js</title>
-<link rel="stylesheet" type="text/css" href="resources/onsen/css/onsen-css-components.css" />
-<link rel="stylesheet" type="text/css" href="resources/onsen/css/onsenui.css" /> 
-<script src="debt.js"></script>
+<link rel="stylesheet" type="text/css" href="resources/angular-material.css" />
 </head>
 
-<body ng-app="debtApp">
+<body ng-app="debtApp" layout="column">
+
+<md-toolbar layout="row">
+	<h1>Debt.js</h1>
+</md-toolbar>
+
+<div flex layout="row">
+
+	<md-sidenav md-is-locked-open="$mdMedia('gt-sm')" class="md-whiteframe-z2" md-component-id="left">
+		<md-list>
+			<md-item>
+				<md-item-content>
+					<md-button>Participants</md-button>
+				</md-item-content>
+			</md-item>
+			<md-item>
+				<md-item-content>
+					<md-button>Expenses</md-button>
+				</md-item-content>
+			</md-item>
+		</md-list>
+	</md-sidenav>
 	
-<ons-navigator animation="slide" var="app.navi">
-	<ons-page>
-		<ons-toolbar>
-			<div class="center">Home</div>
-		</ons-toolbar>
+	<md-content flex id="content">
 		
-		<ons-list>
-			<ons-list-item modifier="chevron" 
-				ng-click="app.navi.pushPage('participants/participant-list.html')">Participants</ons-list-item>
-			<ons-list-item modifier="chevron"
-				ng-click="app.navi.pushPage('expenses/expense-list.html')">Expenses</ons-list-item>
-		</ons-list>
-		
-	</ons-page>
-</ons-navigator>	
+	</md-content>
+
+</div>
+	
+
+
+<script src="debt.js"></script>
 		
 </body>
 

@@ -13,7 +13,7 @@ var paths = {
 	main: './src/app/debt.js',
 	html: ['./src/app/**/*.html', '!./src/app/**/*.spec.*'],
 	resources: [],
-	libResources: ['./src/lib/**/*.*', '!./src/lib/**/*.js', '!./src/lib/onsen/stylus/**/*.*'],
+	libResources: ['./node_modules/angular-material/angular-material.css', './src/lib/**/*.*', '!./src/lib/**/*.js', '!./src/lib/onsen/stylus/**/*.*'],
 	tests: './src/app/test-index.js',
 	testHtml: ['./src/app/jasmine.spec.html'],
 	build: './build'
