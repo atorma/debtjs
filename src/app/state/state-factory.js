@@ -1,7 +1,7 @@
 require("angular").module("debtApp")
 	.factory("state", stateFactory);
 
-var BalanceSheet = require("../balance-sheet");
+var BalanceSheet = require("../domain/balance-sheet");
 
 function stateFactory() {
 	var balanceSheet = new BalanceSheet();
