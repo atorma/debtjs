@@ -14,7 +14,7 @@ function ExpenseListCtrl($scope, $state, state) {
 	}
 	
 	function createNew() {
-		state.balanceSheet.createPerson();
+		state.balanceSheet.createExpense();
 	}
 	
 	function viewDetails(expense) {

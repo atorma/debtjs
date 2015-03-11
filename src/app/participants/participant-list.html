@@ -1,7 +1,16 @@
+<md-subheader class="md-primary">
+	<div layout="row">
+		<h2>Participants</h2></md-subheader>
+		<span flex></span>
+		<md-button ng-click="createNew()">New</md-button>
+	</div>
+</md-subheader>
+
 <md-list>
 	<md-item ng-repeat="person in persons">
 		<md-item-content>
 			<div class="md-tile-content" ng-click="viewDetails(person)">{{person.name}}</div>
 		</md-item-content>
+		<md-divider ng-if="!$last"></md-divider>
 	</md-item>
 </md-list>
