@@ -9,12 +9,6 @@ describe("dummyService", function() {
 
 	var $httpBackend;
 	var dummyService;
-	
-	beforeEach(function() {
-		ons.isWebView = function() {
-			return false;
-		};
-	});
 
 	beforeEach(angular.mock.module("debtApp"));
 

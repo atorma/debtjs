@@ -1,7 +1,7 @@
 require("angular").module("debtApp")
 	.controller("ParticipantListCtrl", ParticipantListCtrl);
 
-function ParticipantListCtrl($scope, state) {
+function ParticipantListCtrl($scope, $state, state, $q) {
 	
 	$scope.createNew = createNew;
 	$scope.viewDetails = viewDetails;
@@ -19,7 +19,6 @@ function ParticipantListCtrl($scope, state) {
 	}
 	
 	function viewDetails(person) {
-		state.selectedPerson = person;
-		$scope.app.navi.pushPage("participants/participant-detail.html");
+		$state.transitionTo("participantDetail", {id: person.id});
 	}
 }

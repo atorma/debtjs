@@ -6,10 +6,10 @@
 <link rel="stylesheet" type="text/css" href="resources/angular-material.css" />
 </head>
 
-<body ng-app="debtApp" layout="column">
+<body ng-app="debtApp" layout="column" ng-controller="ShellCtrl">
 
 <md-toolbar layout="row">
-	<h1>Debt.js</h1>
+	<div class="center"><h1>Debt.js</h1></div>
 </md-toolbar>
 
 <div flex layout="row">
@@ -18,19 +18,21 @@
 		<md-list>
 			<md-item>
 				<md-item-content>
-					<md-button>Participants</md-button>
+					<md-button ng-click="showParticipantList()">Participants</md-button>
 				</md-item-content>
 			</md-item>
 			<md-item>
 				<md-item-content>
-					<md-button>Expenses</md-button>
+					<md-button ng-click="showExpenseList()">Expenses</md-button>
 				</md-item-content>
 			</md-item>
 		</md-list>
 	</md-sidenav>
 	
+
+	
 	<md-content flex id="content">
-		
+		<div ui-view></div>
 	</md-content>
 
 </div>

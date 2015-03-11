@@ -1,5 +1,7 @@
-<ons-page ng-controller="ExpenseListCtrl">
-	<ons-list>
-		<ons-list-item ng-repeat="expense in expenses">{{expense.name}}</ons-list-item>
-	</ons-list>
-</ons-page>
+<md-list>
+	<md-item ng-repeat="expense in expenses">
+		<md-item-content>
+			<div class="md-tile-content" ng-click="viewDetails(expense)">{{expense.name}}</div>
+		</md-item-content>
+	</md-item>
+</md-list>

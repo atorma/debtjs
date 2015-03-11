@@ -18,13 +18,23 @@ var BalanceSheet = function() {
 	this.debts = debts;
 	this.participations = participations;
 	
+	this.getPerson = getPerson;
 	this.createPerson = createPerson;
+	
+	this.getExpense = getExpense;
 	this.createExpense = createExpense;
 	this.removeExpense = removeExpense;
+	
+	
 	this.createPayment = createPayment;
 	this.removePayment = removePayment;
 
 	/////////////////////////////////////
+	
+	function getPerson(id) {
+		return getById(id, persons);
+	}
+	
 	
 	function createPerson(data) {
 		if (!data) {
@@ -40,6 +50,21 @@ var BalanceSheet = function() {
 		var person = new Person(data);
 		persons.push(person);
 		return person;
+	}
+	
+	
+	function getById(id, array) {
+		var found = null;
+		angular.forEach(array, function(obj) {
+			if (obj.id == id) {
+				found = obj;
+			}
+		});
+		return found;
+	}
+	
+	function getExpense(id) {
+		return getById(id, expenses);
 	}
 
 	function createExpense(data) {
