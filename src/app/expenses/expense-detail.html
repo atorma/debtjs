@@ -1,1 +1,38 @@
-<h2>{{expense.name}}</h2>
+<md-subheader class="md-primary">
+	<div layout="row">
+		<h2>{{expense.name}}</h2>
+		<span flex></span>
+		<md-button ng-click="">Delete</md-button>
+	</div>
+</md-subheader>
+
+<md-content>
+
+<section layout="row" layout-align="start center" layout-margin >
+	<div flex="20">Share costs</div>
+	<md-radio-group layout="row">
+		<md-radio-button value="equal">Equally</md-radio-button>
+		<md-radio-button value="custom">Custom</md-radio-button>
+	</md-radio-group>
+</section>
+
+<md-card ng-repeat="participant in participants">
+	<md-content layout="row" layout-align="start center" layout-margin>
+		<div flex>
+			<md-checkbox>{{participant.name}}</md-checkbox>
+		</div>
+		<md-input-container>
+			<label>Paid</label>
+			<input type="number"/>
+		</md-input-container>
+		<md-input-container>
+			<label>Share</label>
+			<input type="number"/>
+		</md-input-container>
+		<div flex style="text-align: right;">
+			<span>Balance</span>
+		</div>
+	</md-content>
+</md-card>
+
+</md-content>
