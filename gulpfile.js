@@ -10,16 +10,16 @@ var del = require('del');
 
 
 var paths = {
-	main: './src/app/debt.js',
-	html: ['./src/app/**/*.html', '!./src/app/**/*.spec.*'],
+	main: 'src/app/debt.js',
+	html: ['src/app/**/*.html', '!src/app/**/*.spec.html'],
 	resources: [],
-	libResources: ['./node_modules/angular-material/angular-material.css', './src/lib/**/*.*', '!./src/lib/**/*.js', '!./src/lib/onsen/stylus/**/*.*'],
-	tests: './src/app/test-index.js',
-	testHtml: ['./src/app/jasmine.spec.html'],
-	build: './build'
+	libResources: ['node_modules/angular-material/angular-material.css', 'src/lib/**/*.*', '!src/lib/**/*.js'],
+	tests: 'src/app/test-index.js',
+	testHtml: ['src/app/jasmine.spec.html'],
+	build: 'build'
 };
 
-var appBundler = watchify(browserify(paths.main, watchify.args));
+var appBundler = watchify(browserify('./'+paths.main, watchify.args));
 appBundler.on('update', bundleApp);
 appBundler.on('log', gutil.log);
 
@@ -94,18 +94,6 @@ gulp.task('tdd', function(done) {
 
 
 function bundleApp() {
-	return appBundler.bundle()
-	.on('error', gutil.log.bind(gutil, 'Browserify Error'))
-	.pipe(source('debt.js'))
-	// optional, remove if you don't want sourcemaps
-	.pipe(buffer())
-	.pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-	.pipe(sourcemaps.write('./')) // writes .map file
-	//
-	.pipe(gulp.dest(paths.build));
-}
-
-function bundleApp2() {
 	return appBundler.bundle()
 	.on('error', gutil.log.bind(gutil, 'Browserify Error'))
 	.pipe(source('debt.js'))
