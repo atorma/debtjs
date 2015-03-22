@@ -118,6 +118,7 @@ describe("Balance sheet", function () {
 				
 				sheet.shareExpense(expense);
 				
+				expect(part1.share + part2.share + part3.share).toBe(10);
 				expect(part1.share).toBe(3.33);
 				expect(part2.share).toBe(3.33);
 				expect(part3.share).toBe(3.34);
