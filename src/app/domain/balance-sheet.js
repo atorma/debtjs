@@ -1,21 +1,18 @@
 "use strict";
 
 var angular = require("angular");
+var Decimal = require("simple-decimal-money");
 
 var BalanceSheet = function() {
 
 	var persons = [];
 	var expenses = [];
-	var payments = [];
-	var debts = [];
 	var participations = [];
 	var idSequence = 1;
 	
 	
 	this.persons = persons;
 	this.expenses = expenses;
-	this.payments = payments;
-	this.debts = debts;
 	this.participations = participations;
 	
 	this.getPerson = getPerson;
@@ -25,9 +22,10 @@ var BalanceSheet = function() {
 	this.createExpense = createExpense;
 	this.removeExpense = removeExpense;
 	
+	this.createParticipation = createParticipation;
+	this.removeParticipation= removeParticipation;
 	
-	this.createPayment = createPayment;
-	this.removePayment = removePayment;
+	this.shareExpense = shareExpense;
 
 	/////////////////////////////////////
 	
@@ -90,24 +88,37 @@ var BalanceSheet = function() {
 				expenses.splice(i, 1);
 			}
 		});
-		angular.forEach(toRemove.getPayments(), function(p) {
-			removePayment(p);
+		angular.forEach(toRemove.getParticipations(), function(p) {
+			removeParticipation(p);
 		});
 	}
 
-	function createPayment(data) {
-		var payment = new Payment(data);
-		payments.push(payment);
-		return payment;
+	function createParticipation(data) {
+		var participation = new Participation(data);
+		participations.push(participation);
+		return participation;
 	}
 
-	function removePayment(toRemove) {
+	function removeParticipation(toRemove) {
 		if (!toRemove) return;
-		angular.forEach(payments, function(p, i) {
+		angular.forEach(participations, function(p, i) {
 			if (p.equals(toRemove)) {
-				payments.splice(i, 1);
+				participations.splice(i, 1);
 			}
 		});
+	}
+	
+	
+	function shareExpense(expense) {
+		var cost = new Decimal(expense.getCost());
+		var participations = expense.getParticipations();
+		var sum = new Decimal(0);
+		for (var i = 0; i < participations.length - 1; i++) {
+			var share = cost.divideBy(participations.length); 
+			sum = sum.add(share);
+			participations[i].share = share.toNumber();
+		}
+		participations[participations.length - 1].share = cost.subtract(sum).toNumber();
 	}
 	
 	
@@ -121,25 +132,25 @@ var BalanceSheet = function() {
 		var _this = this;
 		
 		this.getCost = getCost;
-		this.getPayments = getPayments;
+		this.getParticipations = getParticipations;
 		this.equals = equals;
 		
 		function getCost() {
 			var cost = 0;
-			angular.forEach(getPayments(), function(p) {
-				cost = cost + p.amount;
+			angular.forEach(getParticipations(), function(p) {
+				cost = cost + p.paid;
 			});
 			return cost;
 		}
 		
-		function getPayments() {
-			var myPayments = [];
-			angular.forEach(payments, function(p) {
+		function getParticipations() {
+			var myParticipations = [];
+			angular.forEach(participations, function(p) {
 				if (_this.equals(p.expense)) {
-					myPayments.push(p);
+					myParticipations.push(p);
 				}
 			});
-			return myPayments;
+			return myParticipations;
 		}
 		
 		function equals(other) {
@@ -147,22 +158,31 @@ var BalanceSheet = function() {
 		}
 	}
 	
-	function Payment(data) {
+	function Participation(data) {
 		var _this = this; 
 		
 		if (!data || !data.person || !data.expense) {
-			throw "Undefined payment";
+			throw "Undefined participation";
 		}
 		this.person = data.person;
 		this.expense = data.expense;
 		
-		if (!angular.isDefined(data.amount)) {
-			this.amount = 0;
-		} else if (!angular.isNumber(data.amount)) {
-			throw "Amount is not a number";
+		if (!angular.isDefined(data.paid)) {
+			this.paid = 0;
+		} else if (!angular.isNumber(data.paid)) {
+			throw "'paid' is not a number";
 		} else {
-			this.amount = data.amount;
+			this.paid = data.paid;
 		}
+		
+		if (!angular.isDefined(data.share)) {
+			this.share = 0;
+		} else if (!angular.isNumber(data.share)) {
+			throw "'share' is not a number";
+		} else {
+			this.share = data.share;
+		}
+		
 		
 		this.equals = equals;
 		

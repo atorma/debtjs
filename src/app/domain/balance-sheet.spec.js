@@ -78,52 +78,67 @@ describe("Balance sheet", function () {
 			});
 			
 			it("is updated when payment is created", function() {
-				var payment1 = sheet.createPayment({person: person1, expense: expense, amount: 11});
+				var payment1 = sheet.createParticipation({person: person1, expense: expense, paid: 11});
 				expect(expense.getCost()).toBe(11);
 				
-				var payment2 = sheet.createPayment({person: person2, expense: expense, amount: 22});
+				var payment2 = sheet.createParticipation({person: person2, expense: expense, paid: 22});
 				expect(expense.getCost()).toBe(11 + 22);
 			});
 			
 			it("is updated when payment is updated", function() {
-				var payment1 = sheet.createPayment({person: person1, expense: expense, amount: 10});
-				payment1.amount = 200;
+				var payment1 = sheet.createParticipation({person: person1, expense: expense, paid: 10});
+				payment1.paid = 200;
 				expect(expense.getCost()).toBe(200);
 			});
 			
 			it("is updated when payment is deleted", function() {
-				var payment1 = sheet.createPayment({person: person1, expense: expense, amount: 10});
-				var payment2 = sheet.createPayment({person: person1, expense: expense, amount: 15});
+				var payment1 = sheet.createParticipation({person: person1, expense: expense, paid: 10});
+				var payment2 = sheet.createParticipation({person: person1, expense: expense, paid: 15});
 				expect(expense.getCost()).toBe(25);
-				sheet.removePayment(payment2);
+				sheet.removeParticipation(payment2);
 				expect(expense.getCost()).toBe(10);
 			});
 			
 			it("is computed over correct expenses", function() {
 				var expense2 = sheet.createExpense({});
-				sheet.createPayment({person: person1, expense: expense, amount: 10});
+				sheet.createParticipation({person: person1, expense: expense, paid: 10});
 				expect(expense.getCost()).toBe(10);
 				
-				sheet.createPayment({person: person1, expense: expense2, amount: 999});
+				sheet.createParticipation({person: person1, expense: expense2, paid: 999});
 				expect(expense.getCost()).toBe(10);
+			});
+			
+			it("can be split equally among participants in cent accuracy without loss of money", function() {
+				var person3 = sheet.createPerson({});
+				var nonParticipant = sheet.createPerson({});
+				
+				var part1 = sheet.createParticipation({person: person1, expense: expense, paid: 10});
+				var part2 = sheet.createParticipation({person: person2, expense: expense, paid: 0});
+				var part3 = sheet.createParticipation({person: person3, expense: expense, paid: 0});
+				
+				sheet.shareExpense(expense);
+				
+				expect(part1.share).toBe(3.33);
+				expect(part2.share).toBe(3.33);
+				expect(part3.share).toBe(3.34);
 			});
 		});
 		
-		it("can return payments of it", function() {
+		it("can return participations to it", function() {
 			var expense1 = sheet.createExpense({});
 			var expense2 = sheet.createExpense({});
 			var person1 = sheet.createPerson({});
 			var person2 = sheet.createPerson({});
 			
-			var p1To1 = sheet.createPayment({person: person1, expense: expense1, amount: 10});
-			var p2To1 = sheet.createPayment({person: person2, expense: expense1, amount: 11});
-			var p1To2 = sheet.createPayment({person: person1, expense: expense2, amount: 20});
+			var p1To1 = sheet.createParticipation({person: person1, expense: expense1, paid: 10});
+			var p2To1 = sheet.createParticipation({person: person2, expense: expense1, paid: 11});
+			var p1To2 = sheet.createParticipation({person: person1, expense: expense2, paid: 20});
 			
-			expect(expense1.getPayments().length).toBe(2);
-			expect(expense1.getPayments()[0].equals(p1To1)).toBe(true);
-			expect(expense1.getPayments()[1].equals(p2To1)).toBe(true);
-			expect(expense2.getPayments().length).toBe(1);
-			expect(expense2.getPayments()[0].equals(p1To2)).toBe(true);
+			expect(expense1.getParticipations().length).toBe(2);
+			expect(expense1.getParticipations()[0].equals(p1To1)).toBe(true);
+			expect(expense1.getParticipations()[1].equals(p2To1)).toBe(true);
+			expect(expense2.getParticipations().length).toBe(1);
+			expect(expense2.getParticipations()[0].equals(p1To2)).toBe(true);
 		});
 
 		
@@ -133,18 +148,14 @@ describe("Balance sheet", function () {
 			var person1 = sheet.createPerson({});
 			var person2 = sheet.createPerson({});
 			
-			sheet.createPayment({person: person1, expense: expense1, amount: 10});
-			sheet.createPayment({person: person2, expense: expense1, amount: 11});
-			var p1To2 = sheet.createPayment({person: person1, expense: expense2, amount: 20});
-			var p2To2 = sheet.createPayment({person: person2, expense: expense2, amount: 21});
+			sheet.createParticipation({person: person1, expense: expense1, paid: 10});
+			sheet.createParticipation({person: person2, expense: expense1, paid: 11});
+			var p1To2 = sheet.createParticipation({person: person1, expense: expense2, paid: 20});
+			var p2To2 = sheet.createParticipation({person: person2, expense: expense2, paid: 21});
 			
 			sheet.removeExpense(expense1);
 			expect(sheet.expenses.length).toBe(1);
 			expect(sheet.expenses[0].equals(expense2)).toBe(true);
-			expect(sheet.payments.length).toBe(2);
-			expect(sheet.payments[0].equals(p1To2)).toBe(true);
-			expect(sheet.payments[1].equals(p2To2)).toBe(true);
-			
 		});
 		
 	});
@@ -162,6 +173,35 @@ describe("Balance sheet", function () {
 			expect(sheet.getExpense(food.id)).toBe(food);
 			expect(sheet.getExpense(gas.id)).toBe(gas);
 		});
+		
+	});
+	
+	describe("participation", function() {
+		
+		it("is created with correct default values", function() {
+			var anssi = sheet.createPerson({name: "Anssi"});
+			var food = sheet.createExpense({name: "Food"});
+			
+			var participation = sheet.createParticipation({expense: food, person: anssi});
+			expect(participation.paid).toBe(0);
+			expect(participation.share).toBe(0);
+		});
+		
+		it("requires person and expense", function() {
+			var anssi = sheet.createPerson({name: "Anssi"});
+			var food = sheet.createExpense({name: "Food"});
+			
+			expect(function() {
+				sheet.createParticipation({expense: food});
+			}).toThrow();
+			expect(function() {
+				sheet.createParticipation({person: anssi});
+			}).toThrow();
+			expect(function() {
+				sheet.createParticipation({person: anssi, expense: food});
+			}).not.toThrow();
+		});
+		
 		
 	});
 
