@@ -24,8 +24,6 @@ var BalanceSheet = function() {
 	
 	this.createParticipation = createParticipation;
 	this.removeParticipation= removeParticipation;
-	
-	this.shareExpense = shareExpense;
 
 	/////////////////////////////////////
 	
@@ -76,6 +74,10 @@ var BalanceSheet = function() {
 		if (data.name === undefined) {
 			data.name = "Expense " + (expenses.length + 1);
 		}
+		if (!data.sharing) {
+			data.sharing = 'equal';
+		}
+		
 		var expense = new Expense(data);
 		expenses.push(expense);
 		return expense;
@@ -109,17 +111,7 @@ var BalanceSheet = function() {
 	}
 	
 	
-	function shareExpense(expense) {
-		var cost = new Decimal(expense.getCost());
-		var participations = expense.getParticipations();
-		var sum = new Decimal(0);
-		for (var i = 0; i < participations.length - 1; i++) {
-			var share = cost.divideBy(participations.length); 
-			sum = sum.add(share);
-			participations[i].share = share.toNumber();
-		}
-		participations[participations.length - 1].share = cost.subtract(sum).toNumber();
-	}
+	
 	
 	
 	function Person(data) {
@@ -133,6 +125,7 @@ var BalanceSheet = function() {
 		
 		this.getCost = getCost;
 		this.getParticipations = getParticipations;
+		this.shareCost = shareCost;
 		this.equals = equals;
 		
 		function getCost() {
@@ -151,6 +144,18 @@ var BalanceSheet = function() {
 				}
 			});
 			return myParticipations;
+		}
+		
+		function shareCost() {
+			var cost = new Decimal(_this.getCost());
+			var participations = _this.getParticipations();
+			var sum = new Decimal(0);
+			for (var i = 0; i < participations.length - 1; i++) {
+				var share = cost.divideBy(participations.length); 
+				sum = sum.add(share);
+				participations[i].share = share.toNumber();
+			}
+			participations[participations.length - 1].share = cost.subtract(sum).toNumber();
 		}
 		
 		function equals(other) {
