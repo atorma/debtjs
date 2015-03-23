@@ -13,5 +13,3 @@ require("./domain");
 require("./layout");
 require("./participants");
 require("./expenses");
-
-require("./dummy-service");
