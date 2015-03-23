@@ -11,7 +11,6 @@ angular.module("debtApp", ["ngMaterial", "ui.router"]);
 
 require("./domain");
 require("./layout");
-require("./state");
 require("./participants");
 require("./expenses");
 

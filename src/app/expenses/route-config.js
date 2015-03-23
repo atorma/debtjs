@@ -7,12 +7,22 @@ function config($stateProvider) {
 		.state("expenseList", {
 			url: "/expenses",
 			templateUrl: "expenses/expense-list.html",
-			controller: "ExpenseListCtrl"
+			controller: "ExpenseListCtrl",
+			resolve: {
+        balanceSheet: function(balanceSheetService) {
+          return balanceSheetService.balanceSheet;
+        }
+      }
 		})
 		.state("expenseDetail", {
 			url: "/expenses/:id",
 			templateUrl: "expenses/expense-detail.html",
-			controller: "ExpenseDetailCtrl"
+			controller: "ExpenseDetailCtrl",
+			resolve: {
+        balanceSheet: function(balanceSheetService) {
+          return balanceSheetService.balanceSheet;
+        }
+      }
 		})
 		;
 }

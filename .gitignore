@@ -7,6 +7,9 @@ node_modules/
 .project
 .tern-project
 
+# npm
+npm-debug.log
+
 
 # Windows image file caches
 Thumbs.db

@@ -1,12 +1,12 @@
 require("angular").module("debtApp")
 	.controller("ParticipantDetailCtrl", ParticipantDetailCtrl);
 
-function ParticipantDetailCtrl($scope, $stateParams, state) {
+function ParticipantDetailCtrl($scope, $stateParams, balanceSheet) {
 	
 	init();
 	
 	function init() {
-		$scope.person = state.balanceSheet.getPerson($stateParams.id);
+		$scope.person = balanceSheet.getPerson($stateParams.id);
 	}
 	
 }

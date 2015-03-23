@@ -1,13 +1,13 @@
 require("angular").module("debtApp")
 	.controller("ExpenseDetailCtrl", ExpenseDetailCtrl);
 
-function ExpenseDetailCtrl($scope, $stateParams, state) {
+function ExpenseDetailCtrl($scope, $stateParams, balanceSheet) {
 	
 	init();
 	
 	function init() {
-		$scope.expense = state.balanceSheet.getExpense($stateParams.id);
-		$scope.participants = state.balanceSheet.persons;
+		$scope.balanceSheet = balanceSheet;
+		$scope.expense = balanceSheet.getExpense($stateParams.id);
 	}
 
 }

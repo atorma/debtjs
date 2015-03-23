@@ -1,7 +1,7 @@
 require("angular").module("debtApp")
 	.controller("ExpenseListCtrl", ExpenseListCtrl);
 
-function ExpenseListCtrl($scope, $state, state) {
+function ExpenseListCtrl($scope, $state, balanceSheet) {
 	
 	$scope.createNew = createNew;
 	$scope.viewDetails = viewDetails;
@@ -10,11 +10,11 @@ function ExpenseListCtrl($scope, $state, state) {
 	
 	
 	function init() {
-		$scope.expenses = state.balanceSheet.expenses;
+		$scope.expenses = balanceSheet.expenses;
 	}
 	
 	function createNew() {
-		state.balanceSheet.createExpense();
+	  balanceSheet.createExpense();
 	}
 	
 	function viewDetails(expense) {
