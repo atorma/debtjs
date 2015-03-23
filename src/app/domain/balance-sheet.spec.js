@@ -185,20 +185,21 @@ describe("Balance sheet", function () {
   });
 
   describe("participation", function() {
+    
+    var anssi, food;
+    
+    beforeEach(function() {
+      anssi = sheet.createPerson({name: "Anssi"});
+      food = sheet.createExpense({name: "Food"});
+    });
 
     it("is created with correct default values", function() {
-      var anssi = sheet.createPerson({name: "Anssi"});
-      var food = sheet.createExpense({name: "Food"});
-
       var participation = sheet.createParticipation({expense: food, person: anssi});
       expect(participation.paid).toBe(0);
       expect(participation.share).toBe(0);
     });
-
+    
     it("requires person and expense", function() {
-      var anssi = sheet.createPerson({name: "Anssi"});
-      var food = sheet.createExpense({name: "Food"});
-
       expect(function() {
         sheet.createParticipation({expense: food});
       }).toThrow();
@@ -209,8 +210,29 @@ describe("Balance sheet", function () {
         sheet.createParticipation({person: anssi, expense: food});
       }).not.toThrow();
     });
+    
+    it("cannot be created as duplicate", function() {
+      var participation = sheet.createParticipation({expense: food, person: anssi});
+      expect(function() {
+        sheet.createParticipation({expense: participation.expense, person: participation.person});
+      }).toThrow();
+      expect(sheet.participations.length).toBe(1);
+    });
 
-
+    it("can be removed by person and expense or using itself", function() {
+      sheet.createParticipation({expense: food, person: anssi});
+      expect(sheet.participations.length).toBe(1);
+      
+      sheet.removeParticipation({expense: food, person: anssi});
+      expect(sheet.participations.length).toBe(0);
+      
+      var participation = sheet.createParticipation({expense: food, person: anssi});
+      expect(sheet.participations.length).toBe(1);
+      
+      sheet.removeParticipation(participation);
+      expect(sheet.participations.length).toBe(0);
+    });
+    
   });
 
 });

@@ -97,12 +97,18 @@ var BalanceSheet = function() {
 
 	function createParticipation(data) {
 		var participation = new Participation(data);
+		angular.forEach(participations, function(p) {
+      if (p.equals(participation)) {
+        throw "Duplicate participation";
+      }
+    });
 		participations.push(participation);
 		return participation;
 	}
 
 	function removeParticipation(toRemove) {
 		if (!toRemove) return;
+		toRemove = new Participation(toRemove);
 		angular.forEach(participations, function(p, i) {
 			if (p.equals(toRemove)) {
 				participations.splice(i, 1);
@@ -116,6 +122,13 @@ var BalanceSheet = function() {
 	
 	function Person(data) {
 		angular.extend(this, data);
+		var _this = this;
+		
+		this.equals = equals;
+		
+		function equals(other) {
+      return angular.equals(_this, other);
+    }
 	}
 
 	

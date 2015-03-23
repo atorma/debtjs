@@ -19,7 +19,7 @@
   <md-card ng-repeat="person in balanceSheet.persons">
     <md-content layout="row" layout-align="start center" layout-margin>
       <div flex>
-        <md-checkbox>{{person.name}}</md-checkbox>
+        <md-checkbox ng-model="participationMap[person.id]" ng-change="setParticipation(person, participationMap[person.id])">{{person.name}}</md-checkbox>
       </div>
       <md-input-container>
         <label>Paid</label>
