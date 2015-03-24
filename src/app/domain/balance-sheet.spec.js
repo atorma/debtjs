@@ -24,6 +24,22 @@ describe("Balance sheet", function () {
       expect(anssi.id).not.toEqual(malla.id);
       expect(sheet.persons).toEqual([anssi, malla]);
     });
+    
+    it("equals other expense by id", function() {
+      var person1 = sheet.createPerson({name: "Anssi"});
+      var person2 = sheet.createPerson({name: "Malla"});
+      var expense1 = sheet.createExpense({name: "Anssi"});
+      
+      expect(person1.equals(person1)).toBe(true);
+      expect(person1.equals(person2)).toBe(false);
+      expect(person1.equals(expense1)).toBe(false);
+      
+      person2.id = person1.id;
+      expect(person1.equals(person2)).toBe(true);
+      
+      expense1.id = person1.id;
+      expect(person1.equals(expense1)).toBe(false);
+    });
 
     it("creates person with numbered name when no name given", function() {
       var person1 = sheet.createPerson();
@@ -50,6 +66,22 @@ describe("Balance sheet", function () {
       expect(gas.name).toBe("Gas");
       expect(food.id).not.toEqual(gas.id);
       expect(sheet.expenses).toEqual([food, gas]);
+    });
+    
+    it("equals other expense by id", function() {
+      var expense1 = sheet.createExpense({name: "Food"});
+      var expense2 = sheet.createExpense({name: "Gas"});
+      var person1 = sheet.createPerson({name: "Food"});
+      
+      expect(expense1.equals(expense1)).toBe(true);
+      expect(expense1.equals(expense2)).toBe(false);
+      expect(expense1.equals(person1)).toBe(false);
+      
+      expense2.id = expense1.id;
+      expect(expense1.equals(expense2)).toBe(true);
+      
+      person1.id = expense1.id;
+      expect(expense1.equals(person1)).toBe(false);
     });
 
     it("creates expense with numbered name when no name given", function() {
@@ -99,7 +131,7 @@ describe("Balance sheet", function () {
 
       it("is updated when payment is deleted", function() {
         var payment1 = sheet.createParticipation({person: person1, expense: expense, paid: 10});
-        var payment2 = sheet.createParticipation({person: person1, expense: expense, paid: 15});
+        var payment2 = sheet.createParticipation({person: person2, expense: expense, paid: 15});
         expect(expense.getCost()).toBe(25);
         sheet.removeParticipation(payment2);
         expect(expense.getCost()).toBe(10);
@@ -217,6 +249,13 @@ describe("Balance sheet", function () {
         sheet.createParticipation({expense: participation.expense, person: participation.person});
       }).toThrow();
       expect(sheet.participations.length).toBe(1);
+    });
+    
+    it("can be found by person and expense", function() {
+      var participation = sheet.createParticipation({expense: food, person: anssi, paid: 10, share: 5});
+      expect(sheet.participations.length).toBe(1);
+      
+      expect(sheet.getParticipation({person: anssi, expense: food})).toBe(participation);
     });
 
     it("can be removed by person and expense or using itself", function() {

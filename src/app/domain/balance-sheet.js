@@ -22,6 +22,7 @@ var BalanceSheet = function() {
 	this.createExpense = createExpense;
 	this.removeExpense = removeExpense;
 	
+	this.getParticipation = getParticipation;
 	this.createParticipation = createParticipation;
 	this.removeParticipation= removeParticipation;
 
@@ -59,6 +60,7 @@ var BalanceSheet = function() {
 		return found;
 	}
 	
+	
 	function getExpense(id) {
 		return getById(id, expenses);
 	}
@@ -95,6 +97,18 @@ var BalanceSheet = function() {
 		});
 	}
 
+	
+	function getParticipation(criteria) {
+	  var toSeek = new Participation(criteria); 
+	  var found;
+	  angular.forEach(participations, function(p) {
+	    if (p.equals(toSeek)) {
+	      found = p;
+	    }
+	  });
+	  return found;
+	}
+	
 	function createParticipation(data) {
 		var participation = new Participation(data);
 		angular.forEach(participations, function(p) {
@@ -127,10 +141,11 @@ var BalanceSheet = function() {
 		this.equals = equals;
 		
 		function equals(other) {
-      return angular.equals(_this, other);
+      return (other instanceof Person) && (other.id === _this.id);
     }
 	}
 
+	
 	
 	function Expense(data) {
 		angular.extend(this, data);
@@ -172,9 +187,11 @@ var BalanceSheet = function() {
 		}
 		
 		function equals(other) {
-			return angular.equals(_this, other);
+			return (other instanceof Expense) && (other.id === _this.id);
 		}
 	}
+	
+	
 	
 	function Participation(data) {
 		var _this = this; 
@@ -182,9 +199,10 @@ var BalanceSheet = function() {
 		if (!data || !data.person || !data.expense) {
 			throw "Undefined participation";
 		}
+		
 		this.person = data.person;
 		this.expense = data.expense;
-		
+
 		if (!angular.isDefined(data.paid)) {
 			this.paid = 0;
 		} else if (!angular.isNumber(data.paid)) {
@@ -204,8 +222,9 @@ var BalanceSheet = function() {
 		
 		this.equals = equals;
 		
+		
 		function equals(other) {
-			return angular.equals(_this, other);
+			return (other instanceof Participation) && _this.person.equals(other.person) && _this.expense.equals(other.expense);
 		}
 	}
 
