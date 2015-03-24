@@ -23,11 +23,11 @@
       </div>
       <md-input-container>
         <label>Paid</label>
-        <input type="number" />
+        <input type="number" required ng-model="balanceSheet.getParticipation({person: person, expense: expense}).paid" />
       </md-input-container>
       <md-input-container>
         <label>Share</label>
-        <input type="number" />
+        <input type="number" required ng-model="balanceSheet.getParticipation({person: person, expense: expense}).share" ng-disabled="balanceSheet.sharing != 'custom'" />
       </md-input-container>
       <div flex style="text-align: right;">
         <span>Balance</span>
