@@ -9,6 +9,7 @@ describe("ExpenseDetailCtrl", function() {
 
   var $scope;
   var $stateParams;
+  var $state;
   var balanceSheet;
   var expense;
   var controller;
@@ -18,19 +19,28 @@ describe("ExpenseDetailCtrl", function() {
   beforeEach(function() {
     balanceSheet = new BalanceSheet();
     expense = balanceSheet.createExpense();
+    
     $stateParams = {
         id: expense.id
     };
+    $state = jasmine.createSpyObj("$state", ["go"]);
 
   });
 
-  beforeEach(angular.mock.inject(function($rootScope, $controller) {
+  beforeEach(angular.mock.inject(function($rootScope, $controller, $q, $mdDialog) {
     $scope = $rootScope;
+    
+    // Dialog always results in "OK"
+    $mdDialog.show = function() {
+      return $q.when();
+    };
     
     controller = $controller("ExpenseDetailCtrl", {
       balanceSheet: balanceSheet,
       $scope: $rootScope,
-      $stateParams: $stateParams
+      $stateParams: $stateParams,
+      $state: $state,
+      $mdDialog: $mdDialog
     });
     
   }));
@@ -121,9 +131,19 @@ describe("ExpenseDetailCtrl", function() {
       
       expect(expense.shareCost).not.toHaveBeenCalled();
     });
+    
   });
   
-  
+  it("deletes expense", function() {
+    $scope.expense = expense;
+    spyOn(balanceSheet, "removeExpense");
+    
+    $scope.removeExpense();
+    $scope.$digest();
+    
+    expect(balanceSheet.removeExpense).toHaveBeenCalledWith(expense);
+    expect($state.go).toHaveBeenCalledWith("expenseList");
+  });
   
   
 

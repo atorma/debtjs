@@ -1,18 +1,27 @@
 require("angular").module("debtApp")
 	.controller("ExpenseDetailCtrl", ExpenseDetailCtrl);
 
-function ExpenseDetailCtrl($scope, $stateParams, balanceSheet) {
-	  
+function ExpenseDetailCtrl(balanceSheet, $scope, $mdDialog, $stateParams, $state) {
+  var confirmRemoveExpense;
+  
   this.init = init;
+  
   $scope.setParticipation = setParticipation;
   $scope.shareCost = shareCost;
+  $scope.removeExpense = removeExpense;
   
 	init();
+	
+	/////////////////////////////////////////////////////////////
 	
 	function init() {
 		$scope.balanceSheet = balanceSheet;
 		$scope.expense = balanceSheet.getExpense($stateParams.id);
 		$scope.isParticipant = getParticipationMap();
+		
+		confirmRemoveExpense = $mdDialog.confirm()
+    .content("Really delete this expense?")
+    .ok("Ok").cancel("Cancel");
 	};
 
 	function getParticipationMap() {
@@ -44,5 +53,13 @@ function ExpenseDetailCtrl($scope, $stateParams, balanceSheet) {
 	  if ($scope.expense.sharing === 'equal') {
 	    $scope.expense.shareCost();
 	  }
+	}
+	
+	function removeExpense() {
+	  $mdDialog.show(confirmRemoveExpense)
+	  .then(function() {
+      balanceSheet.removeExpense($scope.expense);
+      $state.go("expenseList");
+    });
 	}
 }
