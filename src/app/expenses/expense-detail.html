@@ -8,30 +8,38 @@
 
 <md-content>
 
-  <section layout="row" layout-align="start center" layout-margin>
-    <div flex="20">Share costs</div>
-    <md-radio-group layout="row" ng-model="expense.sharing">
-      <md-radio-button value="equal">Equally</md-radio-button>
-      <md-radio-button value="custom">Custom</md-radio-button>
-    </md-radio-group>
+  <section layout="column" layout-margin>
+    <div layout="row" layout-align="start center">
+      <div flex="15">Cost</div>
+      <div flex>{{expense.getCost() | currency:""}}</div>
+    </div>
+    <div layout="row" layout-align="start center">
+      <div flex="15">Share</div>
+      <md-radio-group layout="row" ng-model="expense.sharing">
+        <md-radio-button value="equal" style="margin-left: 0">Equally</md-radio-button>
+        <md-radio-button value="custom">Custom</md-radio-button>
+      </md-radio-group>
+    </div>
   </section>
   
   <md-card ng-repeat="person in balanceSheet.persons">
     <md-content layout="row" layout-align="start center" layout-margin>
       <div flex>
-        <md-checkbox ng-model="participationMap[person.id]" ng-change="setParticipation(person, participationMap[person.id])">{{person.name}}</md-checkbox>
+        <md-checkbox ng-model="isParticipant[person.id]" ng-change="setParticipation(person, isParticipant[person.id])">{{person.name}}</md-checkbox>
       </div>
-      <md-input-container>
+      <md-input-container flex>
         <label>Paid</label>
-        <input type="number" required ng-model="balanceSheet.getParticipation({person: person, expense: expense}).paid" />
+        <input type="number" required pattern="[1-9]*[0-9]([,|\.][0-9]{0,2})?"
+          ng-model="balanceSheet.getParticipation({person: person, expense: expense}).paid" 
+          ng-change="shareCost(expense)" 
+          ng-disabled="!isParticipant[person.id]" />
       </md-input-container>
-      <md-input-container>
+      <md-input-container flex>
         <label>Share</label>
-        <input type="number" required ng-model="balanceSheet.getParticipation({person: person, expense: expense}).share" ng-disabled="balanceSheet.sharing != 'custom'" />
+        <input type="number" required 
+          ng-model="balanceSheet.getParticipation({person: person, expense: expense}).share" 
+          ng-disabled="!isParticipant[person.id] || expense.sharing != 'custom'" />
       </md-input-container>
-      <div flex style="text-align: right;">
-        <span>Balance</span>
-      </div>
     </md-content>
   </md-card>
 

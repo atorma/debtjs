@@ -5,13 +5,14 @@ function ExpenseDetailCtrl($scope, $stateParams, balanceSheet) {
 	  
   this.init = init;
   $scope.setParticipation = setParticipation;
+  $scope.shareCost = shareCost;
   
 	init();
 	
 	function init() {
 		$scope.balanceSheet = balanceSheet;
 		$scope.expense = balanceSheet.getExpense($stateParams.id);
-		$scope.participationMap = getParticipationMap();
+		$scope.isParticipant = getParticipationMap();
 	};
 
 	function getParticipationMap() {
@@ -30,13 +31,18 @@ function ExpenseDetailCtrl($scope, $stateParams, balanceSheet) {
 	  return map;
 	}
 	
-	function setParticipation(person, participates) {
-	  if (participates) {
+	function setParticipation(person, isParticipant) {
+	  if (isParticipant) {
 	    balanceSheet.createParticipation({expense: $scope.expense, person: person});
 	  } else {
 	    balanceSheet.removeParticipation({expense: $scope.expense, person: person});
 	  }
-	  
-	  $scope.participationMap = getParticipationMap();
+	  shareCost();
+	}
+	
+	function shareCost() {
+	  if ($scope.expense.sharing === 'equal') {
+	    $scope.expense.shareCost();
+	  }
 	}
 }

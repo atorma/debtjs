@@ -51,25 +51,81 @@ describe("ExpenseDetailCtrl", function() {
     
     controller.init();
     
-    expect($scope.participationMap[participant1.id]).toBe(true);
-    expect($scope.participationMap[participant2.id]).toBe(true);
-    expect($scope.participationMap[nonParticipant.id]).toBe(false);
+    expect($scope.isParticipant[participant1.id]).toBe(true);
+    expect($scope.isParticipant[participant2.id]).toBe(true);
+    expect($scope.isParticipant[nonParticipant.id]).toBe(false);
+    
+  });
+
+  describe("shareCost", function() {
+    
+    beforeEach(function() {
+      spyOn(expense, "shareCost");
+      $scope.expense = expense;
+    });
+    
+    it("shares cost of expense if sharing mode is 'equal'", function() {
+      expense.sharing = 'equal';
+      $scope.shareCost();
+      
+      expect(expense.shareCost).toHaveBeenCalled();
+    });
+    
+    it("does not share cost of expense if sharing mode is 'custom'", function() {
+      expense.sharing = 'custom';
+      $scope.shareCost();
+      
+      expect(expense.shareCost).not.toHaveBeenCalled();
+    });
     
   });
   
-  it("setParticipation creates or removes participation", function() {
-    var person = balanceSheet.createPerson();
+  describe("setParticipation", function() {
     
-    $scope.setParticipation(person, true);
+    var person;
     
-    expect(expense.getParticipations().length).toBe(1);
-    expect(expense.getParticipations()[0].person).toBe(person);
-    expect($scope.participationMap[person.id]).toBe(true);
+    beforeEach(function() {
+      person = balanceSheet.createPerson();
+      spyOn(expense, "shareCost");
+      $scope.expense = expense;
+    });
     
-    $scope.setParticipation(person, false);
+    it("creates or removes participation", function() {      
+      $scope.setParticipation(person, true);
+      
+      expect(expense.getParticipations().length).toBe(1);
+      expect(expense.getParticipations()[0].person).toBe(person);
+      
+      $scope.setParticipation(person, false);
+      
+      expect(expense.getParticipations().length).toBe(0);
+    });
     
-    expect(expense.getParticipations().length).toBe(0);
+    it("shares cost of expense if sharing mode is 'equal'", function() {
+      expense.sharing = 'equal';
+      $scope.setParticipation(person, true);
+      
+      expect(expense.shareCost).toHaveBeenCalled();
+    });
+    
+    it("shares cost of expense if sharing mode is 'equal'", function() {
+      expense.sharing = 'equal';
+      $scope.setParticipation(person, false);
+      
+      expect(expense.shareCost).toHaveBeenCalled();
+    });
+    
+    it("does not share cost of expense if sharing mode is 'custom'", function() {
+      expense.sharing = 'custom';
+      $scope.setParticipation(person, true);
+      
+      expect(expense.shareCost).not.toHaveBeenCalled();
+    });
   });
+  
+  
+  
+  
 
 });
 

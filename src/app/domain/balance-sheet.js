@@ -157,11 +157,11 @@ var BalanceSheet = function() {
 		this.equals = equals;
 		
 		function getCost() {
-			var cost = 0;
+			var cost = new Decimal(0);
 			angular.forEach(getParticipations(), function(p) {
-				cost = cost + p.paid;
+				cost = cost.add(p.paid);
 			});
-			return cost;
+			return cost.toNumber();
 		}
 		
 		function getParticipations() {
