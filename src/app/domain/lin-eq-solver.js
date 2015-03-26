@@ -1,7 +1,7 @@
 "use strict";
 
 
-function solve(A, b, options) {
+function solve(A, b) {
 	// Internal copies of the linear system and its dimensions
 	var coefMatrix, constVector, xVector;
 	var m, n, rank, numberOfSolutions;

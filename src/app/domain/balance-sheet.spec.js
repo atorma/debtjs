@@ -25,6 +25,14 @@ describe("Balance sheet", function () {
       expect(sheet.persons).toEqual([anssi, malla]);
     });
     
+    it("can be found by id", function() {
+      var anssi = sheet.createPerson({name: "Anssi"});
+      var malla = sheet.createPerson({name: "Malla"});
+
+      expect(sheet.getPerson(anssi.id)).toBe(anssi);
+      expect(sheet.getPerson(malla.id)).toBe(malla);
+    });
+    
     it("equals other expense by id", function() {
       var person1 = sheet.createPerson({name: "Anssi"});
       var person2 = sheet.createPerson({name: "Malla"});
@@ -66,6 +74,14 @@ describe("Balance sheet", function () {
       expect(gas.name).toBe("Gas");
       expect(food.id).not.toEqual(gas.id);
       expect(sheet.expenses).toEqual([food, gas]);
+    });
+    
+    it("can be found by id", function() {
+      var food = sheet.createExpense({name: "Food"});
+      var gas = sheet.createExpense({name: "Gas"});
+
+      expect(sheet.getExpense(food.id)).toBe(food);
+      expect(sheet.getExpense(gas.id)).toBe(gas);
     });
     
     it("equals other expense by id", function() {
@@ -197,23 +213,7 @@ describe("Balance sheet", function () {
       expect(sheet.expenses.length).toBe(1);
       expect(sheet.expenses[0].equals(expense2)).toBe(true);
     });
-
-  });
-
-  describe("expenses and costs", function() {
-
-    it("can be found by id", function() {
-      var anssi = sheet.createPerson({name: "Anssi"});
-      var food = sheet.createExpense({name: "Food"});
-      var malla = sheet.createPerson({name: "Malla"});
-      var gas = sheet.createExpense({name: "Gas"});
-
-      expect(sheet.getPerson(anssi.id)).toBe(anssi);
-      expect(sheet.getPerson(malla.id)).toBe(malla);
-      expect(sheet.getExpense(food.id)).toBe(food);
-      expect(sheet.getExpense(gas.id)).toBe(gas);
-    });
-
+    
   });
 
   describe("participation", function() {
