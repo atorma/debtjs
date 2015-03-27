@@ -169,30 +169,36 @@ function debtSolver(linEqSolver) {
         candidates.splice(candidateIdx, 1);
       }
       
-      // Eliminate the chosen variables
+      // Eliminate the chosen variables by setting their coefficients to zero
       
-      toEliminate.sort(function(a, b) {
-        return b - a;
-      });
-
+//      toEliminate.sort(function(a, b) {
+//        return b - a;
+//      });
+//
+//      for (var i = 0; i < A.length; i++) {
+//        for (var j = 0; j < toEliminate.length; j++) {
+//          A[i].splice(toEliminate[j], 1);
+//        }
+//      }
+      
       for (var i = 0; i < A.length; i++) {
         for (var j = 0; j < toEliminate.length; j++) {
-          A[i].splice(toEliminate[j], 1);
+          A[i][toEliminate[j]] = 0;
         }
       }
 
-      // Solve the reduced system
+      // Solve the updated system
       
       solution = linEqSolver.solve(A, b);
       
     } while (!isNonNegative(solution.xVector));
     
-    // Add the eliminated variables to x for the next step
-    toEliminate.sort();
-    for (var i = 0; i < toEliminate.length; i++) {
-      var toIdx = Math.min(toEliminate[i], solution.xVector.length - 1);
-      solution.xVector.splice(toIdx, 0, 0);
-    }
+//    // Add the eliminated variables to x for the next step
+//    toEliminate.sort();
+//    for (var i = 0; i < toEliminate.length; i++) {
+//      var toIdx = Math.min(toEliminate[i], solution.xVector.length - 1);
+//      solution.xVector.splice(toIdx, 0, 0);
+//    }
     
     return solution.xVector;
   }

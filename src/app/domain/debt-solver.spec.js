@@ -4,6 +4,7 @@ var angular = require("angular");
 require("angular-mocks/ngMock");
 require("../debt");
 var BalanceSheet = require("./balance-sheet");
+var Decimal = require("simple-decimal-money");
 
 describe("Debt solver", function() {
   
@@ -76,19 +77,20 @@ describe("Debt solver", function() {
       
     });
     
-    xit("of random balance sheet", function() {
-      var balanceSheet = createRandomBalanceSheet({
-        numPersons: 6, 
-        numExpenses: 8,
-        participationProb: 0.9
-      });
-      console.log(angular.toJson(balanceSheet));
-      
-      var debts = debtSolver.solve(balanceSheet.participations);
-      
-      angular.forEach(debts, function(d) {
-        expect(d.amount).not.toBeLessThan(0);
-      });
+    it("of random balance sheets", function() {
+      for (var i = 0; i < 10; i++) {
+        var balanceSheet = createRandomBalanceSheet({
+          numPersons: 6, 
+          numExpenses: 10,
+          participationProb: 0.8
+        });
+        
+        var debts = debtSolver.solve(balanceSheet.participations);
+        
+        angular.forEach(debts, function(d) {
+          expect(d.amount).not.toBeLessThan(0);
+        });
+      }
     });
     
   });
@@ -109,11 +111,11 @@ describe("Debt solver", function() {
   function createRandomBalanceSheet(options) {
     var balanceSheet = new BalanceSheet();
     
-    for (var i = 0; i < options.numPersons.length; i++) {
+    for (var i = 0; i < options.numPersons; i++) {
       balanceSheet.createPerson();
     }
     
-    for (var i = 0; i < options.numExpenses.length; i++) {
+    for (var i = 0; i < options.numExpenses; i++) {
       balanceSheet.createExpense();
     }
     
@@ -122,7 +124,8 @@ describe("Debt solver", function() {
         var p = balanceSheet.persons[i];
         var e = balanceSheet.expenses[j];
         if (Math.random() <= options.participationProb) {
-          balanceSheet.createParticipation({person: p, expense: e, paid: Math.random()*100});
+          var paid = (new Decimal(Math.random()*100)).toNumber();
+          balanceSheet.createParticipation({person: p, expense: e, paid: paid});
         }
       }
     }
