@@ -3,6 +3,7 @@
 var angular = require("angular");
 require("angular-mocks/ngMock");
 require("../debt");
+var BalanceSheet = require("./balance-sheet");
 
 describe("Debt solver", function() {
   
@@ -16,9 +17,9 @@ describe("Debt solver", function() {
   }));
   
   
-  describe("computes debts", function() {
+  describe("computes debts from participations", function() {
     
-    it("from given participations", function() {
+    it("when there are two free variables", function() {
       
       var p11 = {paid: 100, share: 26, person: {id: 1, name: "Anssi"}, expense: {id: 1, name: "Food"}};
       var p21 = {paid: 0, share: 26, person: {id: 2, name: "Tomi"}, expense: {id: 1, name: "Food"}};
@@ -58,7 +59,6 @@ describe("Debt solver", function() {
       
       
       var debts = debtSolver.solve(participations);
-      console.log(angular.toJson(debts));
       
       // Creditors get in total what they are owed by
       expect(getSum(1, debts)).toBe(4);
@@ -76,7 +76,23 @@ describe("Debt solver", function() {
       
     });
     
+    xit("of random balance sheet", function() {
+      var balanceSheet = createRandomBalanceSheet({
+        numPersons: 6, 
+        numExpenses: 8,
+        participationProb: 0.9
+      });
+      console.log(angular.toJson(balanceSheet));
+      
+      var debts = debtSolver.solve(balanceSheet.participations);
+      
+      angular.forEach(debts, function(d) {
+        expect(d.amount).not.toBeLessThan(0);
+      });
+    });
+    
   });
+
   
   function getSum(personId, debts) {
     var sum = 0;
@@ -90,4 +106,33 @@ describe("Debt solver", function() {
     return sum;
   }
   
-});
+  function createRandomBalanceSheet(options) {
+    var balanceSheet = new BalanceSheet();
+    
+    for (var i = 0; i < options.numPersons.length; i++) {
+      balanceSheet.createPerson();
+    }
+    
+    for (var i = 0; i < options.numExpenses.length; i++) {
+      balanceSheet.createExpense();
+    }
+    
+    for (var i = 0; i < balanceSheet.persons.length; i++) {
+      for (var j = 0; j < balanceSheet.expenses.length; j++) {
+        var p = balanceSheet.persons[i];
+        var e = balanceSheet.expenses[j];
+        if (Math.random() <= options.participationProb) {
+          balanceSheet.createParticipation({person: p, expense: e, paid: Math.random()*100});
+        }
+      }
+    }
+    
+    for (var j = 0; j < balanceSheet.expenses.length; j++) {
+      var e = balanceSheet.expenses[j];
+      e.shareCost();
+    }
+    
+    return balanceSheet;
+  }
+  
+}); 

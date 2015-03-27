@@ -5,42 +5,39 @@ var Decimal = require("simple-decimal-money");
 
 
 /**
- * Backbone of the solution algorithm.
+ * We form a linear system Ax = b. A is a binary matrix with size (d+c)*(d*c),
+ * where d is the number of debtors and c is the number of creditors. Columns of A 
+ * are ordered so that x[c*i + j] is the value of the debt owed by debtor i to creditor j.
  * 
- * We form a linear system Ax = b. When there are d debtors and c creditors, 
- * the size of solution x is (d*c)*1 and x[c*i + j] is the value of the debt owed 
- * by debtor i to creditor j.
- * <p>
- * Elements of b are balances of the debtors (positive) and creditors (negative)
+ * Elements of b are balances - converted to non-negative - of the debtors and the creditors 
  * with the following correspondence:
- * <p>
- * b[0]: first debtor <br>
- * ... <br>
- * b[d-1]: last debtor <br>
- * b[d] = first creditor <br>
- * ... <br>
- * b[d+c-1] = last creditor <br>
- * <p>
- * The coefficient matrix A is constructed so that for each debtor i, we have equation
- * where total value of debts to paid by i equals i's balance:<br>
- * x[c*i] + x[c*i + 1] + ... + x[c*i + c] = b[i] <br>
- * Coefficients for other elements of x are zero. <br>
- * For each creditor j, we must have equation where the total value of debts received by j
- * equals i's balance:<br>
- * -x[c*i] - x[c*i + 1] - ... -x[c*i + c] = b[i] <br>
- * Coefficients for other elements of x are zero. <br>
- * <p>
- * Thus, the size of the coefficient matrix A is (d+c)*(d*c).
+ * 
+ * b[0]: first debtor
+ * ... 
+ * b[d-1]: last debtor
+ * b[d] = first creditor
+ * ... 
+ * b[d+c-1] = last creditor
+ * 
+ * The coefficient matrix A is constructed so that for each person i, we have equation
+ * where total value of debts to paid by i (if i is a debtor) or to i (if i is a creditor) equals i's 
+ * non-negative balance.
+ * 
  * Rows of A indexed between [0, d-1] represent the debtors in the order 
- * of <code>debtors</code> list. Rows of A indexed between [d, d+c-1] 
- * represent the creditor in the order of <code>creditors</code> 
- * list. Values of A are -1, 0, or 1: <br>
- *  -1: the person corresponding to the row is the creditor of the debt <br>
- *   0: = the person is neither the debtor nor the creditor in the debt <br>
- *   1: the person is the debtor of the debt <br>  
- * <p>
- * This linear system is solved by Gaussian elimination. It is possible that it has no
- * unique solution. 
+ * of debtors> list. Rows of A indexed between [d, d+c-1] represent the 
+ * creditors in the order of creditors list.
+ * 
+ * Ideally, we would like to find the sparsest (most 0's) solution x to Ax = b
+ * in case the system is underdetermined and has an infinite number of solutions.
+ * 
+ * This problem, posed as min ||x||_0  s.t. Ax = b, x >= 0, where ||x||_0 is the number
+ * of non-zero elements, is in general an NP-hard problem. There is some amount of literature
+ * about the problem (keywords: sparse nonnegative solution of underdetermined linear equations).
+ * The problem is usually approximated as convex optimization problem by minimizing L1-norm (sum of 
+ * absolute value) instead. One option could be to use the cassowary javascript library.
+ * 
+ * In this function we just iterate by setting random combinations of free variables to zero 
+ * until we find a non-negative solution.
  */
 function debtSolver(linEqSolver) {
   
@@ -52,8 +49,8 @@ function debtSolver(linEqSolver) {
     var balances = computeBalances(participations);
     var roles = getDebtorsAndCreditors(balances);
     var linearSystem = createLinearSystem(roles);
-    var linearSystemSolution = linEqSolver.solve(linearSystem.A, linearSystem.b);
-    var debts = createDebts(linearSystemSolution, roles);
+    var debtVector = solveLinearSystem(linearSystem);
+    var debts = createDebts(debtVector, roles);
     
     return debts;
   }
@@ -96,34 +93,33 @@ function debtSolver(linEqSolver) {
     };
   }
   
-  // Creates a system where debts are solved in cents
   function createLinearSystem(roles) {
     var d = roles.debtors.length;
     var c = roles.creditors.length;
     
-    // Right-hand side vector
+    // Right-hand side vector, creditor balances converted to non-negative to allow binary coefficients
     var b = []; 
     for (var i = 0; i < d; i++) {
       b[i] = (new Decimal(roles.debtors[i].balance)).multiply(100).toNumber();
     }
     for (var i = 0; i < c; i++) {
-      b[d + i] = (new Decimal(roles.creditors[i].balance)).multiply(100).toNumber();
+      b[d + i] = (new Decimal(roles.creditors[i].balance)).multiply(-100).toNumber();
     }
     
     // Coefficient matrix
     var A = initMatrix(d + c, d*c); 
     
-    // Coefficients of equations "sum of debts paid by debtor = sum debtor's balance"
+    // Coefficients of equations "sum of debts paid by debtor = debtor's balance"
     for (var i = 0; i < d; i++) {
       for (var j = i*c; j < (i+1)*c; j++) {
         A[i][j] = 1;
       }
     }
     
-    // Coefficients of equations "negative sum debts received by creditor = sum creditor's credit"
+    // Coefficients of equations "sum debts received by creditor = creditor's balance"
     for (var i = d; i < c+d; ++i) {
       for (var j = (i-d); j < d*c; j += c) {
-        A[i][j] = -1;
+        A[i][j] = 1;
       }
     } 
     
@@ -144,15 +140,83 @@ function debtSolver(linEqSolver) {
     return A;
   }
   
-  function createDebts(linearSystemSolution, roles) {
-    var x = linearSystemSolution.xVector;
+  function solveLinearSystem(linearSystem) {
+    var solution = linEqSolver.solve(linearSystem.A, linearSystem.b);
+    var numVars = solution.numberOfVariables;
+    var numFreeVars = solution.numberOfFreeVariables;
+    
+    if (numFreeVars === 0) {
+      return solution.xVector;
+    }
+
+    var toEliminate;
+    do {
+      
+      var A = angular.copy(linearSystem.A);
+      var b = linearSystem.b;
+      
+      // Pick random numFreeVars variables for elimination
+      
+      var candidates = [];
+      for (var i = 0; i < numVars; i++) {
+        candidates[i] = i;
+      }
+      
+      toEliminate = [];
+      for (var i = 0; i < numFreeVars; i++) {
+        var candidateIdx = Math.floor(Math.random()*candidates.length);
+        toEliminate.push(candidates[candidateIdx]);
+        candidates.splice(candidateIdx, 1);
+      }
+      
+      // Eliminate the chosen variables
+      
+      toEliminate.sort(function(a, b) {
+        return b - a;
+      });
+
+      for (var i = 0; i < A.length; i++) {
+        for (var j = 0; j < toEliminate.length; j++) {
+          A[i].splice(toEliminate[j], 1);
+        }
+      }
+
+      // Solve the reduced system
+      
+      solution = linEqSolver.solve(A, b);
+      
+    } while (!isNonNegative(solution.xVector));
+    
+    // Add the eliminated variables to x for the next step
+    toEliminate.sort();
+    for (var i = 0; i < toEliminate.length; i++) {
+      var toIdx = Math.min(toEliminate[i], solution.xVector.length - 1);
+      solution.xVector.splice(toIdx, 0, 0);
+    }
+    
+    return solution.xVector;
+  }
+  
+  function isNonNegative(vector) {
+    if (!vector) {
+      return false;
+    }
+    for (var i = 0; i < vector.length; i++) {
+      if (vector[i] < 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  function createDebts(debtVector, roles) {
     var debts = [];
 
-    for (var i = 0; i < x.length; i++) {
-      if (x[i] != 0) {
+    for (var i = 0; i < debtVector.length; i++) {
+      if (debtVector[i] != 0) {
         var debtorIdx = Math.floor(i/roles.creditors.length);
         var creditorIdx = i - roles.creditors.length*debtorIdx;
-        var amount = (new Decimal(x[i])).divideBy(100).toNumber();
+        var amount = (new Decimal(debtVector[i])).divideBy(100).toNumber();
         var debt = {debtor: roles.debtors[debtorIdx].person, creditor: roles.creditors[creditorIdx].person, amount: amount};
         debts.push(debt);
       }
@@ -160,4 +224,4 @@ function debtSolver(linEqSolver) {
     
     return debts;
   }
-} 
+}  
