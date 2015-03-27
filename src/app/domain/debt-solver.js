@@ -36,8 +36,8 @@ var Decimal = require("simple-decimal-money");
  * The problem is usually approximated as convex optimization problem by minimizing L1-norm (sum of 
  * absolute value) instead. One option could be to use the cassowary javascript library.
  * 
- * In this function we just iterate by setting random combinations of free variables to zero 
- * until we find a non-negative solution.
+ * In this function find a non-negative x using Gaussian elimination and setting random combinations 
+ * of free variables to zero until we find a non-negative solution.
  */
 function debtSolver(linEqSolver) {
   
@@ -46,12 +46,17 @@ function debtSolver(linEqSolver) {
   };
   
   function solve(participations) {
+    if (!participations || participations.length === 0) {
+      return [];
+    }
     var balances = computeBalances(participations);
+    if (!hasNonZeroBalance(balances)) {
+      return [];
+    }
     var roles = getDebtorsAndCreditors(balances);
     var linearSystem = createLinearSystem(roles);
     var debtVector = solveLinearSystem(linearSystem);
     var debts = createDebts(debtVector, roles);
-    
     return debts;
   }
   
@@ -73,6 +78,16 @@ function debtSolver(linEqSolver) {
     });
     
     return balances;
+  }
+  
+  function hasNonZeroBalance(balances) {
+    var result = false;
+    angular.forEach(balances, function(b) {
+      if (b.balance !== 0) {
+        result = true;
+      }
+    });
+    return result;
   }
   
   function getDebtorsAndCreditors(balances) {
@@ -140,6 +155,7 @@ function debtSolver(linEqSolver) {
     return A;
   }
   
+  // Solve debts, ensuring a non-negative solution 
   function solveLinearSystem(linearSystem) {
     var solution = linEqSolver.solve(linearSystem.A, linearSystem.b);
     var numVars = solution.numberOfVariables;
@@ -171,16 +187,6 @@ function debtSolver(linEqSolver) {
       
       // Eliminate the chosen variables by setting their coefficients to zero
       
-//      toEliminate.sort(function(a, b) {
-//        return b - a;
-//      });
-//
-//      for (var i = 0; i < A.length; i++) {
-//        for (var j = 0; j < toEliminate.length; j++) {
-//          A[i].splice(toEliminate[j], 1);
-//        }
-//      }
-      
       for (var i = 0; i < A.length; i++) {
         for (var j = 0; j < toEliminate.length; j++) {
           A[i][toEliminate[j]] = 0;
@@ -192,13 +198,7 @@ function debtSolver(linEqSolver) {
       solution = linEqSolver.solve(A, b);
       
     } while (!isNonNegative(solution.xVector));
-    
-//    // Add the eliminated variables to x for the next step
-//    toEliminate.sort();
-//    for (var i = 0; i < toEliminate.length; i++) {
-//      var toIdx = Math.min(toEliminate[i], solution.xVector.length - 1);
-//      solution.xVector.splice(toIdx, 0, 0);
-//    }
+
     
     return solution.xVector;
   }

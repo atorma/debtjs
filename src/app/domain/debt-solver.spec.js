@@ -70,9 +70,9 @@ describe("Debt solver", function() {
       expect(getSum(4, debts)).toBe(-46);
       expect(getSum(5, debts)).toBe(-66);
       
-      // All amounts are non-negative
+      // All amounts are positive
       angular.forEach(debts, function(d) {
-        expect(d.amount).not.toBeLessThan(0);
+        expect(d.amount).toBeGreaterThan(0);
       });
       
     });
@@ -80,15 +80,15 @@ describe("Debt solver", function() {
     it("of random balance sheets", function() {
       for (var i = 0; i < 10; i++) {
         var balanceSheet = createRandomBalanceSheet({
-          numPersons: 6, 
-          numExpenses: 10,
-          participationProb: 0.8
+          numPersons: Math.floor(Math.random()*10) + 1, 
+          numExpenses: Math.floor(Math.random()*10) + 1,
+          participationProb: Math.random()
         });
         
         var debts = debtSolver.solve(balanceSheet.participations);
         
         angular.forEach(debts, function(d) {
-          expect(d.amount).not.toBeLessThan(0);
+          expect(d.amount).toBeGreaterThan(0);
         });
       }
     });

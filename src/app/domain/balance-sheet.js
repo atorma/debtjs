@@ -175,8 +175,12 @@ var BalanceSheet = function() {
 		}
 		
 		function shareCost() {
+		  var participations = _this.getParticipations();
+		  if (participations.length === 0) {
+		    return;
+		  }
+		  
 			var cost = new Decimal(_this.getCost());
-			var participations = _this.getParticipations();
 			var sum = new Decimal(0);
 			for (var i = 0; i < participations.length - 1; i++) {
 				var share = cost.divideBy(participations.length); 

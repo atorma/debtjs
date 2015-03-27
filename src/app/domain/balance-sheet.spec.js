@@ -162,7 +162,7 @@ describe("Balance sheet", function () {
         expect(expense.getCost()).toBe(10);
       });
 
-      it("can be split equally among participants in cent accuracy without loss of money", function() {
+      it("can be shared equally among participants in cent accuracy without loss of money", function() {
         var person3 = sheet.createPerson({});
         var nonParticipant = sheet.createPerson({});
 
@@ -178,6 +178,11 @@ describe("Balance sheet", function () {
         expect(part3.share).toBe(3.34);
       });
 
+      it("is shared as noop without error when no participations", function() {
+        expect(function() {
+          expense.shareCost();
+        }).not.toThrow();
+      });
     });
 
     it("can return participations to it", function() {
