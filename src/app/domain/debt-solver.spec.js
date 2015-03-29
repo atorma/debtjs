@@ -8,12 +8,12 @@ var Decimal = require("simple-decimal-money");
 
 describe("Debt solver", function() {
   
-  var debtSolver;
+  var solveDebts;
   
   beforeEach(angular.mock.module("debtApp"));
 
   beforeEach(angular.mock.inject(function($injector) {
-    debtSolver = $injector.get("debtSolver");
+    solveDebts = $injector.get("solveDebts");
     
   }));
   
@@ -59,7 +59,7 @@ describe("Debt solver", function() {
                             p14, p24, p34, p44, p54];
       
       
-      var debts = debtSolver.solve(participations);
+      var debts = solveDebts(participations);
       
       // Creditors get in total what they are owed by
       expect(getSum(1, debts)).toBe(4);
@@ -85,7 +85,7 @@ describe("Debt solver", function() {
           participationProb: Math.random()
         });
         
-        var debts = debtSolver.solve(balanceSheet.participations);
+        var debts = solveDebts(balanceSheet.participations);
         
         angular.forEach(debts, function(d) {
           expect(d.amount).toBeGreaterThan(0);

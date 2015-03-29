@@ -1,7 +1,7 @@
 "use strict";
 
 
-function solve(A, b) {
+function solve(input) {
 	// Internal copies of the linear system and its dimensions
 	var coefMatrix, constVector, xVector;
 	var m, n, rank, numberOfSolutions;
@@ -33,22 +33,22 @@ function solve(A, b) {
 	/////////////////////////////////////////////////////////////
 	
 	function validate() {
-    	if (!A || !b) {
+    	if (!input || !input.A || !input.b) {
     		throw "Null matrix A or vector b in system Ax = b";
     	}
     	
-    	if (A.length < 1 || A[0].length < 1) {
+    	if (input.A.length < 1 || input.A[0].length < 1) {
     		throw "Matrix A in Ax = b has no rows or no columns";
     	}
 		
-    	if (A.length != b.length) {
+    	if (input.A.length != input.b.length) {
     		throw "The dimensions of the matrix and the constant vector are incompatible"; 
     	}
 	}
 
 	function initialize() {
-		coefMatrix = copyMatrix(A);
-		constVector = copyArray(b);
+		coefMatrix = copyMatrix(input.A);
+		constVector = copyArray(input.b);
 		
 		m = coefMatrix.length;
 		n = coefMatrix[0].length;
@@ -257,6 +257,4 @@ function copyMatrix(input) {
 }
 	
 
-module.exports = {
-	solve: solve
-};
+module.exports = solve;

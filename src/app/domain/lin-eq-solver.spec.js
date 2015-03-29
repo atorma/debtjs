@@ -1,6 +1,6 @@
 "use strict";
 
-var linEqSolver = require('./lin-eq-solver');
+var solve = require('./lin-eq-solver');
 
 describe("Linear equation solver", function () {
 
@@ -13,7 +13,7 @@ describe("Linear equation solver", function () {
 		var rhsVector = [-1, 7, 4];
 		var expectedResult = [-1, 4, -2];
 		
-		var solution = linEqSolver.solve(coefMatrix, rhsVector);
+		var solution = solve({A: coefMatrix, b: rhsVector});
 		
 		expect(solution.xVector).toEqual(expectedResult);
 	});
@@ -28,7 +28,7 @@ describe("Linear equation solver", function () {
 		var rhsVector = [-1, 7, 4, 2];
 		var expectedResult = [-1, 4, -2, 0];
 		
-		var solution = linEqSolver.solve(coefMatrix, rhsVector);
+		var solution = solve({A: coefMatrix, b: rhsVector});
 		
 		expect(solution.xVector).toEqual(expectedResult);
 		expect(solution.rank).toBe(3);
@@ -44,7 +44,7 @@ describe("Linear equation solver", function () {
 		];
 		var rhsVector = [-1, 7, 4, 8];
 		
-		var solution = linEqSolver.solve(coefMatrix, rhsVector);
+		var solution = solve({A: coefMatrix, b: rhsVector});
 		
 		expect(solution.xVector).toBe(undefined);
 		expect(solution.rank).toBe(3);
@@ -62,7 +62,7 @@ describe("Linear equation solver", function () {
 		var rhsVector = [-1, 7, 4, 2, 7];
 		var expectedResult = [-1, 4, -2, 0];
 		
-		var solution = linEqSolver.solve(coefMatrix, rhsVector);
+		var solution = solve({A: coefMatrix, b: rhsVector});
 		
 		expect(solution.xVector).toEqual(expectedResult);
 		expect(solution.rank).toBe(3);
@@ -80,7 +80,7 @@ describe("Linear equation solver", function () {
 		var rhsVector = [-30, -30, -30, -30, 120];
 		var expectedResult = [30, 30, 30, 30];
 		
-		var solution = linEqSolver.solve(coefMatrix, rhsVector);
+		var solution = solve({A: coefMatrix, b: rhsVector});
 		
 		expect(solution.xVector).toEqual(expectedResult);
 		expect(solution.rank).toBe(4);
@@ -98,7 +98,7 @@ describe("Linear equation solver", function () {
 		var rhsVector = [-66, -46, 4, 14, 94];
 		var expectedResult = [4, 14, 48, 46];
 		
-		var solution = linEqSolver.solve(coefMatrix, rhsVector);
+		var solution = solve({A: coefMatrix, b: rhsVector});
 		
 		expect(solution.xVector).toEqual(expectedResult);
 		expect(solution.rank).toBe(4);

@@ -1,8 +1,8 @@
-var linEqSolver = require('./lin-eq-solver');
+var solve = require('./lin-eq-solver');
 
 require("angular").module("debtApp")
-.factory("linEqSolver", linEqSolverFactory);
+.factory("solveLinearSystem", solveLinearSystem);
 
-function linEqSolverFactory() {
-  return linEqSolver;
+function solveLinearSystem() {
+  return solve;
 }

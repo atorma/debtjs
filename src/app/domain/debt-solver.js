@@ -1,10 +1,12 @@
 require("angular").module("debtApp")
-.factory("debtSolver", debtSolver);
+.factory("solveDebts", debtSolverFactory);
 
 var Decimal = require("simple-decimal-money");
 
 
 /**
+ * A function that computes debts from given expense participations.
+ *  
  * We form a linear system Ax = b. A is a binary matrix with size (d+c)*(d*c),
  * where d is the number of debtors and c is the number of creditors. Columns of A 
  * are ordered so that x[c*i + j] is the value of the debt owed by debtor i to creditor j.
@@ -36,14 +38,13 @@ var Decimal = require("simple-decimal-money");
  * The problem is usually approximated as convex optimization problem by minimizing L1-norm (sum of 
  * absolute value) instead. One option could be to use the cassowary javascript library.
  * 
- * In this function find a non-negative x using Gaussian elimination and setting random combinations 
+ * In this function we find a non-negative x using Gaussian elimination and setting random combinations 
  * of free variables to zero until we find a non-negative solution.
  */
-function debtSolver(linEqSolver) {
+function debtSolverFactory(solveLinearSystem) {
   
-  return {
-    solve: solve
-  };
+  return solve;
+  
   
   function solve(participations) {
     if (!participations || participations.length === 0) {
@@ -54,8 +55,8 @@ function debtSolver(linEqSolver) {
       return [];
     }
     var roles = getDebtorsAndCreditors(balances);
-    var linearSystem = createLinearSystem(roles);
-    var debtVector = solveLinearSystem(linearSystem);
+    var linearSystem = createDebtEquations(roles);
+    var debtVector = solveDebts(linearSystem);
     var debts = createDebts(debtVector, roles);
     return debts;
   }
@@ -108,7 +109,7 @@ function debtSolver(linEqSolver) {
     };
   }
   
-  function createLinearSystem(roles) {
+  function createDebtEquations(roles) {
     var d = roles.debtors.length;
     var c = roles.creditors.length;
     
@@ -156,8 +157,8 @@ function debtSolver(linEqSolver) {
   }
   
   // Solve debts, ensuring a non-negative solution 
-  function solveLinearSystem(linearSystem) {
-    var solution = linEqSolver.solve(linearSystem.A, linearSystem.b);
+  function solveDebts(linearSystem) {
+    var solution = solveLinearSystem(linearSystem);
     var numVars = solution.numberOfVariables;
     var numFreeVars = solution.numberOfFreeVariables;
     
@@ -195,7 +196,7 @@ function debtSolver(linEqSolver) {
 
       // Solve the updated system
       
-      solution = linEqSolver.solve(A, b);
+      solution = solveLinearSystem({A: A, b: b});
       
     } while (!isNonNegative(solution.xVector));
 
