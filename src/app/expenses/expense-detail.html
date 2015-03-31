@@ -1,46 +1,83 @@
 <md-subheader class="md-primary">
-<div layout="row">
-  <h2>{{expense.name}}</h2>
-  <span flex></span>
-  <md-button ng-click="removeExpense()">Delete</md-button>
-</div>
+  <div layout="row">
+    <h2>{{expense.name}}</h2>
+    <span flex></span>
+    <md-button ng-click="removeExpense()">Delete</md-button>
+  </div>
 </md-subheader>
 
 <md-content>
 
-  <section layout="column" layout-margin>
-    <div layout="row" layout-align="start center">
-      <div flex="15">Cost</div>
-      <div flex>{{expense.getCost() | currency:""}}</div>
-    </div>
-    <div layout="row" layout-align="start center">
-      <div flex="15">Share</div>
-      <md-radio-group layout="row" ng-model="expense.sharing">
-        <md-radio-button value="equal" style="margin-left: 0">Equally</md-radio-button>
-        <md-radio-button value="custom">Custom</md-radio-button>
-      </md-radio-group>
+  <section>
+    <div layout="column" layout-margin-sides>
+      <div flex layout="row" layout-align="start center">
+        <div flex="15">Cost</div>
+        <div flex>{{expense.getCost() | currency:""}}</div>
+      </div>
+      <div flex layout="row" layout-align="start center">
+        <div flex="15">Share</div>
+        <md-radio-group layout="row" ng-model="expense.sharing">
+          <md-radio-button value="equal" style="margin-left: 0">Equally</md-radio-button>
+          <md-radio-button value="custom">Custom</md-radio-button>
+        </md-radio-group>
+      </div>
     </div>
   </section>
   
-  <md-card ng-repeat="person in balanceSheet.persons">
-    <md-content layout="row" layout-align="start center" layout-margin>
-      <div flex>
-        <md-checkbox ng-model="isParticipant[person.id]" ng-change="setParticipation(person, isParticipant[person.id])">{{person.name}}</md-checkbox>
+  <section>
+    <md-subheader class="no-padding-bottom">
+      <div layout="row">
+        <h3>Participants</h3>
+        <span flex></span>
+        <md-button ng-click="setAllParticipations(!isEveryoneParticipant)">
+          <span ng-if="!isEveryoneParticipant">Select all</span>
+          <span ng-if="isEveryoneParticipant">Deselect all</span>
+        </md-button>
       </div>
+    </md-subheader>
+    <form ng-repeat="person in balanceSheet.persons" layout="row" layout-align="start center" layout-margin-sides novalidate>
+      <md-checkbox flex ng-model="isParticipant[person.id]" ng-change="setParticipation(person, isParticipant[person.id])">{{person.name}}</md-checkbox>
       <md-input-container flex>
         <label>Paid</label>
-        <input type="number" required pattern="[1-9]*[0-9]([,|\.][0-9]{0,2})?"
+        <input type="number" ng-required="isParticipant[person.id]" pattern="(0|[1-9][0-9]*)([,|\.][0-9]{0,2})?"
           ng-model="balanceSheet.getParticipation({person: person, expense: expense}).paid" 
-          ng-change="shareCost(expense)" 
+          ng-change="refresh()" 
           ng-disabled="!isParticipant[person.id]" />
       </md-input-container>
       <md-input-container flex>
         <label>Share</label>
-        <input type="number" required 
+        <input type="number" ng-required="isParticipant[person.id]" 
           ng-model="balanceSheet.getParticipation({person: person, expense: expense}).share" 
           ng-disabled="!isParticipant[person.id] || expense.sharing != 'custom'" />
       </md-input-container>
-    </md-content>
-  </md-card>
+      <md-input-container flex>
+        <label>Balance</label>
+        <input type="number" 
+          ng-model="balanceSheet.getParticipation({person: person, expense: expense}).share - balanceSheet.getParticipation({person: person, expense: expense}).paid" 
+          ng-disabled="true" />
+      </md-input-container>
+    </form>
+  </section>
+  
+  <section>
+    <md-subheader class="no-padding-bottom"><h3>Debts</h3></md-subheader>
+    <div layout="column" layout-margin-sides>
+      <md-list flex ng-if="debtsByDebtor.length > 0">
+        <md-item ng-repeat="d in debtsByDebtor">
+          <md-item-content layout="column" layout-align="space-between start">
+            <div flex>{{d.debtor.name}}</div>
+            <md-list flex style="padding-left: 16px">
+              <md-item ng-repeat="c in d.debts">
+                <md-item-content>
+                  {{c.creditor.name}}: {{c.amount | currency:""}}
+                </md-item-content>
+              </md-item>
+            </md-list>
+          </md-item-content>
+        </md-item>
+      </md-list>
+      <div flex ng-if="!debtsByDebtor || debtsByDebtor.length == 0">No debts!</div>
+    </div>
+  </section>
 
 </md-content>
