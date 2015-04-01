@@ -90,6 +90,10 @@ function ExpenseDetailCtrl(balanceSheet, solveDebts, $scope, $mdDialog, $statePa
 	}
 	
 	function computeDebts() {
+	  if (!$scope.expense.isBalanced()) {
+	    return [];
+	  }
+	  
 	  var debtorList = [];
 	  var debtorIndices = {};
 	  var debts = solveDebts($scope.expense.getParticipations());

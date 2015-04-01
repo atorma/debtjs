@@ -152,6 +152,8 @@ var BalanceSheet = function() {
 		var _this = this;
 		
 		this.getCost = getCost;
+		this.getSumOfShares = getSumOfShares;
+		this.isBalanced = isBalanced;
 		this.getParticipations = getParticipations;
 		this.shareCost = shareCost;
 		this.equals = equals;
@@ -162,6 +164,18 @@ var BalanceSheet = function() {
 				cost = cost.add(p.paid);
 			});
 			return cost.toNumber();
+		}
+		
+		function getSumOfShares() {
+		  var sum = new Decimal(0);
+		  angular.forEach(getParticipations(), function(p) {
+		    sum = sum.add(p.share);
+      });
+      return sum.toNumber();
+		}
+		
+		function isBalanced() {
+		  return getCost() === getSumOfShares();
 		}
 		
 		function getParticipations() {

@@ -122,9 +122,9 @@ describe("Balance sheet", function () {
       var expense, person1, person2;
 
       beforeEach(function() {
-        expense = sheet.createExpense({});
-        person1 = sheet.createPerson({});
-        person2 = sheet.createPerson({});
+        expense = sheet.createExpense();
+        person1 = sheet.createPerson();
+        person2 = sheet.createPerson();
       });
 
       it("is initially zero", function() {
@@ -183,13 +183,14 @@ describe("Balance sheet", function () {
           expense.shareCost();
         }).not.toThrow();
       });
+      
     });
 
     it("can return participations to it", function() {
-      var expense1 = sheet.createExpense({});
-      var expense2 = sheet.createExpense({});
-      var person1 = sheet.createPerson({});
-      var person2 = sheet.createPerson({});
+      var expense1 = sheet.createExpense();
+      var expense2 = sheet.createExpense();
+      var person1 = sheet.createPerson();
+      var person2 = sheet.createPerson();
 
       var p1To1 = sheet.createParticipation({person: person1, expense: expense1, paid: 10});
       var p2To1 = sheet.createParticipation({person: person2, expense: expense1, paid: 11});
@@ -201,13 +202,39 @@ describe("Balance sheet", function () {
       expect(expense2.getParticipations().length).toBe(1);
       expect(expense2.getParticipations()[0].equals(p1To2)).toBe(true);
     });
-
+    
+    it("can compute sum of shares of participants", function() {
+      var expense = sheet.createExpense();
+      expect(expense.getSumOfShares()).toBe(0);
+      
+      var person1 = sheet.createPerson();
+      var person2 = sheet.createPerson();
+      sheet.createParticipation({person: person1, expense: expense, paid: 20, share: 15});
+      sheet.createParticipation({person: person2, expense: expense, paid: 0, share: 5});
+      
+      expect(expense.getSumOfShares()).toBe(20);
+    });
+    
+    it("is balanced if cost equals sum of shares", function() {
+      var expense = sheet.createExpense();
+      
+      var person1 = sheet.createPerson();
+      var person2 = sheet.createPerson();
+      var prt1 = sheet.createParticipation({person: person1, expense: expense, paid: 20, share: 15});
+      var prt2 = sheet.createParticipation({person: person2, expense: expense, paid: 0, share: 5});
+      
+      expect(expense.isBalanced()).toBe(true);
+      
+      prt2.share = 0;
+      
+      expect(expense.isBalanced()).toBe(false);
+    });
 
     it("removing removes all payments of it", function() {
-      var expense1 = sheet.createExpense({});
-      var expense2 = sheet.createExpense({});
-      var person1 = sheet.createPerson({});
-      var person2 = sheet.createPerson({});
+      var expense1 = sheet.createExpense();
+      var expense2 = sheet.createExpense();
+      var person1 = sheet.createPerson();
+      var person2 = sheet.createPerson();
 
       sheet.createParticipation({person: person1, expense: expense1, paid: 10});
       sheet.createParticipation({person: person2, expense: expense1, paid: 11});

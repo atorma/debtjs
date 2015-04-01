@@ -111,7 +111,7 @@ describe("ExpenseDetailCtrl", function() {
       
       expect(expense.shareCost).not.toHaveBeenCalled();
     });
-    
+
     it("computes debts by debtor into $scope", function() {
       var participations = [{person: "Dummy"}];
       spyOn(expense, "getParticipations").and.returnValue(participations);

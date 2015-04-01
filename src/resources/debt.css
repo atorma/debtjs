@@ -8,3 +8,41 @@
 .no-padding-bottom, .no-padding-bottom * {
   padding-bottom: 0;
 }
+
+.no-padding-top, .no-padding-top * {
+  padding-top: 0;
+}
+
+.no-padding-left, .no-padding-left * {
+  padding-left: 0;
+}
+
+.no-padding-right, .no-padding-right * {
+  padding-right: 0;
+}
+
+.no-padding, .no-padding * {
+  padding: 0;
+}
+
+
+.no-margin-bottom, .no-margin-bottom * {
+  margin-bottom: 0;
+}
+
+.no-margin-top, .no-margin-top * {
+  margin-top: 0;
+}
+
+.no-margin-left, .no-margin-left * {
+  margin-left: 0;
+}
+
+.no-margin-right, .no-margin-right * {
+  margin-right: 0;
+}
+
+.no-margin, .no-margin * {
+  margin: 0;
+}
+
