@@ -1,3 +1,5 @@
+"use strict";
+
 var solve = require('./lin-eq-solver');
 
 require("angular").module("debtApp")

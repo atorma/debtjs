@@ -1,3 +1,5 @@
+"use strict";
+
 var BalanceSheet = require('./balance-sheet');
 
 require("angular").module("debtApp")
