@@ -9,7 +9,9 @@ require("angular-ui-router");
 
 angular.module("debtApp", ["ngMaterial", "ui.router"]);
 
+require("./route-config");
 require("./domain");
 require("./layout");
+require("./balance-sheet");
 require("./participants");
 require("./expenses");

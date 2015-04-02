@@ -16,15 +16,20 @@
 <div flex layout="row">
 
 	<md-sidenav md-is-locked-open="$mdMedia('gt-sm')" class="md-whiteframe-z2" md-component-id="left">
-		<md-list>
+		<md-list class="menu">
+            <md-item>
+              <md-item-content>
+                <md-button flex="100" ng-click="showBalanceSheet()">Home</md-button>
+              </md-item-content>
+            </md-item>
 			<md-item>
 				<md-item-content>
-					<md-button ng-click="showParticipantList()">Participants</md-button>
+					<md-button flex="100" ng-click="showParticipantList()">Participants</md-button>
 				</md-item-content>
 			</md-item>
 			<md-item>
 				<md-item-content>
-					<md-button ng-click="showExpenseList()">Expenses</md-button>
+					<md-button flex="100" ng-click="showExpenseList()">Expenses</md-button>
 				</md-item-content>
 			</md-item>
 		</md-list>

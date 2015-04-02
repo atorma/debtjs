@@ -46,3 +46,7 @@
   margin: 0;
 }
 
+
+.menu .md-button {
+  text-align: left;
+}
