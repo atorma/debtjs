@@ -3,7 +3,7 @@
 var angular = require("angular");
 require("angular-mocks/ngMock");
 require("../debt");
-var BalanceSheet = require("../domain/balance-sheet");
+var BalanceSheet = require("../balance-sheet/balance-sheet");
   
 describe("ExpenseDetailCtrl", function() {
 

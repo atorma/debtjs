@@ -10,7 +10,7 @@ require("angular-ui-router");
 angular.module("debtApp", ["ngMaterial", "ui.router"]);
 
 require("./route-config");
-require("./domain");
+require("./debts");
 require("./layout");
 require("./balance-sheet");
 require("./participants");
