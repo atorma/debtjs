@@ -10,6 +10,10 @@ describe("Balance sheet", function () {
   beforeEach(function() {
     sheet = new BalanceSheet();
   });
+  
+  it("has as an initial name", function() {
+    expect(sheet.name).toBe("New sheet");
+  });
 
   describe("person", function() {
 

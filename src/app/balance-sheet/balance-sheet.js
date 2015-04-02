@@ -10,7 +10,7 @@ var BalanceSheet = function() {
 	var participations = [];
 	var idSequence = 1;
 	
-	
+	this.name = "New sheet";
 	this.persons = persons;
 	this.expenses = expenses;
 	this.participations = participations;
