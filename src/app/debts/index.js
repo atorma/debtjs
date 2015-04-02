@@ -3,3 +3,4 @@
 require("./lin-eq-solver");
 require("./lin-eq-solver-factory");
 require("./debt-solver");
+require("./debt-service");

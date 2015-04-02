@@ -11,18 +11,22 @@ describe("ExpenseDetailCtrl", function() {
   var $stateParams;
   var $state;
   var balanceSheet;
-  var solveDebts;
+  var debtService;
   var expense;
   var controller;
-
-  beforeEach(angular.mock.module("debtApp"));
   
   beforeEach(function() {
     balanceSheet = new BalanceSheet();
     expense = balanceSheet.createExpense();
     
-    solveDebts = jasmine.createSpy("solveDebts");
-    solveDebts.and.returnValue([]);
+    debtService = {
+      computeDebts: function() {
+        return [];
+      },
+      organizeByDebtor: function() {
+        return [];
+      }
+    };
     
     $stateParams = {
         id: expense.id
@@ -31,6 +35,8 @@ describe("ExpenseDetailCtrl", function() {
 
   });
 
+  beforeEach(angular.mock.module("debtApp"));
+  
   beforeEach(angular.mock.inject(function($rootScope, $controller, $q, $mdDialog) {
     $scope = $rootScope;
     
@@ -41,7 +47,7 @@ describe("ExpenseDetailCtrl", function() {
     
     controller = $controller("ExpenseDetailCtrl", {
       balanceSheet: balanceSheet,
-      solveDebts: solveDebts,
+      debtService: debtService,
       $scope: $rootScope,
       $stateParams: $stateParams,
       $state: $state,
@@ -116,29 +122,24 @@ describe("ExpenseDetailCtrl", function() {
       var participations = [{person: "Dummy"}];
       spyOn(expense, "getParticipations").and.returnValue(participations);
       
-      var debts = [
-         {debtor: {id: 1, name: "Valtteri"}, creditor: {id: 9, name: "Anssi"}, amount: 10},
-         {debtor: {id: 2, name: "Johannes"}, creditor: {id: 8, name: "Tomi"}, amount: 15},
-         {debtor: {id: 2, name: "Johannes"}, creditor: {id: 9, name: "Anssi"}, amount: 27}
-      ];
-      solveDebts.and.returnValue(debts);
+      var debts = [{debtor: {id: 1, name: "Valtteri"}, creditor: {id: 9, name: "Anssi"}, amount: 10}];
+      debtService.computeDebts = function(input) {
+        expect(input).toBe(participations);
+        return debts;
+      };
+      
+      var debtsByDebtor = [{
+          debtor: {id: 1, name: "Valtteri"},
+          debts: [{creditor: {id: 9, name: "Anssi"}, amount: 10}]
+        }];
+      debtService.organizeByDebtor = function(input) {
+        expect(input).toBe(debts);
+        return debtsByDebtor;
+      };
       
       $scope.refresh();
       
-      expect($scope.debtsByDebtor.length).toBe(2);
-      expect($scope.debtsByDebtor[0]).toEqual({
-        debtor: {id: 2, name: "Johannes"},
-        debts: [
-                {creditor: {id: 9, name: "Anssi"}, amount: 27},
-                {creditor: {id: 8, name: "Tomi"}, amount: 15} 
-                ]
-      });
-      expect($scope.debtsByDebtor[1]).toEqual({
-        debtor: {id: 1, name: "Valtteri"},
-        debts: [
-                {creditor: {id: 9, name: "Anssi"}, amount: 10}
-                ]
-      });
+      expect($scope.debtsByDebtor).toBe(debtsByDebtor);
     });
   });
   

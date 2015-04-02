@@ -3,7 +3,7 @@
 require("angular").module("debtApp")
 	.controller("ExpenseDetailCtrl", ExpenseDetailCtrl);
 
-function ExpenseDetailCtrl(balanceSheet, solveDebts, $scope, $mdDialog, $stateParams, $state) {
+function ExpenseDetailCtrl(balanceSheet, debtService, $scope, $mdDialog, $stateParams, $state) {
   var confirmRemoveExpense;
   
   this.init = init;
@@ -95,34 +95,9 @@ function ExpenseDetailCtrl(balanceSheet, solveDebts, $scope, $mdDialog, $statePa
 	  if (!$scope.expense.isBalanced()) {
 	    return [];
 	  }
-	  
-	  var debtorList = [];
-	  var debtorIndices = {};
-	  var debts = solveDebts($scope.expense.getParticipations());
-	  
-	  angular.forEach(debts, function(d) {
-	    var debtorIndex = debtorIndices[d.debtor.id];
-	    var debtor;
-	    if (debtorIndex === undefined) {
-	      debtorIndex = debtorList.length;
-	      debtor = {debtor: d.debtor, debts: []};
-	      debtorList.push(debtor);
-	      debtorIndices[d.debtor.id] = debtorIndex;
-	    }
-	    debtor = debtorList[debtorIndex];
-	    debtor.debts.push({creditor: d.creditor, amount: d.amount});
-	  });
-	  
-	  angular.forEach(debtorList, function(d) {
-	    d.debts.sort(function(d1, d2) {
-	      return d1.creditor.name.localeCompare(d2.creditor.name);
-	    });
-	  });
-	  debtorList.sort(function(d1, d2) {
-	    return d1.debtor.name.localeCompare(d2.debtor.name);
-	  });
-	  
-	  return debtorList;
+	 
+	  var debts = debtService.computeDebts($scope.expense.getParticipations());
+	  return debtService.organizeByDebtor(debts);
 	}
 
 	
