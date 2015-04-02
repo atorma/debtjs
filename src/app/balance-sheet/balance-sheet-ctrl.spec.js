@@ -3,7 +3,7 @@
 var angular = require("angular");
 require("angular-mocks/ngMock");
 require("../debt");
-var BalanceSheet = require("../domain/balance-sheet");
+var BalanceSheet = require("./balance-sheet");
   
 describe("BalanceSheetCtrl", function() {
 
@@ -11,7 +11,7 @@ describe("BalanceSheetCtrl", function() {
   var $stateParams;
   var $state;
   var balanceSheet;
-  var solveDebts;
+  var debtService;
   var controller;
 
   beforeEach(angular.mock.module("debtApp"));
@@ -19,8 +19,14 @@ describe("BalanceSheetCtrl", function() {
   beforeEach(function() {
     balanceSheet = new BalanceSheet();
     
-    solveDebts = jasmine.createSpy("solveDebts");
-    solveDebts.and.returnValue([]);
+    debtService = {
+      computeDebts: function() {
+        return [];
+      },
+      organizeByDebtor: function() {
+        return [];
+      }
+    };
     
     $state = jasmine.createSpyObj("$state", ["go"]);
 
@@ -36,7 +42,7 @@ describe("BalanceSheetCtrl", function() {
     
     controller = $controller("BalanceSheetCtrl", {
       balanceSheet: balanceSheet,
-      solveDebts: solveDebts,
+      debtService: debtService,
       $scope: $rootScope
     });
     
@@ -46,5 +52,29 @@ describe("BalanceSheetCtrl", function() {
     expect($scope.balanceSheet).toBe(balanceSheet);
   });
   
+  describe("refresh", function() {
+    
+    it("computes debts by debtor into $scope", function() {
+      
+      balanceSheet.participations = "Dummy participations";
+
+      var debts = "Dummy debts";
+      debtService.computeDebts = function(input) {
+        expect(input).toBe(balanceSheet.participations);
+        return debts;
+      };
+      
+      var debtsByDebtor = "Dummy debts by debtor";
+      debtService.organizeByDebtor = function(input) {
+        expect(input).toBe(debts);
+        return debtsByDebtor;
+      };
+      
+      $scope.refresh();
+      
+      expect($scope.debtsByDebtor).toBe(debtsByDebtor);
+    });
+    
+  });
 });
 

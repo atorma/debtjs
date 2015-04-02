@@ -3,9 +3,11 @@
 require("angular").module("debtApp")
   .controller("BalanceSheetCtrl", BalanceSheetCtrl);
 
-function BalanceSheetCtrl(balanceSheet, solveDebts, $scope) {
+function BalanceSheetCtrl(balanceSheet, debtService, $scope) {
   
   this.init = init;
+  
+  $scope.refresh = refresh;
   
   init();
   
@@ -17,6 +19,11 @@ function BalanceSheetCtrl(balanceSheet, solveDebts, $scope) {
   };
   
   function refresh() {
-
+    $scope.debtsByDebtor = computeDebts();
+  }
+  
+  function computeDebts() {
+    var debts = debtService.computeDebts(balanceSheet.participations);
+    return debtService.organizeByDebtor(debts);
   }
 }
