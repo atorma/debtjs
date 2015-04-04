@@ -8,7 +8,11 @@ require("angular-route");
 require("angular-ui-router");
 require("angular-local-storage");
 
-angular.module("debtApp", ["ngMaterial", "ui.router", "LocalStorageModule"]);
+angular
+  .module("debtApp", ["ngMaterial", "ui.router", "LocalStorageModule"])
+    .config(function(localStorageServiceProvider) {
+      localStorageServiceProvider.setPrefix("debtApp");
+    });
 
 require("./route-config");
 require("./debts");
