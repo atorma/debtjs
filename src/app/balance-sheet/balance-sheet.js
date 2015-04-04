@@ -1,19 +1,26 @@
 "use strict";
 
 var _ = require('lodash');
+var angular = require("angular");
 var Decimal = require("simple-decimal-money");
 
 var BalanceSheet = function() {
 
+  var _this = this;
+  
 	var persons = [];
 	var expenses = [];
 	var participations = [];
-	var idSequence = 1;
+	
+	// Properties
 	
 	this.name = "New sheet";
 	this.persons = persons;
 	this.expenses = expenses;
 	this.participations = participations;
+	this.idSequence = 1;
+	
+	// Functions
 	
 	this.isBalanced = isBalanced;
 	
@@ -28,6 +35,7 @@ var BalanceSheet = function() {
 	this.createParticipation = createParticipation;
 	this.removeParticipation= removeParticipation;
 
+	this.toJson = toJson;
 	
 	/////////////////////////////////////
 	
@@ -51,8 +59,8 @@ var BalanceSheet = function() {
 			data = {};
 		}
 		if (data.id === undefined) {
-			data.id = idSequence;
-			idSequence = idSequence + 1;	
+			data.id = _this.idSequence;
+			_this.idSequence = _this.idSequence + 1;	
 		}
 		if (data.name === undefined) {
 			data.name = "Person " + (persons.length + 1);
@@ -73,8 +81,8 @@ var BalanceSheet = function() {
 			data = {};
 		}
 		if (data.id === undefined) {
-			data.id = idSequence;
-			idSequence = idSequence + 1;
+			data.id = _this.idSequence;
+			_this.idSequence = _this.idSequence + 1;
 		}
 		if (data.name === undefined) {
 			data.name = "Expense " + (expenses.length + 1);
@@ -251,6 +259,44 @@ var BalanceSheet = function() {
 		}
 	}
 
+	
+	function toJson() {
+	  var data = {};
+	  data.name = _this.name;
+	  data.persons = _this.persons;
+	  data.expenses = _this.expenses;
+	  data.idSequence = _this.idSequence;
+	  data.participations = _.map(_this.participations, function(p) {
+	    return {personId: p.person.id, expenseId: p.expense.id, paid: p.paid, share: p.share};
+	  });
+	  return angular.toJson(data);
+	}
+	
 };
+
+BalanceSheet.fromJson = function(json) {
+ var sheet = new BalanceSheet();
+ var data = angular.fromJson(json);
+ 
+ sheet.idSequence = data.idSequence;
+ sheet.name = data.name;
+ 
+ _.each(data.persons, function(p) {
+   sheet.createPerson(p);
+ });
+ 
+ _.each(data.expenses, function(e) {
+   sheet.createExpense(e);
+ });
+ 
+ _.each(data.participations, function(p) {
+   var person = sheet.getPerson(p.personId);
+   var expense = sheet.getExpense(p.expenseId);
+   sheet.createParticipation({person: person, expense: expense, paid: p.paid, share: p.share});
+ });
+ 
+ return sheet;
+};
+
 
 module.exports = BalanceSheet;

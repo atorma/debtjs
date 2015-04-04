@@ -2,6 +2,8 @@
 
 var BalanceSheet = require('./balance-sheet');
 var Decimal = require("simple-decimal-money");
+var _ = require("lodash");
+var angular = require("angular");
 
 describe("Balance sheet", function () {
 
@@ -337,4 +339,34 @@ describe("Balance sheet", function () {
     expect(sheet.isBalanced()).toBe(false);
   });
 
+  
+  describe("from/to JSON", function() {
+    
+    it("can generate a JSON representation and recover itself", function() {
+      
+      var sheet1 = new BalanceSheet();
+      sheet1.name = "JSON test sheet";
+      var p1 = sheet1.createPerson({name: "Anssi"});
+      var p2 = sheet1.createPerson({name: "Malla"});
+      var e1 = sheet1.createExpense({name: "Food"});
+      var e2 = sheet1.createExpense({name: "Stuff"});
+      var p1e1 = sheet1.createParticipation({person: p1, expense: e1, paid: 15, share: 10});
+      var p2e1 = sheet1.createParticipation({person: p2, expense: e1, paid: 0, share: 5});
+      var p1e2 = sheet1.createParticipation({person: p1, expense: e2, paid: 10, share: 0});
+      var p2e2 = sheet1.createParticipation({person: p2, expense: e2, paid: 0, share: 10});
+      
+      var sheet1Json = sheet1.toJson();      
+      var sheet2 = BalanceSheet.fromJson(sheet1Json);
+      
+      expect(sheet2.name).toEqual(sheet1.name);
+      expect(angular.equals(sheet1.persons, sheet2.persons)).toBe(true);
+      expect(angular.equals(sheet1.expenses, sheet2.expenses)).toBe(true);
+      expect(angular.equals(sheet1.participations, sheet2.participations)).toBe(true);
+    });
+    
+  });
+ 
+  
 });
+
+
