@@ -252,6 +252,7 @@ describe("Balance sheet", function () {
       expect(sheet.expenses[0].equals(expense2)).toBe(true);
     });
     
+    
   });
 
   describe("participation", function() {

@@ -1,6 +1,5 @@
 "use strict";
 
-var angular = require("angular");
 var _ = require('lodash');
 var Decimal = require("simple-decimal-money");
 
@@ -90,13 +89,11 @@ var BalanceSheet = function() {
 	}
 	
 	function removeExpense(toRemove) {
-		if (!toRemove) return;
-		angular.forEach(expenses, function(e, i) {
-			if (e.equals(toRemove)) {
-				expenses.splice(i, 1);
-			}
+	  toRemove = getExpense(toRemove.id);
+		_.remove(expenses, function(e) {
+		  return e.equals(toRemove);
 		});
-		angular.forEach(toRemove.getParticipations(), function(p) {
+		_.forEach(toRemove.getParticipations(), function(p) {
 			removeParticipation(p);
 		});
 	}
@@ -119,19 +116,16 @@ var BalanceSheet = function() {
 	}
 
 	function removeParticipation(toRemove) {
-		if (!toRemove) return;
-		toRemove = new Participation(toRemove);
-		angular.forEach(participations, function(p, i) {
-			if (p.equals(toRemove)) {
-				participations.splice(i, 1);
-			}
+	  toRemove = getParticipation(toRemove);
+		_.remove(participations, function(p) {
+			return p.equals(toRemove);
 		});
 	}
 	
 
 	function Person(data) {
-		angular.extend(this, data);
-		var _this = this;
+	  var _this = this;
+		_.extend(_this, data);
 		
 		this.equals = equals;
 		
@@ -143,9 +137,9 @@ var BalanceSheet = function() {
 	
 	
 	function Expense(data) {
-		angular.extend(this, data);
-		var _this = this;
-
+	  var _this = this;
+		_.extend(_this, data);
+		
 		this.getCost = getCost;
 		this.getSumOfShares = getSumOfShares;
 		this.isBalanced = isBalanced;
@@ -187,6 +181,10 @@ var BalanceSheet = function() {
 		function isBalanced() {
 		  return _balance.value().toNumber() === 0;
 		}
+		
+		function getBalance() {
+      return _balance.value().toNumber();
+    }
 
 		function getParticipations() {
 			return _myParticipations.value();
@@ -199,18 +197,19 @@ var BalanceSheet = function() {
 		  }
 		  
 			var cost = new Decimal(_this.getCost());
+			var share = cost.divideBy(participations.length);
 			var sum = new Decimal(0);
 			for (var i = 0; i < participations.length - 1; i++) {
-				var share = cost.divideBy(participations.length); 
 				sum = sum.add(share);
 				participations[i].share = share.toNumber();
-			}
+			} 
 			participations[participations.length - 1].share = cost.subtract(sum).toNumber();
 		}
 		
 		function equals(other) {
 			return (other instanceof Expense) && (other.id === _this.id);
 		}
+		
 	}
 	
 	
@@ -225,17 +224,17 @@ var BalanceSheet = function() {
 		this.person = data.person;
 		this.expense = data.expense;
 
-		if (!angular.isDefined(data.paid)) {
+		if (_.isUndefined(data.paid)) {
 			this.paid = 0;
-		} else if (!angular.isNumber(data.paid)) {
+		} else if (!_.isNumber(data.paid)) {
 			throw "'paid' is not a number";
 		} else {
 			this.paid = data.paid;
 		}
 		
-		if (!angular.isDefined(data.share)) {
+		if (_.isUndefined(data.share)) {
 			this.share = 0;
-		} else if (!angular.isNumber(data.share)) {
+		} else if (!_.isNumber(data.share)) {
 			throw "'share' is not a number";
 		} else {
 			this.share = data.share;
