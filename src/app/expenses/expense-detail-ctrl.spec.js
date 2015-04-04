@@ -211,6 +211,13 @@ describe("ExpenseDetailCtrl", function() {
     expect($scope.isParticipant[person3.id]).toBe(true);
     expect($scope.isEveryoneParticipant).toBe(true);
     expect(expense.getParticipations().length).toBe(3);
+    
+    balanceSheet.removeParticipation({person: person2, expense: expense});
+    $scope.refresh();
+    expect($scope.isEveryoneParticipant).toBe(false);
+    
+    $scope.setAllParticipations(true);
+    expect($scope.isEveryoneParticipant).toBe(true);
   });
 });
 

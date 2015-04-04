@@ -75,7 +75,10 @@ function ExpenseDetailCtrl(balanceSheet, debtService, $scope, $mdDialog, $stateP
 	function setAllParticipations(value) {
     angular.forEach(balanceSheet.persons, function(p) {
       if (value === true) {
-        balanceSheet.createParticipation({expense: $scope.expense, person: p});
+        var data = {expense: $scope.expense, person: p};
+        if (!balanceSheet.getParticipation(data)) {
+          balanceSheet.createParticipation(data);
+        }
       } else {
         balanceSheet.removeParticipation({expense: $scope.expense, person: p});
       }
