@@ -198,12 +198,14 @@ var BalanceSheet = function() {
 		  
 			var cost = new Decimal(_this.getCost());
 			var share = cost.divideBy(participations.length);
-			var sum = new Decimal(0);
-			for (var i = 0; i < participations.length - 1; i++) {
-				sum = sum.add(share);
-				participations[i].share = share.toNumber();
-			} 
-			participations[participations.length - 1].share = cost.subtract(sum).toNumber();
+			var lastShare = cost.subtract(share.multiply(participations.length - 1));
+
+			_.forEach(participations, function(p, i) {
+			  if (i < participations.length - 1) {
+			    p.share = share.toNumber();
+			  }
+			});
+			_.last(participations).share = lastShare.toNumber();
 		}
 		
 		function equals(other) {
