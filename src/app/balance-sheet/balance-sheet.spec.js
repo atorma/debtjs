@@ -14,6 +14,8 @@ describe("Balance sheet", function () {
   it("has as an initial name", function() {
     expect(sheet.name).toBe("New sheet");
   });
+  
+  
 
   describe("person", function() {
 
@@ -308,6 +310,30 @@ describe("Balance sheet", function () {
       expect(sheet.participations.length).toBe(0);
     });
     
+  });
+  
+  
+  it("is balanced if all expenses are balanced", function() {
+    var expense1 = sheet.createExpense();
+    var expense2 = sheet.createExpense();
+    var person1 = sheet.createPerson();
+    var person2 = sheet.createPerson();
+    
+    var prt11 = sheet.createParticipation({person: person1, expense: expense1, paid: 20, share: 15});
+    var prt21 = sheet.createParticipation({person: person2, expense: expense1, paid: 0, share: 5});
+    var prt12 = sheet.createParticipation({person: person1, expense: expense2, paid: 35, share: 22.5});
+    var prt22 = sheet.createParticipation({person: person2, expense: expense2, paid: 10, share: 22.5});
+    expect(sheet.isBalanced()).toBe(true);
+    
+    prt21.share = 0;
+    expect(sheet.isBalanced()).toBe(false);
+    
+    // Total in balance, but individual expenses are not
+    prt11.share = 65;
+    prt12.share = 0;
+    prt21.share = 0;
+    prt22.share = 0;
+    expect(sheet.isBalanced()).toBe(false);
   });
 
 });

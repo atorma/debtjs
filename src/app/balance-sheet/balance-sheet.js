@@ -1,6 +1,7 @@
 "use strict";
 
 var angular = require("angular");
+var _ = require('lodash');
 var Decimal = require("simple-decimal-money");
 
 var BalanceSheet = function() {
@@ -15,6 +16,8 @@ var BalanceSheet = function() {
 	this.expenses = expenses;
 	this.participations = participations;
 	
+	this.isBalanced = isBalanced;
+	
 	this.getPerson = getPerson;
 	this.createPerson = createPerson;
 	
@@ -26,10 +29,21 @@ var BalanceSheet = function() {
 	this.createParticipation = createParticipation;
 	this.removeParticipation= removeParticipation;
 
+	
 	/////////////////////////////////////
 	
+	
+	function isBalanced() {
+	  return _.reduce(expenses, function(isBalanced, e) {
+	    return isBalanced && e.isBalanced();
+	  }, true); 
+	}
+	
+	
 	function getPerson(id) {
-		return getById(id, persons);
+		return _(persons).find(function(p) {
+		  return p.id == id;
+		});
 	}
 	
 	
@@ -49,20 +63,10 @@ var BalanceSheet = function() {
 		return person;
 	}
 	
-	
-	function getById(id, array) {
-		var found = null;
-		angular.forEach(array, function(obj) {
-			if (obj.id == id) {
-				found = obj;
-			}
-		});
-		return found;
-	}
-	
-	
 	function getExpense(id) {
-		return getById(id, expenses);
+	  return _(expenses).find(function(e) {
+      return e.id == id;
+    });
 	}
 
 	function createExpense(data) {
@@ -100,22 +104,16 @@ var BalanceSheet = function() {
 	
 	function getParticipation(criteria) {
 	  var toSeek = new Participation(criteria); 
-	  var found;
-	  angular.forEach(participations, function(p) {
-	    if (p.equals(toSeek)) {
-	      found = p;
-	    }
+	  return _(participations).find(function(p) {
+	    return toSeek.equals(p);
 	  });
-	  return found;
 	}
 	
 	function createParticipation(data) {
-		var participation = new Participation(data);
-		angular.forEach(participations, function(p) {
-      if (p.equals(participation)) {
-        throw "Duplicate participation";
-      }
-    });
+		if (getParticipation(data)) {
+      throw "Duplicate participation";
+    }
+		var participation = new Participation(data); 
 		participations.push(participation);
 		return participation;
 	}
@@ -130,10 +128,7 @@ var BalanceSheet = function() {
 		});
 	}
 	
-	
-	
-	
-	
+
 	function Person(data) {
 		angular.extend(this, data);
 		var _this = this;
@@ -150,7 +145,7 @@ var BalanceSheet = function() {
 	function Expense(data) {
 		angular.extend(this, data);
 		var _this = this;
-		
+
 		this.getCost = getCost;
 		this.getSumOfShares = getSumOfShares;
 		this.isBalanced = isBalanced;
@@ -158,34 +153,43 @@ var BalanceSheet = function() {
 		this.shareCost = shareCost;
 		this.equals = equals;
 		
+		var _myParticipations = _.chain(participations).filter(function(p) {
+		  return _this.equals(p.expense);
+		});
+		
+		var _cost = _myParticipations
+		.map("paid").reduce(function(cost, paid) {
+		  return cost.add(paid);
+		}, new Decimal(0));
+		
+		var _sumOfShares = _myParticipations
+    .map("share").reduce(function(sum, share) {
+      return sum.add(share);
+    }, new Decimal(0));
+		
+		var _balance = _myParticipations
+		.map(function(p) {
+		  return (new Decimal(p.share)).subtract(p.paid);
+		})
+		.reduce(function(sum, b) {
+		  return sum.add(b);
+		}, new Decimal(0));
+		
+		
 		function getCost() {
-			var cost = new Decimal(0);
-			angular.forEach(getParticipations(), function(p) {
-				cost = cost.add(p.paid);
-			});
-			return cost.toNumber();
+		  return _cost.value().toNumber();
 		}
 		
 		function getSumOfShares() {
-		  var sum = new Decimal(0);
-		  angular.forEach(getParticipations(), function(p) {
-		    sum = sum.add(p.share);
-      });
-      return sum.toNumber();
+      return _sumOfShares.value().toNumber();
 		}
 		
 		function isBalanced() {
-		  return getCost() === getSumOfShares();
+		  return _balance.value().toNumber() === 0;
 		}
-		
+
 		function getParticipations() {
-			var myParticipations = [];
-			angular.forEach(participations, function(p) {
-				if (_this.equals(p.expense)) {
-					myParticipations.push(p);
-				}
-			});
-			return myParticipations;
+			return _myParticipations.value();
 		}
 		
 		function shareCost() {
