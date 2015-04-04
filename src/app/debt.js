@@ -6,8 +6,9 @@ require("angular-animate");
 require("angular-aria");
 require("angular-route");
 require("angular-ui-router");
+require("angular-local-storage");
 
-angular.module("debtApp", ["ngMaterial", "ui.router"]);
+angular.module("debtApp", ["ngMaterial", "ui.router", "LocalStorageModule"]);
 
 require("./route-config");
 require("./debts");
