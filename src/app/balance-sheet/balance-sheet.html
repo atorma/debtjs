@@ -14,7 +14,25 @@
   </section>
   
   <section>
-    
+    <md-subheader><h3>Debts</h3></md-subheader>
+    <div layout="column" layout-margin-sides>
+      <md-list flex ng-if="debtsByDebtor.length > 0">
+        <md-item ng-repeat="d in debtsByDebtor">
+          <md-item-content layout="column" layout-align="space-between start">
+            <div flex>{{d.debtor.name}}</div>
+            <md-list flex style="padding-left: 16px">
+              <md-item ng-repeat="c in d.debts">
+                <md-item-content>
+                  {{c.creditor.name}}: {{c.amount | currency:""}}
+                </md-item-content>
+              </md-item>
+            </md-list>
+          </md-item-content>
+        </md-item>
+      </md-list>
+      <div flex ng-if="debtsByDebtor.length === 0">No debts!</div>
+      <div flex ng-if="!balanceSheet.isBalanced()">Cannot compute debts. There are unbalanced expenses.</div>
+    </div>
   </section>
 
 </md-content>

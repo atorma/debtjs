@@ -7,7 +7,7 @@ function config($stateProvider) {
 
 	$stateProvider
 		.state("participantList", {
-			url: "/participants",
+			url: "/people",
 			templateUrl: "participants/participant-list.html",
 			controller: "ParticipantListCtrl",
 			resolve: {
@@ -17,7 +17,7 @@ function config($stateProvider) {
 			}
 		})
 		.state("participantDetail", {
-			url: "/participants/:id",
+			url: "/people/:id",
 			templateUrl: "participants/participant-detail.html",
 			controller: "ParticipantDetailCtrl",
 			resolve: {

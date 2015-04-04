@@ -23,7 +23,11 @@ function BalanceSheetCtrl(balanceSheet, debtService, $scope) {
   }
   
   function computeDebts() {
-    var debts = debtService.computeDebts(balanceSheet.participations);
-    return debtService.organizeByDebtor(debts);
+    if (balanceSheet.isBalanced()) {
+      var debts = debtService.computeDebts(balanceSheet.participations);
+      return debtService.organizeByDebtor(debts);
+    } else {
+      return undefined;
+    }
   }
 }

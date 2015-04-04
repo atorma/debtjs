@@ -47,6 +47,8 @@
 }
 
 
-.menu .md-button {
+
+.md-button[href] {
   text-align: left;
+  text-transform: none;
 }
