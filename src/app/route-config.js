@@ -5,6 +5,6 @@ require("angular").module("debtApp")
 
 function config($urlRouterProvider) {
   
-  $urlRouterProvider.otherwise("/index.html");
+  $urlRouterProvider.otherwise("/");
   
 }
