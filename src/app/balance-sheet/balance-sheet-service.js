@@ -1,31 +1,43 @@
 "use strict";
 
+var angular = require("angular");
 var BalanceSheet = require('./balance-sheet');
 
-require("angular").module("debtApp")
+angular.module("debtApp")
 .factory("balanceSheetService", balanceSheetService);
 
 function balanceSheetService(localStorageService) {
   
-  var balanceSheet;
-  if (localStorageService.get("balanceSheetJson")) {
-    var json = localStorageService.get("balanceSheetJson");
-    balanceSheet = BalanceSheet.fromJson(json); 
-  } else {
-    balanceSheet = new BalanceSheet();
-    balanceSheet.createPerson({name: "Anssi"});
-    balanceSheet.createPerson({name: "Malla"});
-    balanceSheet.createExpense({name: "Pesukone"});
-    balanceSheet.createExpense({name: "TV"});
-  }
-  
-  return {
-    balanceSheet: balanceSheet,
-    save: save
+  var service = {
+    balanceSheet: null,
+    save: save,
+    loadFromJson: loadFromJson,
+    exportToJson: exportToJson,
+    init: init
   };
+  service.init();
+  
+  return service;
+  
+  
+  function init() {
+    var data = localStorageService.get("balanceSheetData");
+    service.balanceSheet = new BalanceSheet(data); 
+  }
 
   function save() {
-    localStorageService.set("balanceSheetJson", balanceSheet.toJson());
+    localStorageService.set("balanceSheetData", service.balanceSheet.exportData());
+  }
+  
+  function loadFromJson(json) {
+    var data = angular.fromJson(json);
+    service.balanceSheet = new BalanceSheet(data); 
+    save();
+  }
+  
+  function exportToJson() {
+    var data = service.balanceSheet.exportData(); 
+    return angular.toJson(data);
   }
 }
 
