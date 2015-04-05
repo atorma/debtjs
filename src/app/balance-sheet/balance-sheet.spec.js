@@ -21,7 +21,7 @@ describe("Balance sheet", function () {
 
   describe("person", function() {
 
-    it("gets distinct id when added", function() {
+    it("gets distinct id when created", function() {
       var anssi = sheet.createPerson({name: "Anssi"});
       var malla = sheet.createPerson({name: "Malla"});
 
@@ -72,7 +72,7 @@ describe("Balance sheet", function () {
 
   describe("expense", function() {
 
-    it("gets distinct id when added", function() {
+    it("gets distinct id when created", function() {
       var food = sheet.createExpense({name: "Food"});
       var gas = sheet.createExpense({name: "Gas"});
 
@@ -340,9 +340,9 @@ describe("Balance sheet", function () {
   });
 
   
-  describe("from/to JSON", function() {
+  describe("import/export", function() {
     
-    it("can generate a JSON representation and recover itself", function() {
+    it("can generate data and recover itself via JSON representation of the data", function() {
       
       var sheet1 = new BalanceSheet();
       sheet1.name = "JSON test sheet";
@@ -350,13 +350,15 @@ describe("Balance sheet", function () {
       var p2 = sheet1.createPerson({name: "Malla"});
       var e1 = sheet1.createExpense({name: "Food"});
       var e2 = sheet1.createExpense({name: "Stuff"});
-      var p1e1 = sheet1.createParticipation({person: p1, expense: e1, paid: 15, share: 10});
-      var p2e1 = sheet1.createParticipation({person: p2, expense: e1, paid: 0, share: 5});
-      var p1e2 = sheet1.createParticipation({person: p1, expense: e2, paid: 10, share: 0});
-      var p2e2 = sheet1.createParticipation({person: p2, expense: e2, paid: 0, share: 10});
+      sheet1.createParticipation({person: p1, expense: e1, paid: 15, share: 10});
+      sheet1.createParticipation({person: p2, expense: e1, paid: 0, share: 5});
+      sheet1.createParticipation({person: p1, expense: e2, paid: 10, share: 0});
+      sheet1.createParticipation({person: p2, expense: e2, paid: 0, share: 10});
       
-      var sheet1Json = sheet1.toJson();      
-      var sheet2 = BalanceSheet.fromJson(sheet1Json);
+      var data = sheet1.exportData();     
+      var json = JSON.stringify(data);
+      data = JSON.parse(json);
+      var sheet2 = new BalanceSheet(data);
       
       expect(sheet2.name).toEqual(sheet1.name);
       expect(angular.equals(sheet1.persons, sheet2.persons)).toBe(true);

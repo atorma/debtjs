@@ -4,23 +4,27 @@ var _ = require('lodash');
 var angular = require("angular");
 var Decimal = require("simple-decimal-money");
 
-var BalanceSheet = function() {
+var BalanceSheet = function(data) {
 
   var _this = this;
+  
+  // Data 
   
 	var persons = [];
 	var expenses = [];
 	var participations = [];
-	
-	// Properties
-	
+	var idSequence = 1;
+
 	this.name = "New sheet";
 	this.persons = persons;
 	this.expenses = expenses;
 	this.participations = participations;
-	this.idSequence = 1;
+
+	if (data) {
+	  importData(data);
+	}
 	
-	// Functions
+	// Methods
 	
 	this.isBalanced = isBalanced;
 	
@@ -35,7 +39,7 @@ var BalanceSheet = function() {
 	this.createParticipation = createParticipation;
 	this.removeParticipation= removeParticipation;
 
-	this.toJson = toJson;
+	this.exportData = exportData;
 	
 	/////////////////////////////////////
 	
@@ -59,12 +63,13 @@ var BalanceSheet = function() {
 			data = {};
 		}
 		if (data.id === undefined) {
-			data.id = _this.idSequence;
-			_this.idSequence = _this.idSequence + 1;	
+			data.id = idSequence;
+			idSequence = idSequence + 1;	
 		}
 		if (data.name === undefined) {
 			data.name = "Person " + (persons.length + 1);
 		}
+		
 		var person = new Person(data);
 		persons.push(person);
 		return person;
@@ -81,8 +86,8 @@ var BalanceSheet = function() {
 			data = {};
 		}
 		if (data.id === undefined) {
-			data.id = _this.idSequence;
-			_this.idSequence = _this.idSequence + 1;
+			data.id = idSequence;
+			idSequence = idSequence + 1;
 		}
 		if (data.name === undefined) {
 			data.name = "Expense " + (expenses.length + 1);
@@ -133,20 +138,36 @@ var BalanceSheet = function() {
 
 	function Person(data) {
 	  var _this = this;
-		_.extend(_this, data);
+	  
+	  // Data
+	  
+		this.id = data.id;
+		this.name = data.name;
+		
+		// Methods
 		
 		this.equals = equals;
+		
+		///////////////////////////////////////
 		
 		function equals(other) {
       return (other instanceof Person) && (other.id === _this.id);
     }
+		
 	}
 
 	
 	
 	function Expense(data) {
 	  var _this = this;
-		_.extend(_this, data);
+	  
+	  // Data
+	  
+	  this.id = data.id;
+	  this.name = data.name;
+	  this.sharing = data.sharing;
+	  
+	  // Methods
 		
 		this.getCost = getCost;
 		this.getSumOfShares = getSumOfShares;
@@ -154,6 +175,8 @@ var BalanceSheet = function() {
 		this.getParticipations = getParticipations;
 		this.shareCost = shareCost;
 		this.equals = equals;
+		
+		///////////////////////////////////////
 		
 		var _myParticipations = _.chain(participations).filter(function(p) {
 		  return _this.equals(p.expense);
@@ -231,6 +254,8 @@ var BalanceSheet = function() {
 			throw "Undefined participation";
 		}
 		
+		// Data
+		
 		this.person = data.person;
 		this.expense = data.expense;
 
@@ -250,9 +275,12 @@ var BalanceSheet = function() {
 			this.share = data.share;
 		}
 		
+		// Methods
 		
 		this.equals = equals;
 		
+		
+		///////////////////////////////////////
 		
 		function equals(other) {
 			return (other instanceof Participation) && _this.person.equals(other.person) && _this.expense.equals(other.expense);
@@ -260,42 +288,43 @@ var BalanceSheet = function() {
 	}
 
 	
-	function toJson() {
+	function exportData() {
 	  var data = {};
+	  
+	  data.idSequence = idSequence;
 	  data.name = _this.name;
-	  data.persons = _this.persons;
-	  data.expenses = _this.expenses;
-	  data.idSequence = _this.idSequence;
-	  data.participations = _.map(_this.participations, function(p) {
+	  data.persons = _.map(persons, function(p) {
+      return {id: p.id, name: p.name};
+    });
+	  data.expenses = _.map(expenses, function(e) {
+	    return {id: e.id, name: e.name, sharing: e.sharing};
+	  });
+	  data.participations = _.map(participations, function(p) {
 	    return {personId: p.person.id, expenseId: p.expense.id, paid: p.paid, share: p.share};
 	  });
-	  return angular.toJson(data);
+	  return  data;
 	}
 	
-};
+	function importData(data) {
+	  idSequence = data.idSequence;
+	  _this.name = data.name;
+	  
+	  _.each(data.persons, function(p) {
+	    createPerson(p);
+	  });
+	  
+	  _.each(data.expenses, function(e) {
+	    createExpense(e);
+	  });
+	  
+	  _.each(data.participations, function(p) {
+	    var person = getPerson(p.personId);
+	    var expense = getExpense(p.expenseId);
+	    createParticipation({person: person, expense: expense, paid: p.paid, share: p.share});
+	  });
+	
+	};
 
-BalanceSheet.fromJson = function(json) {
- var sheet = new BalanceSheet();
- var data = angular.fromJson(json);
- 
- sheet.idSequence = data.idSequence;
- sheet.name = data.name;
- 
- _.each(data.persons, function(p) {
-   sheet.createPerson(p);
- });
- 
- _.each(data.expenses, function(e) {
-   sheet.createExpense(e);
- });
- 
- _.each(data.participations, function(p) {
-   var person = sheet.getPerson(p.personId);
-   var expense = sheet.getExpense(p.expenseId);
-   sheet.createParticipation({person: person, expense: expense, paid: p.paid, share: p.share});
- });
- 
- return sheet;
 };
 
 
