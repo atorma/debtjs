@@ -26,8 +26,8 @@ describe("debtService", function() {
     $provide.value("solveDebts", solveDebts);
   }));
   
-  beforeEach(angular.mock.inject(function($injector) {
-    debtService = $injector.get("debtService");
+  beforeEach(angular.mock.inject(function(_debtService_) {
+    debtService = _debtService_;
   }));
 
   

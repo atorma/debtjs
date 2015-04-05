@@ -12,8 +12,8 @@ describe("Debt solver", function() {
   
   beforeEach(angular.mock.module("debtApp"));
 
-  beforeEach(angular.mock.inject(function($injector) {
-    solveDebts = $injector.get("solveDebts");
+  beforeEach(angular.mock.inject(function(_solveDebts_) {
+    solveDebts = _solveDebts_;
     
   }));
   
