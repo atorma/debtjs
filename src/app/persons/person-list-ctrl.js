@@ -1,12 +1,11 @@
 "use strict";
 
 require("angular").module("debtApp")
-	.controller("ParticipantListCtrl", ParticipantListCtrl);
+	.controller("PersonListCtrl", PersonListCtrl);
 
-function ParticipantListCtrl($scope, $state, balanceSheet) {
+function PersonListCtrl($scope, $state, balanceSheet) {
 	
 	$scope.createNew = createNew;
-	$scope.viewDetails = viewDetails;
 	
 	init();
 	
@@ -18,9 +17,5 @@ function ParticipantListCtrl($scope, $state, balanceSheet) {
 	
 	function createNew() {
 	  balanceSheet.createPerson();
-	}
-	
-	function viewDetails(person) {
-		$state.transitionTo("participantDetail", {id: person.id});
 	}
 }

@@ -14,7 +14,7 @@
     <h2>
       <span ng-if="$state.includes('balanceSheet')">Home</span>
       <span ng-if="$state.includes('expenses')">Expenses</span>
-      <span ng-if="$state.includes('people')">People</span>
+      <span ng-if="$state.includes('persons')">People</span>
     </h2>
   </div>
 </md-toolbar>
@@ -33,9 +33,9 @@
           <md-button flex="100" href="#/expenses">Expenses</md-button>
         </md-item-content>
       </md-item>
-    	<md-item ng-class="{selected: $state.includes('people')}">
+    	<md-item ng-class="{selected: $state.includes('persons')}">
         <md-item-content>
-    		<md-button flex="100" href="#/people">People</md-button>
+    		<md-button flex="100" href="#/persons">People</md-button>
         </md-item-content>
     	</md-item>
     </md-list>

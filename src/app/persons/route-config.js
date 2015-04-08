@@ -6,12 +6,12 @@ require("angular").module("debtApp")
 function config($stateProvider) {
 
   $stateProvider
-    .state("people", {
-      url: "/people",
+    .state("persons", {
+      url: "/persons",
       views: {
         "main": {
-          templateUrl: "participants/participant-list.html",
-          controller: "ParticipantListCtrl",
+          templateUrl: "persons/person-list.html",
+          controller: "PersonListCtrl",
         }
       },
       resolve: {
@@ -20,12 +20,12 @@ function config($stateProvider) {
         }
       }
     })
-    .state("people.detail", {
+    .state("persons.detail", {
       url: "/:id",
       views: {
         "main": {
-          templateUrl: "participants/participant-detail.html",
-          controller: "ParticipantDetailCtrl"
+          templateUrl: "persons/person-detail.html",
+          controller: "PersonDetailCtrl"
         }
       }
     })

@@ -1,9 +1,9 @@
 "use strict";
 
 require("angular").module("debtApp")
-	.controller("ParticipantDetailCtrl", ParticipantDetailCtrl);
+	.controller("PersonDetailCtrl", PersonDetailCtrl);
 
-function ParticipantDetailCtrl($scope, $stateParams, balanceSheet) {
+function PersonDetailCtrl($scope, $stateParams, balanceSheet) {
 	
 	init();
 	

@@ -17,7 +17,7 @@ angular
 require("./route-config");
 require("./debts");
 require("./balance-sheet");
-require("./participants");
+require("./persons");
 require("./expenses");
 
 
