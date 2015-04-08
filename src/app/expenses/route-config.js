@@ -6,25 +6,28 @@ require("angular").module("debtApp")
 function config($stateProvider) {
 
 	$stateProvider
-		.state("expenseList", {
+		.state("expenses", {
 			url: "/expenses",
-			templateUrl: "expenses/expense-list.html",
-			controller: "ExpenseListCtrl",
+			views: {
+			  "main": {
+			    templateUrl: "expenses/expense-list.html",
+		      controller: "ExpenseListCtrl"
+			  }
+			},
 			resolve: {
         balanceSheet: function(balanceSheetService) {
           return balanceSheetService.balanceSheet;
         }
       }
 		})
-		.state("expenseDetail", {
-			url: "/expenses/:id",
-			templateUrl: "expenses/expense-detail.html",
-			controller: "ExpenseDetailCtrl",
-			resolve: {
-        balanceSheet: function(balanceSheetService) {
-          return balanceSheetService.balanceSheet;
-        }
-      }
+		.state("expenses.detail", {
+			url: "/:id",
+			views: {
+			  "main": {
+			    templateUrl: "expenses/expense-detail.html",
+		      controller: "ExpenseDetailCtrl"
+			  }
+			}
 		})
 		;
 }

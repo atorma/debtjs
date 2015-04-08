@@ -46,9 +46,28 @@
   margin: 0;
 }
 
-
-
 .md-button[href] {
   text-align: left;
   text-transform: none;
+}
+
+
+.menu .md-button {
+  border-radius: 0;
+  color: inherit;
+  cursor: pointer;
+  display: block;
+  line-height: 40px;
+  margin: 0;
+  max-height: 40px;
+  overflow: hidden;
+  padding: 0 16px;
+  text-align: left;
+  text-decoration: none;
+  white-space: normal;
+  width: 100%;
+}
+
+.menu .selected {
+  background-color: #f6f6f6;
 }

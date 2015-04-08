@@ -35,7 +35,9 @@ describe("ExpenseDetailCtrl", function() {
 
   });
 
-  beforeEach(angular.mock.module("debtApp"));
+  beforeEach(angular.mock.module("debtApp", function($provide) {
+    $provide.value("$state", $state);
+  }));
   
   beforeEach(angular.mock.inject(function($rootScope, $controller, $q, $mdDialog) {
     $scope = $rootScope;
@@ -48,7 +50,7 @@ describe("ExpenseDetailCtrl", function() {
     controller = $controller("ExpenseDetailCtrl", {
       balanceSheet: balanceSheet,
       debtService: debtService,
-      $scope: $rootScope,
+      $scope: $scope,
       $stateParams: $stateParams,
       $state: $state,
       $mdDialog: $mdDialog
@@ -195,7 +197,7 @@ describe("ExpenseDetailCtrl", function() {
     $scope.$digest();
     
     expect(balanceSheet.removeExpense).toHaveBeenCalledWith(expense);
-    expect($state.go).toHaveBeenCalledWith("expenseList");
+    expect($state.go).toHaveBeenCalledWith("expenses");
   });
   
   

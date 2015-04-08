@@ -90,7 +90,7 @@ function ExpenseDetailCtrl(balanceSheet, debtService, $scope, $mdDialog, $stateP
 	  $mdDialog.show(confirmRemoveExpense)
 	  .then(function() {
       balanceSheet.removeExpense($scope.expense);
-      $state.go("expenseList");
+      $state.go("expenses");
     });
 	}
 	

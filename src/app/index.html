@@ -9,34 +9,40 @@
 
 <body ng-app="debtApp" layout="column" ng-controller="BalanceSheetSaveCtrl">
 
-<md-toolbar layout="row">
-	<div class="center"><h1>Debt.js</h1></div>
+<md-toolbar>
+  <div class="md-toolbar-tools">
+    <h2>
+      <span ng-if="$state.includes('balanceSheet')">Home</span>
+      <span ng-if="$state.includes('expenses')">Expenses</span>
+      <span ng-if="$state.includes('people')">People</span>
+    </h2>
+  </div>
 </md-toolbar>
 
 <div flex layout="row">
 
-<md-sidenav md-is-locked-open="$mdMedia('gt-sm')" class="md-whiteframe-z2" md-component-id="left">
-  <md-list>
-    <md-item>
-      <md-item-content>
-        <md-button flex="100" href="#/">Home</md-button>
-      </md-item-content>
-    </md-item>
-    <md-item>
-      <md-item-content>
-        <md-button flex="100" href="#/expenses">Expenses</md-button>
-      </md-item-content>
-    </md-item>
-  	<md-item>
-      <md-item-content>
-  		<md-button flex="100" href="#/people">People</md-button>
-      </md-item-content>
-  	</md-item>
-  </md-list>
-</md-sidenav>
-
+  <md-sidenav md-is-locked-open="$mdMedia('gt-sm')" class="md-whiteframe-z2" md-component-id="left">
+    <md-list class="menu">
+      <md-item ng-class="{selected: $state.includes('balanceSheet')}">
+        <md-item-content>
+          <md-button flex="100" href="#/">Home</md-button>
+        </md-item-content>
+      </md-item>
+      <md-item ng-class="{selected: $state.includes('expenses')}">
+        <md-item-content>
+          <md-button flex="100" href="#/expenses">Expenses</md-button>
+        </md-item-content>
+      </md-item>
+    	<md-item ng-class="{selected: $state.includes('people')}">
+        <md-item-content>
+    		<md-button flex="100" href="#/people">People</md-button>
+        </md-item-content>
+    	</md-item>
+    </md-list>
+  </md-sidenav>
+  
   <md-content flex id="content">
-    <div ui-view></div>
+    <div ui-view="main"></div>
   </md-content>
 
 </div>

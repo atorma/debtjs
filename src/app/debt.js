@@ -10,12 +10,25 @@ require("angular-local-storage");
 
 angular
   .module("debtApp", ["ngMaterial", "ui.router", "LocalStorageModule"])
-    .config(function(localStorageServiceProvider) {
-      localStorageServiceProvider.setPrefix("debtApp");
-    });
+    .config(configureLocalStorage)
+    .run(makeStateAvailableInScope)
+    ;
 
 require("./route-config");
 require("./debts");
 require("./balance-sheet");
 require("./participants");
 require("./expenses");
+
+
+function configureLocalStorage(localStorageServiceProvider) {
+  localStorageServiceProvider.setPrefix("debtApp");
+}
+
+// Injection of $state may trigger a GET, which can show as an 
+// "Unexpected request" error in your test. Workaround is to 
+// $provide a mock $state to Angular.
+function makeStateAvailableInScope($rootScope, $state, $stateParams) {
+  $rootScope.$state = $state;
+  $rootScope.$stateParams = $stateParams;
+}
