@@ -7,13 +7,14 @@ var watchify = require('watchify');
 var browserify = require('browserify');
 var karma = require('karma').server;
 var del = require('del');
-
+var _ = require('lodash');
 
 var paths = {
 	main: 'src/app/debt.js',
 	html: ['src/app/**/*.html', '!src/app/**/*.spec.html'],
 	resources: ['src/resources/**'],
 	libResources: ['node_modules/angular-material/angular-material.css', 'src/lib/**/*.*', '!src/lib/**/*.js'],
+	materialDesignIcons: ['action/ic_delete_24px.svg', 'navigation/ic_menu_24px.svg', 'navigation/ic_more_vert_24px.svg', 'navigation/ic_chevron_right_24px.svg'],
 	tests: 'src/app/test-index.js',
 	testHtml: ['src/app/jasmine.spec.html'],
 	build: 'build'
@@ -40,7 +41,6 @@ gulp.task('html', function() {
 });
 
 gulp.task('watch:html', function() {
-	// TODO use gulp-watch to include new files - or relative path?
 	gulp.watch(paths.html, ['html']);
 });
 
@@ -56,6 +56,22 @@ gulp.task('watch:resources', function() {
 gulp.task('lib-resources', function() {
 	gulp.src(paths.libResources)
 	.pipe(gulp.dest(paths.build + '/resources'));
+	
+	var materialDesignIcons = _.map(paths.materialDesignIcons, function(path) {
+	  var slashIndex = path.lastIndexOf('/');
+	  var filePath = path.substring(0, slashIndex);
+	  var fileName = path.substring(slashIndex + 1);
+	  return {
+	    fullPath: 'node_modules/material-design-icons/' + filePath + '/svg/production/' + fileName,
+	    typePath: filePath
+	  };
+	});
+	
+	_.each(materialDesignIcons, function(iconProps) {
+	  gulp.src(iconProps.fullPath)
+	  .pipe(gulp.dest(paths.build + '/resources/icons/' + iconProps.typePath));
+	});
+	
 });
 
 

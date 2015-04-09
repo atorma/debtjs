@@ -11,11 +11,18 @@
 
 <md-toolbar>
   <div class="md-toolbar-tools">
+    <md-button class="md-icon-button" aria-label="Menu">
+      <md-icon md-svg-icon="navigation:menu"></md-icon>
+    </md-button>
     <h2>
       <span ng-if="$state.includes('balanceSheet')">Home</span>
       <span ng-if="$state.includes('expenses')">Expenses</span>
       <span ng-if="$state.includes('persons')">People</span>
     </h2>
+    <span flex></span>
+    <md-button class="md-icon-button" aria-label="More">
+      <md-icon md-svg-icon="navigation:more_vert"></md-icon>
+    </md-button>
   </div>
 </md-toolbar>
 

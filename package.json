@@ -20,6 +20,7 @@
     "angular-route": "^1.3.14",
     "angular-ui-router": "^0.2.13",
     "lodash": "^3.6.0",
+    "material-design-icons": "^1.0.1",
     "simple-decimal-money": "^0.2.3"
   },
   "devDependencies": {
