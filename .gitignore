@@ -1,6 +1,7 @@
 # application
 build/
 node_modules/
+bower_components/
 
 # Eclipse project
 .settings
