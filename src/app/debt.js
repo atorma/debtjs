@@ -29,23 +29,18 @@ function configureLocalStorage(localStorageServiceProvider) {
 
 function configureIcons($mdIconProvider) {
   
-  var iconPaths = ['action/ic_delete_24px.svg', 'navigation/ic_menu_24px.svg', 'navigation/ic_more_vert_24px.svg', 'navigation/ic_chevron_right_24px.svg'];
+  var spriteNames = ['action', 'alert', 'content', 'navigation'];
   
-  var iconProps = _.map(iconPaths, function(path) {
-    
-    var slashIndex = path.lastIndexOf('/');
-    var filePath = path.substring(0, slashIndex + 1);
-    var fileName = path.substring(slashIndex + 1);
-    
+  var spriteProps = _.map(spriteNames, function(name) {
+    var fileName = 'svg-sprite-' + name + '.svg';
     return {
-      iconPath: "resources/icons/" + filePath + fileName,
-      iconName: (filePath + fileName).replace("/", ":").replace(".svg", "").replace("ic_", "").replace("_24px", "")
+      filePath: 'resources/icons/' + fileName,
+      spriteName: name
     };
-    
   });
-  
-  _.each(iconProps, function(prop) {
-    $mdIconProvider.icon(prop.iconName, prop.iconPath);
+
+  _.each(spriteProps, function(prop) {
+    $mdIconProvider.iconSet(prop.spriteName, prop.filePath);
   });
 
 }

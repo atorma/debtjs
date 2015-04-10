@@ -14,11 +14,13 @@ var paths = {
 	html: ['src/app/**/*.html', '!src/app/**/*.spec.html'],
 	resources: ['src/resources/**'],
 	libResources: ['node_modules/angular-material/angular-material.css', 'src/lib/**/*.*', '!src/lib/**/*.js'],
-	materialDesignIcons: ['action/ic_delete_24px.svg', 'navigation/ic_menu_24px.svg', 'navigation/ic_more_vert_24px.svg', 'navigation/ic_chevron_right_24px.svg'],
 	tests: 'src/app/test-index.js',
 	testHtml: ['src/app/jasmine.spec.html'],
 	build: 'build'
 };
+
+var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
+
 
 var appBundler = watchify(browserify('./'+paths.main, watchify.args));
 appBundler.on('update', bundleApp);
@@ -57,19 +59,14 @@ gulp.task('lib-resources', function() {
 	gulp.src(paths.libResources)
 	.pipe(gulp.dest(paths.build + '/resources'));
 	
-	var materialDesignIcons = _.map(paths.materialDesignIcons, function(path) {
-	  var slashIndex = path.lastIndexOf('/');
-	  var filePath = path.substring(0, slashIndex);
-	  var fileName = path.substring(slashIndex + 1);
-	  return {
-	    fullPath: 'node_modules/material-design-icons/' + filePath + '/svg/production/' + fileName,
-	    typePath: filePath
-	  };
+	var materialDesignSpritePaths = _.map(materialDesignSprites, function(name) {
+	  var fileName = 'svg-sprite-' + name + '.svg';
+	  return 'node_modules/material-design-icons/sprites/svg-sprite/' + fileName;
 	});
 	
-	_.each(materialDesignIcons, function(iconProps) {
-	  gulp.src(iconProps.fullPath)
-	  .pipe(gulp.dest(paths.build + '/resources/icons/' + iconProps.typePath));
+	_.each(materialDesignSpritePaths, function(path) {
+	  gulp.src(path)
+	  .pipe(gulp.dest(paths.build + '/resources/icons/'));
 	});
 	
 });
