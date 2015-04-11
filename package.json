@@ -1,7 +1,7 @@
 {
   "name": "debtjs",
   "version": "0.0.1",
-  "description": "",
+  "description": "Debt app",
   "main": "",
   "directories": {},
   "browser": {},
@@ -27,7 +27,7 @@
     "angular-mocks": "^1.3.14",
     "browserify": "^9.0.3",
     "browserify-shim": "^3.8.3",
-    "del": "^1.1.1",
+    "debowerify": "^1.2.0",
     "gulp": "^3.8.11",
     "gulp-sourcemaps": "^1.5.0",
     "gulp-util": "^3.0.4",

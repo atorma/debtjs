@@ -7,10 +7,12 @@ require("angular-aria");
 require("angular-route");
 require("angular-ui-router");
 require("angular-local-storage");
+//require("ng-mfb");
+
 var _ = require("lodash");
 
 angular
-  .module("debtApp", ["ngMaterial", "ui.router", "LocalStorageModule"])
+  .module("debtApp", ["ngMaterial", "ui.router", "LocalStorageModule", "ng-mfb"])
     .config(configureLocalStorage)
     .config(configureIcons)
     .run(makeStateAvailableInScope)

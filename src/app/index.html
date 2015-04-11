@@ -5,7 +5,9 @@
   <title>Debt.js</title>
   <link rel="stylesheet" type="text/css" href="resources/angular-material.css" />
   <link rel="stylesheet" type="text/css" href="resources/debt.css" />
+  <link rel="stylesheet" type="text/css" href="resources/mfb.css" />
   <script src="debt.js"></script>
+  <script src="mfb-directive.js"></script>
 </head>
 
 <body ng-app="debtApp" layout="column" ng-controller="BalanceSheetSaveCtrl">
@@ -21,7 +23,7 @@
       <span ng-if="$state.includes('persons')">People</span>
     </h2>
     <span flex></span>
-    <md-button class="md-icon-button" aria-label="More">
+    <md-button aria-label="More">
       <md-icon md-svg-icon="navigation:ic_more_vert_24px"></md-icon>
     </md-button>
   </div>
@@ -52,6 +54,13 @@
   <md-content flex id="content">
     <div ui-view="main"></div>
   </md-content>
+  
+  <nav mfb-menu position="br" effect="zoomin" label="hover here"
+    template-url="ng-mfb-menu-md.tpl.html"
+    resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px"
+    toggling-method="click">
+    <mfb-button template-url="ng-mfb-button-md.tpl.html" icon="action:ic_face_24px" label="add person"></mfb-button>
+  </nav>
 
 </div>
 	

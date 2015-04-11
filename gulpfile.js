@@ -5,15 +5,16 @@ var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var watchify = require('watchify');
 var browserify = require('browserify');
+var debowerify = require('debowerify');
 var karma = require('karma').server;
-var del = require('del');
 var _ = require('lodash');
 
 var paths = {
 	main: 'src/app/debt.js',
 	html: ['src/app/**/*.html', '!src/app/**/*.spec.html'],
 	resources: ['src/resources/**'],
-	libResources: ['node_modules/angular-material/angular-material.css', 'src/lib/**/*.*', '!src/lib/**/*.js'],
+	lib: ['bower_components/ng-mfb/src/mfb-directive.js'],
+	libResources: ['node_modules/angular-material/angular-material.css', 'bower_components/ng-mfb/mfb/src/mfb.css', 'src/lib/**/*.*', '!src/lib/**/*.js'],
 	tests: 'src/app/test-index.js',
 	testHtml: ['src/app/jasmine.spec.html'],
 	build: 'build'
@@ -23,17 +24,18 @@ var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
 
 
 var appBundler = watchify(browserify('./'+paths.main, watchify.args));
+//appBundler.transform(debowerify);
 appBundler.on('update', bundleApp);
 appBundler.on('log', gutil.log);
 
 
 var testBundler = watchify(browserify([paths.tests], watchify.args));
+//testBundler.transform(debowerify);
 testBundler.on('update', bundleTests); 
 testBundler.on('log', gutil.log); 
 
 
-// Builds the application
-gulp.task('build', ['js', 'html', 'watch:html', 'resources', 'watch:resources', 'lib-resources']);
+gulp.task('build', ['js', 'html', 'watch:html', 'resources', 'watch:resources', 'lib', 'lib-resources']);
 
 gulp.task('js', bundleApp);
 
@@ -55,6 +57,11 @@ gulp.task('watch:resources', function() {
 	gulp.watch(paths.resources, ['resources']);
 });
 
+gulp.task('lib', function() {
+  gulp.src(paths.lib)
+  .pipe(gulp.dest(paths.build));
+});
+
 gulp.task('lib-resources', function() {
 	gulp.src(paths.libResources)
 	.pipe(gulp.dest(paths.build + '/resources'));
@@ -69,12 +76,6 @@ gulp.task('lib-resources', function() {
 	  .pipe(gulp.dest(paths.build + '/resources/icons/'));
 	});
 	
-});
-
-
-
-gulp.task('clean', function(cb) {
-	del([paths.build], cb);
 });
 
 
