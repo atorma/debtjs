@@ -23,7 +23,7 @@ function config($stateProvider) {
     .state("persons.detail", {
       url: "/:id",
       views: {
-        "main": {
+        "main@": {
           templateUrl: "persons/person-detail.html",
           controller: "PersonDetailCtrl"
         }

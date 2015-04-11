@@ -51,16 +51,20 @@
     </md-list>
   </md-sidenav>
   
-  <md-content flex id="content">
+  <md-content flex>
     <div ui-view="main"></div>
   </md-content>
   
-  <nav mfb-menu position="br" effect="zoomin" label="hover here"
-    template-url="ng-mfb-menu-md.tpl.html"
-    resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px"
-    toggling-method="click">
-    <mfb-button template-url="ng-mfb-button-md.tpl.html" icon="action:ic_face_24px" label="add person"></mfb-button>
-  </nav>
+  <div ng-controller="FloatingActionCtrl">
+    <mfb-menu
+      position="br" effect="zoomin"
+      template-url="ng-mfb-menu-md.tpl.html" 
+      resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px" 
+      toggling-method="click">
+      <mfb-button ng-click="createExpense()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_shopping_basket_24px" label="Add expense"></mfb-button>
+      <mfb-button ng-click="createPerson()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_face_24px" label="Add person"></mfb-button>
+    </mfb-menu>
+  </div>
 
 </div>
 	

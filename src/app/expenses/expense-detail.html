@@ -28,16 +28,6 @@
   </section>
   
   <section>
-    <md-subheader>
-      <div layout="row">
-        <h3>Participants</h3>
-        <span flex></span>
-        <md-button ng-click="setAllParticipations(!isEveryoneParticipant)">
-          <span ng-if="!isEveryoneParticipant">Select all</span>
-          <span ng-if="isEveryoneParticipant">Deselect all</span>
-        </md-button>
-      </div>
-    </md-subheader>
     <md-list>
       <md-item ng-repeat="person in balanceSheet.persons">
         <md-item-content layout="row">
@@ -70,14 +60,13 @@
   </section>
   
   <section>
-    <md-subheader><h3>Debts</h3></md-subheader>
     <div layout="column" layout-margin-sides>
       <div flex ng-if="debtsByDebtor.length > 0">
-        <p>To settle this expense alone</p>
+        <p>To settle just this expense</p>
         <md-list>
           <md-item ng-repeat="d in debtsByDebtor">
             <md-item-content layout="column" layout-align="space-between start">
-              <div flex>{{d.debtor.name}}</div>
+              <div flex>{{d.debtor.name}} should pay</div>
               <md-list flex style="padding-left: 16px">
                 <md-item ng-repeat="c in d.debts">
                   <md-item-content>

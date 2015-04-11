@@ -4,9 +4,7 @@ require("angular").module("debtApp")
 	.controller("PersonListCtrl", PersonListCtrl);
 
 function PersonListCtrl($scope, $state, balanceSheet) {
-	
-	$scope.createNew = createNew;
-	
+		
 	init();
 	
 	/////////////////////////////
@@ -15,7 +13,4 @@ function PersonListCtrl($scope, $state, balanceSheet) {
 		$scope.persons = balanceSheet.persons;
 	}
 	
-	function createNew() {
-	  balanceSheet.createPerson();
-	}
 }
