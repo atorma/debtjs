@@ -1,25 +1,13 @@
-<md-content>
-
-  <section>
-    <md-subheader class="md-primary">
-      <div layout="row">
-        <h2 flex>
-          <md-input-container class="no-margin, no-padding">
-            <input type="text" ng-model="balanceSheet.name" required/>
-          </md-input-container> 
-        </h2>
-      </div>
-    </md-subheader>
-  </section>
-  
-  <section>
-    <div layout="column" layout-margin-sides>
-      <div flex ng-if="debtsByDebtor.length > 0">
-        <p>All unsettled expenses are settled by</p>
+<md-subheader class="md-primary">Debts</md-subheader>
+<md-card>
+  <md-card-content>
+    <div layout="column">
+      <div ng-if="debtsByDebtor.length > 0">
+        <p>All expenses are settled when</p>
         <md-list>
           <md-item ng-repeat="d in debtsByDebtor">
             <md-item-content layout="column" layout-align="space-between start">
-              <div flex>{{d.debtor.name}} should pay</div>
+              <div flex>{{d.debtor.name}} pays</div>
               <md-list flex style="padding-left: 16px">
                 <md-item ng-repeat="c in d.debts">
                   <md-item-content>
@@ -31,9 +19,50 @@
           </md-item>
         </md-list>
       </div>
-      <div flex ng-if="debtsByDebtor.length === 0">No debts!</div>
-      <div flex ng-if="!balanceSheet.isBalanced()">Cannot compute debts. There are unbalanced expenses.</div>
+      <div ng-if="debtsByDebtor.length === 0">All expenses are settled up!</div>
+      <div ng-if="!balanceSheet.isBalanced()">Cannot compute debts. There are unbalanced expenses.</div>
     </div>
-  </section>
+  </md-card-content>
+</md-card>
 
-</md-content>
+<md-subheader class="md-primary">Expenses</md-subheader>
+<md-card>
+  <md-list class="menu">
+    <md-item ng-repeat="expense in balanceSheet.expenses">
+      <md-item-content>
+        <div class="md-tile-content" layout="column">
+          <div layout="row" layout-align="space-between center">
+            <md-button ng-href="#/expenses/{{expense.id}}">{{expense.name}}</md-button>
+            <div>{{expense.getCost() | currency:""}}</div>
+          </div>
+          <div flex ng-if="!expense.isBalanced()" style="color: red;">Costs and shares unbalanced</div>
+        </div>
+      </md-item-content>
+      <md-divider ng-if="!$last"></md-divider>
+    </md-item>
+    <md-item ng-if="balanceSheet.expenses.length == 0">
+      <md-item-content>
+        <div class="md-tile-content">
+          No expenses yet. Use the <md-icon md-svg-icon="content:ic_add_24px"></md-icon> button to add one.
+         </div>
+      </md-item-content>
+    </md-item>
+  </md-list>
+</md-card>
+
+<md-subheader class="md-primary">People</md-subheader>
+<md-card>
+  <md-list>
+    <md-item ng-repeat="person in balanceSheet.persons">
+      <md-item-content>
+        <div class="md-tile-content" layout="column">
+          <div layout="row" layout-align="space-between center">
+            <md-button ng-href="#/persons/{{person.id}}">{{person.name}}</md-button>
+            <div>Balance</div>
+          </div>
+        </div>
+      </md-item-content>
+      <md-divider ng-if="!$last"></md-divider>
+    </md-item>
+  </md-list>
+</md-card>
