@@ -197,7 +197,7 @@ describe("ExpenseDetailCtrl", function() {
     $scope.$digest();
     
     expect(balanceSheet.removeExpense).toHaveBeenCalledWith(expense);
-    expect($state.go).toHaveBeenCalledWith("expenses");
+    expect($state.go).toHaveBeenCalledWith("balanceSheet");
   });
   
   

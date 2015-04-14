@@ -19,7 +19,8 @@
           </md-item>
         </md-list>
       </div>
-      <div ng-if="debtsByDebtor.length === 0">All expenses are settled up!</div>
+      <div ng-if="balanceSheet.persons.length == 0 || balanceSheet.expenses.length == 0">Add some people and expenses first. Debts settling up all the expenses will appear here.</div>
+      <div ng-if="debtsByDebtor.length == 0 && balanceSheet.persons.length > 0 && balanceSheet.expenses.length > 0">All expenses are settled up!</div>
       <div ng-if="!balanceSheet.isBalanced()">Cannot compute debts. There are unbalanced expenses.</div>
     </div>
   </md-card-content>
@@ -27,7 +28,7 @@
 
 <md-subheader class="md-primary">Expenses</md-subheader>
 <md-card>
-  <md-list class="menu">
+  <md-list>
     <md-item ng-repeat="expense in balanceSheet.expenses">
       <md-item-content>
         <div class="md-tile-content" layout="column">
@@ -43,7 +44,7 @@
     <md-item ng-if="balanceSheet.expenses.length == 0">
       <md-item-content>
         <div class="md-tile-content">
-          No expenses yet. Use the <md-icon md-svg-icon="content:ic_add_24px"></md-icon> button to add one.
+          No expenses.
          </div>
       </md-item-content>
     </md-item>
@@ -63,6 +64,13 @@
         </div>
       </md-item-content>
       <md-divider ng-if="!$last"></md-divider>
+    </md-item>
+    <md-item ng-if="balanceSheet.persons.length == 0">
+      <md-item-content>
+        <div class="md-tile-content">
+          No people.
+         </div>
+      </md-item-content>
     </md-item>
   </md-list>
 </md-card>

@@ -6,26 +6,13 @@ require("angular").module("debtApp")
 function config($stateProvider) {
 
   $stateProvider
-    .state("persons", {
-      url: "/persons",
-      views: {
-        "main": {
-          templateUrl: "persons/person-list.html",
-          controller: "PersonListCtrl",
-        }
-      },
+    .state("person", {
+      url: "/persons/:id",
+      templateUrl: "persons/person-detail.html",
+      controller: "PersonDetailCtrl",
       resolve: {
         balanceSheet: function(balanceSheetService) {
           return balanceSheetService.balanceSheet;
-        }
-      }
-    })
-    .state("persons.detail", {
-      url: "/:id",
-      views: {
-        "main@": {
-          templateUrl: "persons/person-detail.html",
-          controller: "PersonDetailCtrl"
         }
       }
     })

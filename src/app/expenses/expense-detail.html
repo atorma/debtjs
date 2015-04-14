@@ -7,7 +7,9 @@
         </md-input-container> 
       </h2>
       <div flex="10"></div>
-      <md-button ng-click="removeExpense()">Delete</md-button>
+      <md-button ng-click="removeExpense()" aria-label="Delete expense">
+        <md-icon md-svg-icon="action:ic_delete_24px"/>
+      </md-button>
     </div>
   </md-subheader>
   <div layout="column" layout-margin-sides>
@@ -24,6 +26,8 @@
     </div>
   </div>
 </section>
+
+<md-divider/>
 
 <section>
   <md-list>
@@ -57,8 +61,10 @@
   </md-list>
 </section>
 
+<md-divider/>
+
 <section>
-  <div layout="column" layout-margin-sides>
+  <div layout="column" layout-margin>
     <div flex ng-if="debtsByDebtor.length > 0">
       <p>To settle just this expense</p>
       <md-list>

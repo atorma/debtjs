@@ -8,12 +8,8 @@ function config($stateProvider) {
   $stateProvider
     .state("balanceSheet", {
       url: "/",
-      views: {
-        "main": {
-          templateUrl : "balance-sheet/balance-sheet.html",
-          controller : "BalanceSheetCtrl"
-        }
-      },
+      templateUrl : "balance-sheet/balance-sheet.html",
+      controller : "BalanceSheetCtrl",
       resolve: {
         balanceSheet : function(balanceSheetService) {
           return balanceSheetService.balanceSheet;
