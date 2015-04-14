@@ -2,9 +2,10 @@ module.exports = function(config) {
 	config.set({
 		basePath : '',
 		frameworks : [ 'browserify', 'jasmine' ],
-		files : [ {
-			pattern : 'src/app/**/*.spec.js'
-		} ],
+		files : [
+		         {pattern: 'src/app/**/*.spec.js'},
+		         {pattern: 'bower_components/ng-mfb/src/mfb-directive.js'}
+		         ],
 		exclude : [],
 		preprocessors : {
 			'src/app/**/*.spec.js' : [ 'browserify' ]
