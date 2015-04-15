@@ -28,15 +28,17 @@
 
 <md-subheader class="md-primary">Expenses</md-subheader>
 <md-card>
-  <md-list>
+  <md-list class="menu">
     <md-item ng-repeat="expense in balanceSheet.expenses">
       <md-item-content>
         <div class="md-tile-content" layout="column">
-          <div layout="row" layout-align="space-between center">
-            <md-button ng-href="#/expenses/{{expense.id}}">{{expense.name}}</md-button>
-            <div>{{expense.getCost() | currency:""}}</div>
-          </div>
-          <div flex ng-if="!expense.isBalanced()" style="color: red;">Costs and shares unbalanced</div>
+          <a href="#/expenses/{{expense.id}}" layout="row" layout-align="start center">
+            <span>{{expense.name}}</span>
+            <span flex></div>
+            <span>{{expense.getCost() | currency:""}}</span>
+            <span class="chevron"><md-icon md-svg-icon="navigation:ic_chevron_right_24px" /></span>
+          </a>
+          <div ng-if="!expense.isBalanced()" style="color: red;">Costs and shares unbalanced</div>
         </div>
       </md-item-content>
       <md-divider ng-if="!$last"></md-divider>
@@ -53,7 +55,7 @@
 
 <md-subheader class="md-primary">People</md-subheader>
 <md-card>
-  <md-list>
+  <md-list class="menu">
     <md-item ng-repeat="person in balanceSheet.persons">
       <md-item-content>
         <div class="md-tile-content" layout="column">

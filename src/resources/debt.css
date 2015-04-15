@@ -68,6 +68,11 @@
   width: 100%;
 }
 
+.menu a, .menu a:visited {
+  text-decoration: none;
+  color: inherit;
+}
+
 .menu .selected {
   background-color: #f6f6f6;
 }
@@ -75,4 +80,9 @@
 
 md-content > section {
   margin-bottom: 16px;
+}
+
+.chevron {
+  width: 48px;
+  text-align: center;
 }
