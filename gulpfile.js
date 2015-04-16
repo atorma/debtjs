@@ -14,7 +14,7 @@ var paths = {
 	html: ['src/app/**/*.html', '!src/app/**/*.spec.html'],
 	resources: ['src/resources/**'],
 	lib: ['bower_components/ng-mfb/src/mfb-directive.js'],
-	libResources: ['node_modules/angular-material/angular-material.css', 'bower_components/ng-mfb/mfb/src/mfb.css', 'src/lib/**/*.*', '!src/lib/**/*.js'],
+	libResources: ['node_modules/angular-material-builds/angular-material.css', 'bower_components/ng-mfb/mfb/src/mfb.css', 'src/lib/**/*.*', '!src/lib/**/*.js'],
 	tests: 'src/app/test-index.js',
 	testHtml: ['src/app/jasmine.spec.html'],
 	build: 'build'

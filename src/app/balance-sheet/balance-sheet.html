@@ -29,27 +29,23 @@
 <md-subheader class="md-primary">Expenses</md-subheader>
 <md-card>
   <md-list class="menu">
-    <md-item ng-repeat="expense in balanceSheet.expenses">
-      <md-item-content>
-        <div class="md-tile-content" layout="column">
-          <a href="#/expenses/{{expense.id}}" layout="row" layout-align="start center">
-            <span>{{expense.name}}</span>
-            <span flex></div>
-            <span>{{expense.getCost() | currency:""}}</span>
-            <span class="chevron"><md-icon md-svg-icon="navigation:ic_chevron_right_24px" /></span>
-          </a>
-          <div ng-if="!expense.isBalanced()" style="color: red;">Costs and shares unbalanced</div>
-        </div>
-      </md-item-content>
+    <md-list-item class="md-2-line" ng-repeat="expense in balanceSheet.expenses">
+      <div class="md-list-item-text" layout="column">
+        <a href="#/expenses/{{expense.id}}" layout="row" layout-align="start center">
+          <span>{{expense.name}}</span>
+          <span flex></span>
+          <span>{{expense.getCost() | currency:""}}</span>
+          <span class="chevron"><md-icon md-svg-icon="navigation:ic_chevron_right_24px" /></span>
+        </a>
+        <div ng-if="!expense.isBalanced()" style="color: red;">Costs and shares unbalanced</div>
+      </div>
       <md-divider ng-if="!$last"></md-divider>
-    </md-item>
-    <md-item ng-if="balanceSheet.expenses.length == 0">
-      <md-item-content>
-        <div class="md-tile-content">
+    </md-list-item>
+    <md-list-item ng-if="balanceSheet.expenses.length == 0">
+      <div class="md-list-item-text">
           No expenses.
-         </div>
-      </md-item-content>
-    </md-item>
+      </div>
+    </md-list-item>
   </md-list>
 </md-card>
 

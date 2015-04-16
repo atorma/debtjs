@@ -46,12 +46,6 @@
   margin: 0;
 }
 
-.md-button[href] {
-  text-align: left;
-  text-transform: none;
-}
-
-
 .menu .md-button {
   border-radius: 0;
   color: inherit;
@@ -84,5 +78,5 @@ md-content > section {
 
 .chevron {
   width: 48px;
-  text-align: center;
+  text-align: right;
 }

@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
   <title>Debt.js</title>
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic"/>
   <link rel="stylesheet" type="text/css" href="resources/angular-material.css" />
   <link rel="stylesheet" type="text/css" href="resources/debt.css" />
   <link rel="stylesheet" type="text/css" href="resources/mfb.css" />
+  
   <script src="debt.js"></script>
   <script src="mfb-directive.js"></script>
 </head>
@@ -14,7 +19,7 @@
 
 <md-toolbar ng-controller="ToolbarCtrl">
   <div class="md-toolbar-tools">
-    <md-button href="#/" aria-label="Home" style="margin-right: 16px">
+    <md-button ng-href="#/" class="md-icon-button" aria-label="Home">
       <md-icon md-svg-icon="action:ic_home_24px"></md-icon>
     </md-button>
     <h2>
@@ -23,7 +28,7 @@
       <span ng-if="$state.includes('person')">Person</span>
     </h2>
     <span flex></span>
-    <md-button aria-label="More">
+    <md-button class="md-icon-button" aria-label="More">
       <md-icon md-svg-icon="navigation:ic_more_vert_24px"></md-icon>
     </md-button>
   </div>
@@ -31,36 +36,15 @@
 
 <div flex layout="row">
 
-  <md-sidenav class="md-whiteframe-z2 md-sidenav-left" md-component-id="main-menu">
-    <md-list class="menu">
-      <md-item ng-class="{selected: $state.includes('balanceSheet')}">
-        <md-item-content>
-          <md-button flex="100" href="#/">Home</md-button>
-        </md-item-content>
-      </md-item>
-      <md-item ng-class="{selected: $state.includes('expenses')}">
-        <md-item-content>
-          <md-button flex="100" href="#/expenses">Expenses</md-button>
-        </md-item-content>
-      </md-item>
-    	<md-item ng-class="{selected: $state.includes('persons')}">
-        <md-item-content>
-    		<md-button flex="100" href="#/persons">People</md-button>
-        </md-item-content>
-    	</md-item>
-    </md-list>
-  </md-sidenav>
-  
   <md-content flex>
     <div ui-view></div>
   </md-content>
   
   <div ng-controller="FloatingActionCtrl">
     <mfb-menu
-      position="br" effect="zoomin"
+      position="br" effect="zoomin" toggling-method="click"
       template-url="ng-mfb-menu-md.tpl.html" 
-      resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px" 
-      toggling-method="click">
+      resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px">
       <mfb-button ng-click="createExpense()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_shopping_basket_24px" label="Add expense"></mfb-button>
       <mfb-button ng-click="createPerson()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_face_24px" label="Add person"></mfb-button>
     </mfb-menu>
