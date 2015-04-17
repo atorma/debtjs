@@ -3,11 +3,10 @@
   <md-card-content>
     <div layout="column">
       <div ng-if="debtsByDebtor.length > 0">
-        <p>All expenses are settled when</p>
         <md-list>
           <md-item ng-repeat="d in debtsByDebtor">
             <md-item-content layout="column" layout-align="space-between start">
-              <div flex>{{d.debtor.name}} pays</div>
+              <div flex>{{d.debtor.name}} owes</div>
               <md-list flex style="padding-left: 16px">
                 <md-item ng-repeat="c in d.debts">
                   <md-item-content>

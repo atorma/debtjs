@@ -5,7 +5,6 @@
         <input type="text" ng-model="expense.name" required/>
       </md-input-container> 
     </h2>
-    <div flex="10"></div>
     <md-button class="md-icon-button md-warn" ng-click="removeExpense()" aria-label="Delete expense">
       <md-icon md-svg-icon="action:ic_delete_24px"/>
     </md-button>
@@ -29,33 +28,52 @@
 
 <section>
   <md-list>
+    <!-- Inputs and the new md-list-item do not seem work. Animation stops etc. Sticking to md-item. -->
     <md-item ng-repeat="person in balanceSheet.persons">
-      <md-item-content layout="row">
-        <form novalidate flex layout="row" layout-align="start center" layout-margin-sides>
-          <md-checkbox flex ng-model="isParticipant[person.id]" ng-change="setParticipation(person, isParticipant[person.id])">{{person.name}}</md-checkbox>
-          <md-input-container flex="25">
+    
+      <form novalidate flex layout-margin-sides
+        layout="row" layout-align="start center"
+        layout-sm="column" layout-align-sm="center start" >
+        
+        <md-checkbox flex ng-model="isParticipant[person.id]" ng-change="setParticipation(person, isParticipant[person.id])">{{person.name}}</md-checkbox>
+        <div flex="50" layout="row">
+          <md-input-container flex>
             <label>Paid</label>
             <input type="number" ng-required="isParticipant[person.id]" pattern="(0|[1-9][0-9]*)([,|\.][0-9]{0,2})?"
               ng-model="balanceSheet.getParticipation({person: person, expense: expense}).paid" 
               ng-change="refresh()" 
               ng-disabled="!isParticipant[person.id]" />
           </md-input-container>
-          <md-input-container flex="25">
+          <md-input-container flex>
             <label>Share</label>
             <input type="number" ng-required="isParticipant[person.id]" 
               ng-model="balanceSheet.getParticipation({person: person, expense: expense}).share" 
               ng-disabled="!isParticipant[person.id] || expense.sharing != 'custom'" />
           </md-input-container>
-        </form>
-      </md-item-content>
+        </div>
+        
+      </form>
+      
     </md-item>
+    
     <md-item ng-if="!expense.isBalanced()">
-      <md-item-content layout="row" layout-align="start center" layout-margin-sides>
-        <div flex style="color: red;">Costs and shares unbalanced</div>
-        <div flex="25">{{expense.getCost()}}</div>
-        <div flex="25">{{expense.getSumOfShares()}}</div>
+    
+      <div flex layout-margin-sides style="color: red;"
+        layout="row" layout-align="start center"
+        layout-sm="column" layout-align-sm="center start">
+        
+        <div flex>
+          <md-icon class="md-warn" md-svg-icon="alert:ic_error_24px"></md-icon> Unbalanced
+        </div>
+        <div flex="50" layout="row">
+          <div flex="50">{{expense.getCost()}}</div>
+          <div flex="50">{{expense.getSumOfShares()}}</div>
+        </div>
+        
       </div>
+      
     </md-item>
+    
   </md-list>
 </section>
 

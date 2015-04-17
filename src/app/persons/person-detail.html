@@ -1,13 +1,12 @@
-<md-subheader class="md-primary">
-  <div layout="row">
+<section>
+  <div layout="row" layout-margin-sides>
     <h2 flex>
       <md-input-container class="no-margin, no-padding">
         <input type="text" ng-model="person.name" required/>
       </md-input-container> 
     </h2>
-    <div flex="10"></div>
-    <md-button ng-click="removePerson()" aria-label="Delete person">
+    <md-button class="md-icon-button md-warn" ng-click="removePerson()" aria-label="Delete person">
       <md-icon md-svg-icon="action:ic_delete_24px"/>
     </md-button>
   </div>
-</md-subheader>
+</section>
