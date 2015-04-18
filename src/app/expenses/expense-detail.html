@@ -1,5 +1,7 @@
 <section>
+
   <div layout="row" layout-margin-sides>
+  
     <h2 flex>
       <md-input-container class="no-margin, no-padding">
         <input type="text" ng-model="expense.name" required/>
@@ -9,22 +11,26 @@
       <md-icon md-svg-icon="action:ic_delete_24px"/>
     </md-button>
   </div>
-  <div layout="column" layout-margin-sides>
-    <div flex layout="row" layout-align="start center">
-      <div flex="15">Cost</div>
-      <div flex>{{expense.getCost() | currency:""}}</div>
+  
+  <div layout="column" >
+  
+    <div layout="row" layout-align="start center" layout-margin-sides>
+      <div flex="20">Cost</div>
+      <div>{{cost | currency:""}}</div>
     </div>
-    <div flex layout="row" layout-align="start center">
-      <div flex="15">Share</div>
+    
+    <div layout="row" layout-align="start center" layout-margin-sides>
+      <div flex="20">Share</div>
       <md-radio-group layout="row" ng-model="expense.sharing" ng-change="refresh()">
         <md-radio-button value="equal" style="margin-left: 0">Equally</md-radio-button>
         <md-radio-button value="custom">Custom</md-radio-button>
       </md-radio-group>
     </div>
+    
   </div>
+  
 </section>
 
-<md-divider/>
 
 <section>
   <md-list>
@@ -32,43 +38,58 @@
     <md-item ng-repeat="person in balanceSheet.persons">
     
       <form novalidate flex layout-margin-sides
-        layout="row" layout-align="start center"
-        layout-sm="column" layout-align-sm="center start" >
+        layout="column" layout-align="center start"
+        layout-gt-sm="row" layout-align-gt-sm="start center">
         
-        <md-checkbox flex ng-model="isParticipant[person.id]" ng-change="setParticipation(person, isParticipant[person.id])">{{person.name}}</md-checkbox>
-        <div flex="50" layout="row">
-          <md-input-container flex>
+        <div flex flex-gt-sm="33">
+          <md-checkbox ng-model="isParticipant[person.id]" ng-change="setParticipation(person, isParticipant[person.id])">{{person.name}}</md-checkbox>
+        </div>
+        
+        <div flex layout="row" >
+          <md-input-container layout-margin-sides>
             <label>Paid</label>
-            <input type="number" ng-required="isParticipant[person.id]" pattern="(0|[1-9][0-9]*)([,|\.][0-9]{0,2})?"
+            <input type="number" style="width: 8em" ng-required="isParticipant[person.id]" pattern="(0|[1-9][0-9]*)([,|\.][0-9]{0,2})?"
               ng-model="balanceSheet.getParticipation({person: person, expense: expense}).paid" 
               ng-change="refresh()" 
               ng-disabled="!isParticipant[person.id]" />
           </md-input-container>
-          <md-input-container flex>
-            <label>Share</label>
-            <input type="number" ng-required="isParticipant[person.id]" 
+          <md-input-container layout-margin-sides>
+            <label>Shared</label>
+            <input type="number" style="width: 8em" ng-required="isParticipant[person.id]" 
               ng-model="balanceSheet.getParticipation({person: person, expense: expense}).share" 
-              ng-disabled="!isParticipant[person.id] || expense.sharing != 'custom'" />
+              ng-disabled="!isParticipant[person.id]"
+              ng-readonly="expense.sharing != 'custom'" />
           </md-input-container>
         </div>
-        
+
+
       </form>
       
     </md-item>
     
-    <md-item ng-if="!expense.isBalanced()">
-    
-      <div flex layout-margin-sides style="color: red;"
-        layout="row" layout-align="start center"
-        layout-sm="column" layout-align-sm="center start">
+    <md-item>
+  
+      <div flex layout-margin-sides 
+        layout="column" layout-align="center start"
+        layout-gt-sm="row" layout-align-gt-sm="start center">
+
+        <div flex flex-gt-sm="33" >
+          <span layout-margin-sides ng-if="!expense.isBalanced()" style="color: red;"><md-icon class="md-warn" md-svg-icon="alert:ic_error_24px"></md-icon> Unbalanced</span>
+          <span layout-margin-sides ng-if="expense.isBalanced()">Total</span>
+        </div>
         
-        <div flex>
-          <md-icon class="md-warn" md-svg-icon="alert:ic_error_24px"></md-icon> Unbalanced
+        <div flex layout="row" >
+          <md-input-container layout-margin-sides>
+            <label>Paid</label>
+            <input type="number" style="width: 8em" ng-model="cost" ng-readonly="true" />
+          </md-input-container>
+          <md-input-container layout-margin-sides>
+            <label>Shared</label>
+            <input type="number" style="width: 8em" ng-model="sumOfShares" ng-readonly="true"/>
+          </md-input-container>
         </div>
-        <div flex="50" layout="row">
-          <div flex="50">{{expense.getCost()}}</div>
-          <div flex="50">{{expense.getSumOfShares()}}</div>
-        </div>
+        
+        <div></div>
         
       </div>
       
@@ -77,7 +98,6 @@
   </md-list>
 </section>
 
-<md-divider/>
 
 <section>
   <div layout="column" layout-margin>

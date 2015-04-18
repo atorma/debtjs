@@ -143,6 +143,23 @@ describe("ExpenseDetailCtrl", function() {
       
       expect($scope.debtsByDebtor).toBe(debtsByDebtor);
     });
+    
+    it("puts expense cost into scope variable", function() {
+      spyOn(expense, "getCost").and.returnValue(120);
+      
+      $scope.refresh();
+      
+      expect($scope.cost).toBe(120);
+    });
+    
+    it("puts expense sum of shares cost into scope variable", function() {
+      spyOn(expense, "getSumOfShares").and.returnValue(120);
+      
+      $scope.refresh();
+      
+      expect($scope.sumOfShares).toBe(120);
+    });
+    
   });
   
   describe("setParticipation", function() {

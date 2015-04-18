@@ -36,6 +36,8 @@ function ExpenseDetailCtrl(balanceSheet, debtService, $scope, $mdDialog, $stateP
     $scope.isParticipant = getParticipationMap();
     $scope.isEveryoneParticipant = isEveryoneParticipant();
     $scope.debtsByDebtor = computeDebts();
+    $scope.cost = $scope.expense.getCost();
+    $scope.sumOfShares = $scope.expense.getSumOfShares();
   }
 
 	function getParticipationMap() {
