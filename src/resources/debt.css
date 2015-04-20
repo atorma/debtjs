@@ -80,3 +80,7 @@ md-content > section {
   width: 48px;
   text-align: right;
 }
+
+.label {
+  color: rgba(0,0,0,0.54);
+}
