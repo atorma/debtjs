@@ -46,21 +46,6 @@
   margin: 0;
 }
 
-.menu .md-button {
-  border-radius: 0;
-  color: inherit;
-  cursor: pointer;
-  display: block;
-  line-height: 40px;
-  margin: 0;
-  max-height: 40px;
-  overflow: hidden;
-  padding: 0 16px;
-  text-align: left;
-  text-decoration: none;
-  white-space: normal;
-  width: 100%;
-}
 
 .menu a, .menu a:visited {
   text-decoration: none;

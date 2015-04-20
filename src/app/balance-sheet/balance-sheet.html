@@ -1,30 +1,3 @@
-<md-subheader class="md-primary">Debts</md-subheader>
-<md-card>
-  <md-card-content>
-    <div layout="column">
-      <div ng-if="debtsByDebtor.length > 0">
-        <md-list>
-          <md-item ng-repeat="d in debtsByDebtor">
-            <md-item-content layout="column" layout-align="space-between start">
-              <div flex>{{d.debtor.name}} owes</div>
-              <md-list flex style="padding-left: 16px">
-                <md-item ng-repeat="c in d.debts">
-                  <md-item-content>
-                    {{c.creditor.name}}: {{c.amount | currency:""}}
-                  </md-item-content>
-                </md-item>
-              </md-list>
-            </md-item-content>
-          </md-item>
-        </md-list>
-      </div>
-      <div ng-if="balanceSheet.persons.length == 0 || balanceSheet.expenses.length == 0">Add some people and expenses first. Debts settling up all the expenses will appear here.</div>
-      <div ng-if="debtsByDebtor.length == 0 && balanceSheet.persons.length > 0 && balanceSheet.expenses.length > 0">All expenses are settled up!</div>
-      <div ng-if="!balanceSheet.isBalanced()">Cannot compute debts. There are unbalanced expenses.</div>
-    </div>
-  </md-card-content>
-</md-card>
-
 <md-subheader class="md-primary">Expenses</md-subheader>
 <md-card>
   <md-list class="menu">
@@ -34,7 +7,6 @@
           <span>{{expense.name}}</span>
           <span flex></span>
           <span>{{expense.getCost() | currency:""}}</span>
-          <span class="chevron"><md-icon md-svg-icon="navigation:ic_chevron_right_24px" /></span>
         </a>
         <div ng-if="!expense.isBalanced()" style="color: red;">Costs and shares unbalanced</div>
       </div>
@@ -51,23 +23,40 @@
 <md-subheader class="md-primary">People</md-subheader>
 <md-card>
   <md-list class="menu">
-    <md-item ng-repeat="person in balanceSheet.persons">
-      <md-item-content>
-        <div class="md-tile-content" layout="column">
-          <div layout="row" layout-align="space-between center">
-            <md-button ng-href="#/persons/{{person.id}}">{{person.name}}</md-button>
-            <div>Balance</div>
-          </div>
-        </div>
-      </md-item-content>
+    <md-list-item class="md-2-line" ng-repeat="person in balanceSheet.persons"">
+      <div class="md-list-item-text" layout="column">
+        <a href="#/persons/{{person.id}}" layout="row" layout-align="start center">
+          <span>{{person.name}}</span>
+          <span flex></span>
+          <span>{{expense.getBalance() | currency:""}}</span>
+        </a>
+      </div>
       <md-divider ng-if="!$last"></md-divider>
-    </md-item>
-    <md-item ng-if="balanceSheet.persons.length == 0">
-      <md-item-content>
-        <div class="md-tile-content">
+    </md-list-item>
+    <md-list-item ng-if="balanceSheet.persons.length == 0">
+      <div class="md-list-item-text">
           No people.
-         </div>
-      </md-item-content>
-    </md-item>
+      </div>
+    </md-list-item>
   </md-list>
+</md-card>
+
+<md-subheader class="md-primary">Debts</md-subheader>
+<md-card>
+  <md-card-content>
+    <div ng-if="debtsByDebtor.length > 0">
+      <div>To settle just this expense</div>
+      <div ng-repeat="d in debtsByDebtor">
+        <p layout="column">
+          <span>{{d.debtor.name}} owes</span>
+          <span ng-repeat="c in d.debts" style="margin-left: 16px;">
+            {{c.creditor.name}}: {{c.amount | currency:""}}
+          </span>
+        </p>
+      </div>
+    </div>
+    <div ng-if="balanceSheet.persons.length == 0 || balanceSheet.expenses.length == 0">Add some people and expenses first. Debts settling up all the expenses will appear here.</div>
+    <div ng-if="debtsByDebtor.length == 0 && balanceSheet.persons.length > 0 && balanceSheet.expenses.length > 0">All expenses are settled up!</div>
+    <div ng-if="!balanceSheet.isBalanced()">Cannot compute debts. There are unbalanced expenses.</div>
+  </md-card-content>
 </md-card>
