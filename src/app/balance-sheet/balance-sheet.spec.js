@@ -13,12 +13,12 @@ describe("Balance sheet", function () {
     sheet = new BalanceSheet();
   });
   
+  
   it("has as an initial name", function() {
     expect(sheet.name).toBe("New sheet");
   });
-  
-  
 
+  
   describe("person", function() {
 
     it("gets distinct id when created", function() {
@@ -339,32 +339,118 @@ describe("Balance sheet", function () {
     expect(sheet.isBalanced()).toBe(false);
   });
 
+  describe("import/export", function() {
     
-  it("can be exported as a data object and recovered (via JSON representation)", function() {
+    beforeEach(function() {
+      sheet.name = "JSON test sheet";
+      var p1 = sheet.createPerson({name: "Anssi"});
+      var p2 = sheet.createPerson({name: "Malla"});
+      var e1 = sheet.createExpense({name: "Food"});
+      var e2 = sheet.createExpense({name: "Stuff"});
+      sheet.createParticipation({person: p1, expense: e1, paid: 15, share: 10});
+      sheet.createParticipation({person: p2, expense: e1, paid: 0, share: 5});
+      sheet.createParticipation({person: p1, expense: e2, paid: 10, share: 0});
+      sheet.createParticipation({person: p2, expense: e2, paid: 0, share: 10});
+    });
     
-    var sheet1 = new BalanceSheet();
-    sheet1.name = "JSON test sheet";
-    var p1 = sheet1.createPerson({name: "Anssi"});
-    var p2 = sheet1.createPerson({name: "Malla"});
-    var e1 = sheet1.createExpense({name: "Food"});
-    var e2 = sheet1.createExpense({name: "Stuff"});
-    sheet1.createParticipation({person: p1, expense: e1, paid: 15, share: 10});
-    sheet1.createParticipation({person: p2, expense: e1, paid: 0, share: 5});
-    sheet1.createParticipation({person: p1, expense: e2, paid: 10, share: 0});
-    sheet1.createParticipation({person: p2, expense: e2, paid: 0, share: 10});
+    it("as data object", function() {
+      var data = sheet.exportData();     
+      var json = JSON.stringify(data);
+      data = JSON.parse(json);
+      var importedSheet = new BalanceSheet(data);
+      
+      expect(importedSheet.name).toEqual(sheet.name);
+      expect(angular.equals(sheet.persons, importedSheet.persons)).toBe(true);
+      expect(angular.equals(sheet.expenses, importedSheet.expenses)).toBe(true);
+      expect(angular.equals(sheet.participations, importedSheet.participations)).toBe(true);
+    });
+      
+    it("fails if input data is invalid", function() {
+      var data = sheet.exportData();     
+      data.participations[0].personId = -666;
+      expect(function() {
+        new BalanceSheet(data);
+      }).toThrow();
+    });
     
-    var data = sheet1.exportData();     
-    var json = JSON.stringify(data);
-    data = JSON.parse(json);
-    var sheet2 = new BalanceSheet(data);
-    
-    expect(sheet2.name).toEqual(sheet1.name);
-    expect(angular.equals(sheet1.persons, sheet2.persons)).toBe(true);
-    expect(angular.equals(sheet1.expenses, sheet2.expenses)).toBe(true);
-    expect(angular.equals(sheet1.participations, sheet2.participations)).toBe(true);
   });
     
+  describe("validates itself", function() {
+  
+    beforeEach(function() {
+      var p1 = sheet.createPerson({name: "Anssi"});
+      var e1 = sheet.createExpense({name: "Food"});
+      sheet.createParticipation({person: p1, expense: e1, paid: 15, share: 10});
+    });
+    
+    it("when valid", function() {
+      expect(sheet.isValid()).toBe(true);        
+    });
+    
+    it("as invalid when a person is missing an id", function() {
+      delete sheet.persons[0].name;
+      expect(sheet.isValid()).toBe(false);        
+    });
+    
+    it("as invalid when a person is missing a name", function() {
+      delete sheet.persons[0].name;
+      expect(sheet.isValid()).toBe(false);        
+    });
+    
+    it("as invalid when an expense is missing an id", function() {
+      delete sheet.expenses[0].id;
+      expect(sheet.isValid()).toBe(false);        
+    });
+    
+    it("as invalid when an expense is missing a name", function() {
+      delete sheet.expenses[0].name;
+      expect(sheet.isValid()).toBe(false);        
+    });
+    
+    it("as invalid when an expense is missing share mode", function() {
+      delete sheet.expenses[0].sharing;
+      expect(sheet.isValid()).toBe(false);        
+      
+    });
+    
+    it("as invalid when an expense has unknown share mode", function() {
+      sheet.expenses[0].sharing = "wtf";
+      expect(sheet.isValid()).toBe(false);        
+    });
+    
+    it("as invalid when a participation person is not found", function() {
+      sheet.participations[0].person = {id: -1235};
+      expect(sheet.isValid()).toBe(false);        
+    });
+    
+    it("as invalid when a participation expense is not found", function() {
+      sheet.participations[0].expense = {id: -1235};
+      expect(sheet.isValid()).toBe(false);        
+    });
+    
+    it("as invalid when a participation does not have a non-negative payment", function() {
+      sheet.participations[0].paid = null;
+      expect(sheet.isValid()).toBe(false);
+      
+      sheet.participations[0].paid = "aargh";
+      expect(sheet.isValid()).toBe(false); 
+      
+      sheet.participations[0].paid = -10;
+      expect(sheet.isValid()).toBe(false);  
+    });
+    
+    it("as invalid when a participation does not have a non-negative share", function() {
+      sheet.participations[0].share = null;
+      expect(sheet.isValid()).toBe(false);
+      
+      sheet.participations[0].share = "aargh";
+      expect(sheet.isValid()).toBe(false); 
+      
+      sheet.participations[0].share = -10;
+      expect(sheet.isValid()).toBe(false);  
+    });
  
+  });
   
 });
 

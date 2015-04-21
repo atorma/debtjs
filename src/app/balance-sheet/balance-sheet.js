@@ -41,6 +41,9 @@ var BalanceSheet = function(data) {
 
 	this.exportData = exportData;
 	
+	this.isValid = isValid;
+	this.throwErrorIfInvalid = throwErrorIfInvalid;
+	
 	/////////////////////////////////////
 	
 	
@@ -323,7 +326,76 @@ var BalanceSheet = function(data) {
 	    createParticipation({person: person, expense: expense, paid: p.paid, share: p.share});
 	  });
 	
+	  throwErrorIfInvalid();
 	};
+	
+	function isValid() {
+	  try {
+	    throwErrorIfInvalid();
+	    return true;
+	  } catch (e) {
+	    return false;
+	  };
+	}
+	
+	function throwErrorIfInvalid() {
+	  
+	  _.each(persons, function(p) {
+	    if (!_.isNumber(p.id)) {
+	      throw "Person has no id"; 
+	    }
+	    if (!_.isString(p.name)) {
+	      throw "Person has no name";
+	    }
+	  });
+	  
+	  _.each(expenses, function(e) {
+	    if (!_.isNumber(e.id)) {
+        throw "Expense has no id"; 
+      }
+      if (!_.isString(e.name)) {
+        throw "Expense has no name";
+      }
+      if (!(e.sharing === "equal" || e.sharing === "custom")) {
+        throw "Expense sharing is not 'equal' or 'custom'";
+      }
+	  });
+	  
+	  var idToEntity = {};
+	  _.each(persons, function(p) {
+	    idToEntity[p.id] = p;
+	  });
+	  _.each(expenses, function(e) {
+      idToEntity[e.id] = e;
+    });
+	  _.each(participations, function(pt) {
+	    if (!pt.person) {
+	      throw "Participation has no person";
+	    }
+	    if (!idToEntity[pt.person.id]) {
+	      throw "Participation person is unknown";
+	    }
+	    if (!pt.expense) {
+        throw "Participation has no expense";
+      }
+      if (!idToEntity[pt.expense.id]) {
+        throw "Participation expense is unknown";
+      }
+      if (!_.isNumber(pt.share)) {
+        throw "Participation share is not a number";
+      }
+      if (pt.share < 0) {
+        throw "Participation share is negative";
+      }
+      if (!_.isNumber(pt.paid)) {
+        throw "Participation paid is not a number";
+      }
+      if (pt.paid < 0) {
+        throw "Participation paid is negative";
+      }
+	  });
+	  
+	}
 
 };
 

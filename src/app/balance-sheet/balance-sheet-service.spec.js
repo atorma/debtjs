@@ -38,28 +38,39 @@ describe("BalanceSheetService", function() {
   beforeEach(angular.mock.inject(function(_balanceSheetService_) {
     balanceSheetService = _balanceSheetService_;
   }));
-
-  it("is initialized with balance sheet data in localStorage when available", function() {
-    var sheet = balanceSheetService.balanceSheet;
-    
-    expect(localStorageService.get).toHaveBeenCalledWith("balanceSheetData");
-    expect(sheet).toBeDefined();
-    expect(sheet.persons.length).toBe(balanceSheetData.persons.length);
-    expect(sheet.expenses.length).toBe(balanceSheetData.expenses.length);
-    expect(sheet.participations.length).toBe(balanceSheetData.participations.length);
-  });
   
-  it("is initialized with a new balance sheet if no data in localStorage", function() {
-    localStorageService.get.and.returnValue(undefined);
-    balanceSheetService.init();
+  describe("is initialized", function() {
     
-    var sheet = balanceSheetService.balanceSheet;
+    it("with balance sheet data in localStorage when available", function() {
+      var sheet = balanceSheetService.balanceSheet;
+      
+      expect(localStorageService.get).toHaveBeenCalledWith("balanceSheetData");
+      expect(sheet).toBeDefined();
+      expect(sheet.persons.length).toBe(balanceSheetData.persons.length);
+      expect(sheet.expenses.length).toBe(balanceSheetData.expenses.length);
+      expect(sheet.participations.length).toBe(balanceSheetData.participations.length);
+    });
     
-    expect(localStorageService.get).toHaveBeenCalledWith("balanceSheetData");
-    expect(sheet).toBeDefined();
-    expect(sheet.persons.length).toBe(0);
-    expect(sheet.expenses.length).toBe(0);
-    expect(sheet.participations.length).toBe(0);
+    it("with a new balance sheet if no data in localStorage", function() {
+      localStorageService.get.and.returnValue(undefined);
+      balanceSheetService.init();
+      
+      var sheet = balanceSheetService.balanceSheet;
+      
+      expect(localStorageService.get).toHaveBeenCalledWith("balanceSheetData");
+      expect(sheet).toBeDefined();
+      expect(sheet.persons.length).toBe(0);
+      expect(sheet.expenses.length).toBe(0);
+      expect(sheet.participations.length).toBe(0);
+    });
+    
+    it("with error thrown if creating sheet from localStorage data fails", function() {
+      balanceSheetService.balanceSheet = undefined;
+      balanceSheetData.participations[0].paid = "aargh";
+      expect(balanceSheetService.init).toThrow();
+      expect(balanceSheetService.balanceSheet).not.toBeDefined();
+    });
+    
   });
   
   it("loads balanceSheet from JSON and saves the result", function() {
@@ -71,10 +82,30 @@ describe("BalanceSheetService", function() {
     expect(localStorageService.set).toHaveBeenCalledWith("balanceSheetData", balanceSheetData);
   });
   
+  it("throws error if imported JSON contains invalid data", function() {
+    balanceSheetService.balanceSheet = undefined;
+    balanceSheetData.participations[0].paid = "aargh";
+    expect(function() {
+      balanceSheetService.loadFromJson(JSON.stringify(balanceSheetData));
+    }).toThrow();
+    expect(balanceSheetService.balanceSheet).not.toBeDefined();
+  });
+  
   it("exports balanceSheet data to JSON", function() {
     var json = balanceSheetService.exportToJson();
     var data = JSON.parse(json);
     expect(data).toEqual(balanceSheetData);
   });
+  
+  describe("save to localStorage", function() {
+    
+    it("validates balance sheet and throws error if invalid", function() {
+      spyOn(balanceSheetService.balanceSheet, "throwErrorIfInvalid").and.throwError("some error");
+      expect(balanceSheetService.save).toThrow();
+      expect(localStorageService.set).not.toHaveBeenCalled();
+    });
+    
+  });
+  
 });
 

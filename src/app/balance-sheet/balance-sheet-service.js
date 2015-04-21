@@ -26,12 +26,13 @@ function balanceSheetService(localStorageService) {
   }
 
   function save() {
+    service.balanceSheet.throwErrorIfInvalid();
     localStorageService.set("balanceSheetData", service.balanceSheet.exportData());
   }
   
   function loadFromJson(json) {
     var data = angular.fromJson(json);
-    service.balanceSheet = new BalanceSheet(data); 
+    service.balanceSheet = new BalanceSheet(data);
     save();
   }
   
