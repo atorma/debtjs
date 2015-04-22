@@ -16,8 +16,7 @@ function BalanceSheetSaveCtrl(balanceSheetService, $scope, $log, $timeout) {
     $scope.$watch(function() {
       if (timeoutPromise === null) {
         timeoutPromise = $timeout(function() {
-          balanceSheetService.save();
-          $log.debug("Balance sheet saved");
+          tryToSave();
           timeoutPromise = null;
         }, 0, false);
       }
@@ -25,5 +24,15 @@ function BalanceSheetSaveCtrl(balanceSheetService, $scope, $log, $timeout) {
     
   };
 
+  function tryToSave() {
+    try {
+      balanceSheetService.save();
+      $scope.errorMessage = undefined;
+      $log.debug("Balance sheet saved");
+    } catch (e) {
+      $scope.errorMessage = "Cannot save: " + e.message;
+      $log.error("Error when saving balance sheet: " + e.message);
+    }
+  }
  
 }

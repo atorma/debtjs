@@ -342,22 +342,22 @@ var BalanceSheet = function(data) {
 	  
 	  _.each(persons, function(p) {
 	    if (!_.isNumber(p.id)) {
-	      throw "Person has no id"; 
+	      throw new Error("Person has no id"); 
 	    }
 	    if (!_.isString(p.name)) {
-	      throw "Person has no name";
+	      throw new Error("Person has no name");
 	    }
 	  });
 	  
 	  _.each(expenses, function(e) {
 	    if (!_.isNumber(e.id)) {
-        throw "Expense has no id"; 
+        throw new Error("Expense has no id"); 
       }
       if (!_.isString(e.name)) {
-        throw "Expense has no name";
+        throw new Error("Expense has no name");
       }
       if (!(e.sharing === "equal" || e.sharing === "custom")) {
-        throw "Expense sharing is not 'equal' or 'custom'";
+        throw new Error("Expense sharing is not 'equal' or 'custom'");
       }
 	  });
 	  
@@ -370,31 +370,35 @@ var BalanceSheet = function(data) {
     });
 	  _.each(participations, function(pt) {
 	    if (!pt.person) {
-	      throw "Participation has no person";
+	      throw new Error("Participation has no person");
 	    }
 	    if (!idToEntity[pt.person.id]) {
-	      throw "Participation person is unknown";
+	      throw new Error("Participation person is unknown");
 	    }
 	    if (!pt.expense) {
-        throw "Participation has no expense";
+        throw new Error("Participation has no expense");
       }
       if (!idToEntity[pt.expense.id]) {
-        throw "Participation expense is unknown";
+        throw new Error("Participation expense is unknown");
       }
       if (!_.isNumber(pt.share)) {
-        throw "Participation share is not a number";
+        throw new Error("Participation share is not a number");
       }
       if (pt.share < 0) {
-        throw "Participation share is negative";
+        throw new Error("Participation share is negative");
       }
       if (!_.isNumber(pt.paid)) {
-        throw "Participation paid is not a number";
+        throw new Error("Participation paid is not a number");
       }
       if (pt.paid < 0) {
-        throw "Participation paid is negative";
+        throw new Error("Participation paid is negative");
       }
 	  });
 	  
+	}
+	
+	function Error(message) {
+	  this.message = message;
 	}
 
 };

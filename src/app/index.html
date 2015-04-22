@@ -1,56 +1,56 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Debt.js</title>
+  <head>
+    <title>Debt.js</title>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
   
-  <meta charset="UTF-8">
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic"/>
+    <link rel="stylesheet" type="text/css" href="resources/angular-material.css" />
+    <link rel="stylesheet" type="text/css" href="resources/debt.css" />
+    <link rel="stylesheet" type="text/css" href="resources/mfb.css" />
+    
+    <script src="debt.js"></script>
+    <script src="mfb-directive.js"></script>
+  </head>
 
-  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic"/>
-  <link rel="stylesheet" type="text/css" href="resources/angular-material.css" />
-  <link rel="stylesheet" type="text/css" href="resources/debt.css" />
-  <link rel="stylesheet" type="text/css" href="resources/mfb.css" />
+  <body ng-app="debtApp" layout="column" ng-controller="BalanceSheetSaveCtrl">
   
-  <script src="debt.js"></script>
-  <script src="mfb-directive.js"></script>
-</head>
-
-<body ng-app="debtApp" layout="column" ng-controller="BalanceSheetSaveCtrl">
-
-<md-toolbar ng-controller="ToolbarCtrl">
-  <div class="md-toolbar-tools">
-    <md-button ng-href="#/" class="md-icon-button md-primary" aria-label="Home">
-      <md-icon md-svg-icon="action:ic_home_24px"></md-icon>
-    </md-button>
-    <span flex></span>
-    <md-button class="md-icon-button" aria-label="More">
-      <md-icon md-svg-icon="navigation:ic_more_vert_24px"></md-icon>
-    </md-button>
-  </div>
-</md-toolbar>
-
-<div flex layout="row">
-
-  <md-content flex layout-padding>
-    <div ui-view></div>
-  </md-content>
-  
-  <div ng-controller="FloatingActionCtrl">
-    <mfb-menu
-      position="br" effect="zoomin" toggling-method="click"
-      template-url="ng-mfb-menu-md.tpl.html" 
-      resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px">
-      <mfb-button ng-click="createExpense()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_shopping_basket_24px" label="Add expense"></mfb-button>
-      <mfb-button ng-click="createPerson()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_face_24px" label="Add person"></mfb-button>
-    </mfb-menu>
-  </div>
-
-</div>
-	
-
-
-
-		
-</body>
+    <md-toolbar ng-controller="ToolbarCtrl">
+      <div class="md-toolbar-tools">
+        <md-button ng-href="#/" class="md-icon-button" aria-label="Home">
+          <md-icon md-svg-icon="action:ic_home_24px"></md-icon>
+        </md-button>
+        <span flex></span>
+        <md-button class="md-icon-button" aria-label="More">
+          <md-icon md-svg-icon="navigation:ic_more_vert_24px"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    
+    <div flex>
+    
+      <md-toolbar ng-if="errorMessage" class="md-warn">
+        <div class="md-toolbar-tools">{{errorMessage}}</div>
+      </md-toolbar>   
+         
+      <md-content flex layout-padding>
+        <div ui-view></div>
+      </md-content>
+      
+      <div ng-controller="FloatingActionCtrl">
+        <mfb-menu
+          position="br" effect="zoomin" toggling-method="click"
+          template-url="ng-mfb-menu-md.tpl.html" 
+          resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px">
+          <mfb-button ng-click="createExpense()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_shopping_basket_24px" label="Add expense"></mfb-button>
+          <mfb-button ng-click="createPerson()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_face_24px" label="Add person"></mfb-button>
+        </mfb-menu>
+      </div>
+    
+    </div>
+  		
+  </body>
 
 </html> 
