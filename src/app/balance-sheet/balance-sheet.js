@@ -30,6 +30,7 @@ var BalanceSheet = function(data) {
 	
 	this.getPerson = getPerson;
 	this.createPerson = createPerson;
+	this.removePerson = removePerson;
 	
 	this.getExpense = getExpense;
 	this.createExpense = createExpense;
@@ -55,9 +56,7 @@ var BalanceSheet = function(data) {
 	
 	
 	function getPerson(id) {
-		return _(persons).find(function(p) {
-		  return p.id == id;
-		});
+		return _(persons).find({id: id});
 	}
 	
 	
@@ -78,10 +77,18 @@ var BalanceSheet = function(data) {
 		return person;
 	}
 	
-	function getExpense(id) {
-	  return _(expenses).find(function(e) {
-      return e.id == id;
+	function removePerson(toRemove) {
+    toRemove = getPerson(toRemove.id);
+    _.remove(persons, function(e) {
+      return e.equals(toRemove);
     });
+    _.forEach(toRemove.getParticipations(), function(p) {
+      removeParticipation(p);
+    });
+  }
+	
+	function getExpense(id) {
+	  return _(expenses).find({id: id});
 	}
 
 	function createExpense(data) {
@@ -150,8 +157,56 @@ var BalanceSheet = function(data) {
 		// Methods
 		
 		this.equals = equals;
+		this.getCost = getCost;
+    this.getSumOfShares = getSumOfShares;
+    this.getBalance = getBalance;
+    this.isBalanced = isBalanced;
+    this.getParticipations = getParticipations;
 		
 		///////////////////////////////////////
+		
+		var _myParticipations = _.chain(participations).filter(function(pt) {
+      return _this.equals(pt.person);
+    });
+    
+    var _cost = _myParticipations
+    .map("paid").reduce(function(cost, paid) {
+      return cost.add(paid);
+    }, new Decimal(0));
+    
+    var _sumOfShares = _myParticipations
+    .map("share").reduce(function(sum, share) {
+      return sum.add(share);
+    }, new Decimal(0));
+    
+    var _balance = _myParticipations
+    .map(function(pt) {
+      return (new Decimal(pt.paid)).subtract(pt.share);
+    })
+    .reduce(function(sum, b) {
+      return sum.add(b);
+    }, new Decimal(0));
+    
+    
+    function getCost() {
+      return _cost.value().toNumber();
+    }
+    
+    function getSumOfShares() {
+      return _sumOfShares.value().toNumber();
+    }
+    
+    function isBalanced() {
+      return _balance.value().toNumber() === 0;
+    }
+    
+    function getBalance() {
+      return _balance.value().toNumber();
+    }
+
+    function getParticipations() {
+      return _myParticipations.value();
+    }
 		
 		function equals(other) {
       return (other instanceof Person) && (other.id === _this.id);
@@ -174,6 +229,7 @@ var BalanceSheet = function(data) {
 		
 		this.getCost = getCost;
 		this.getSumOfShares = getSumOfShares;
+		this.getBalance = getBalance;
 		this.isBalanced = isBalanced;
 		this.getParticipations = getParticipations;
 		this.shareCost = shareCost;
