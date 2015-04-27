@@ -12,6 +12,7 @@ function PersonDetailCtrl(balanceSheet, debtService, $state, $stateParams, $mdDi
   
   vm.init = init;
   vm.refresh = refresh;
+  vm.updateExpense = updateExpense;
   vm.setParticipation = setParticipation;
   vm.removePerson = removePerson;
 	
@@ -48,16 +49,20 @@ function PersonDetailCtrl(balanceSheet, debtService, $state, $stateParams, $mdDi
     return map;
   }
 	
+	function updateExpense(expense) {
+	  if (expense.sharing === 'equal') {
+      expense.shareCost();
+    }
+    refresh();
+	}
+	
 	function setParticipation(expense, isParticipant) {
     if (isParticipant) {
       balanceSheet.createParticipation({expense: expense, person: vm.person});
     } else {
       balanceSheet.removeParticipation({expense: expense, person: vm.person});
     }
-    if (expense.sharing === 'equal') {
-      expense.shareCost();
-    }
-    refresh();
+    updateExpense(expense);
   }
 	
 	function removePerson() {

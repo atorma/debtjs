@@ -117,6 +117,41 @@ describe("PersonDetailCtrl", function() {
     
   });
   
+  describe("updateExpense", function() {
+    
+    var expense;
+    
+    beforeEach(function() {
+      expense = vm.balanceSheet.createExpense();
+      spyOn(expense, "shareCost");
+    });
+        
+    it("shares cost of expense if sharing mode is 'equal'", function() {
+      expense.sharing = 'equal';
+      
+      vm.updateExpense(expense);
+      
+      expect(expense.shareCost).toHaveBeenCalled();
+    });
+    
+    it("shares cost of expense if sharing mode is 'equal'", function() {
+      expense.sharing = 'equal';
+      
+      vm.updateExpense(expense);
+      
+      expect(expense.shareCost).toHaveBeenCalled();
+    });
+    
+    it("does not share cost of expense if sharing mode is 'custom'", function() {
+      expense.sharing = 'custom';
+      
+      vm.updateExpense(expense, true);
+      
+      expect(expense.shareCost).not.toHaveBeenCalled();
+    });
+    
+  });
+  
   describe("setParticipation", function() {
     
     var expense;
@@ -139,6 +174,7 @@ describe("PersonDetailCtrl", function() {
     
     it("shares cost of expense if sharing mode is 'equal'", function() {
       expense.sharing = 'equal';
+      
       vm.setParticipation(expense, true);
       
       expect(expense.shareCost).toHaveBeenCalled();
@@ -146,6 +182,7 @@ describe("PersonDetailCtrl", function() {
     
     it("shares cost of expense if sharing mode is 'equal'", function() {
       expense.sharing = 'equal';
+      
       vm.setParticipation(expense, false);
       
       expect(expense.shareCost).toHaveBeenCalled();
@@ -153,6 +190,7 @@ describe("PersonDetailCtrl", function() {
     
     it("does not share cost of expense if sharing mode is 'custom'", function() {
       expense.sharing = 'custom';
+      
       vm.setParticipation(expense, true);
       
       expect(expense.shareCost).not.toHaveBeenCalled();
