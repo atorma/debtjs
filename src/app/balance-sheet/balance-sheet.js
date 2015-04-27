@@ -56,7 +56,9 @@ var BalanceSheet = function(data) {
 	
 	
 	function getPerson(id) {
-		return _(persons).find({id: id});
+		return _(persons).find(function(p) {
+		  return p.id == id;
+		});
 	}
 	
 	
@@ -82,13 +84,15 @@ var BalanceSheet = function(data) {
     _.remove(persons, function(e) {
       return e.equals(toRemove);
     });
-    _.forEach(toRemove.getParticipations(), function(p) {
-      removeParticipation(p);
+    _.forEach(toRemove.getParticipations(), function(pt) {
+      removeParticipation(pt);
     });
   }
 	
 	function getExpense(id) {
-	  return _(expenses).find({id: id});
+	  return _(expenses).find(function(e) {
+	    return e.id == id;
+	  });
 	}
 
 	function createExpense(data) {
@@ -116,16 +120,16 @@ var BalanceSheet = function(data) {
 		_.remove(expenses, function(e) {
 		  return e.equals(toRemove);
 		});
-		_.forEach(toRemove.getParticipations(), function(p) {
-			removeParticipation(p);
+		_.forEach(toRemove.getParticipations(), function(pt) {
+			removeParticipation(pt);
 		});
 	}
 
 	
 	function getParticipation(criteria) {
 	  var toSeek = new Participation(criteria); 
-	  return _(participations).find(function(p) {
-	    return toSeek.equals(p);
+	  return _(participations).find(function(pt) {
+	    return toSeek.equals(pt);
 	  });
 	}
 	
@@ -140,8 +144,8 @@ var BalanceSheet = function(data) {
 
 	function removeParticipation(toRemove) {
 	  toRemove = getParticipation(toRemove);
-		_.remove(participations, function(p) {
-			return p.equals(toRemove);
+		_.remove(participations, function(pt) {
+			return pt.equals(toRemove);
 		});
 	}
 	
@@ -252,8 +256,8 @@ var BalanceSheet = function(data) {
     }, new Decimal(0));
 		
 		var _balance = _myParticipations
-		.map(function(p) {
-		  return (new Decimal(p.share)).subtract(p.paid);
+		.map(function(pt) {
+		  return (new Decimal(pt.share)).subtract(pt.paid);
 		})
 		.reduce(function(sum, b) {
 		  return sum.add(b);
@@ -358,8 +362,8 @@ var BalanceSheet = function(data) {
 	  data.expenses = _.map(expenses, function(e) {
 	    return {id: e.id, name: e.name, sharing: e.sharing};
 	  });
-	  data.participations = _.map(participations, function(p) {
-	    return {personId: p.person.id, expenseId: p.expense.id, paid: p.paid, share: p.share};
+	  data.participations = _.map(participations, function(pt) {
+	    return {personId: pt.person.id, expenseId: pt.expense.id, paid: pt.paid, share: pt.share};
 	  });
 	  return  data;
 	}
