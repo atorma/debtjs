@@ -19,14 +19,7 @@ describe("PersonDetailCtrl", function() {
     balanceSheet = new BalanceSheet();
     person = balanceSheet.createPerson();
     
-    debtService = {
-      computeDebts: function() {
-        return [];
-      },
-      organizeByDebtor: function() {
-        return [];
-      }
-    };
+    debtService = jasmine.createSpyObj("debtService", ["computeDebts", "organizeByDebtor", "organizeByCreditor"]);
     
     $stateParams = {
         id: person.id
@@ -90,15 +83,7 @@ describe("PersonDetailCtrl", function() {
       expect(vm.isParticipant[expense2.id]).toBe(true);
       expect(vm.isParticipant[otherExpense.id]).toBe(false);
     });
-    
-    xit("computes who owns money and how much to the person when person is creditor", function() {
-      
-    });
-    
-    xit("computes to whom the person owns money and how much when the person is debtor", function() {
-      
-    });
-    
+
     it("puts person's total costs into scope variable", function() {
       spyOn(vm.person, "getCost").and.returnValue(120);
       
@@ -115,6 +100,84 @@ describe("PersonDetailCtrl", function() {
       expect(vm.sumOfShares).toBe(120);
     });
     
+    it("puts person's balance into scope variable", function() {
+      spyOn(vm.person, "getBalance").and.returnValue(120);
+      
+      vm.refresh();
+      
+      expect(vm.balance).toBe(120);
+    });
+    
+    describe("debts", function() {
+            
+      beforeEach(function() {
+        balanceSheet.participations = [{person: "Dummy participation"}];
+      });
+      
+      it("computed as debtsAsCreditor when the person is creditor", function() {
+        spyOn(balanceSheet, "isBalanced").and.returnValue(true);
+        spyOn(person, "getBalance").and.returnValue(-100); // creditor
+
+        var debtor1 = balanceSheet.createPerson({name: "Debtor 1"});
+        var debtor2 = balanceSheet.createPerson({name: "Debtor 2"});
+        var otherCreditor = balanceSheet.createPerson({name: "Other creditor"});
+        
+        var debts = [
+                     {debtor: debtor1, creditor: otherCreditor, amount: 10},
+                     {debtor: debtor2, creditor: person, amount: 50}
+                    ];
+        debtService.computeDebts.and.returnValue(debts);
+        
+        vm.refresh();
+        
+        expect(debtService.computeDebts).toHaveBeenCalledWith(balanceSheet.participations);
+        expect(vm.debtsAsCreditor).toEqual([{debtor: debtor2, creditor: person, amount: 50}]);
+      });
+      
+      it("computed as debtsAsDebtor when the person is debtor", function() {
+        spyOn(balanceSheet, "isBalanced").and.returnValue(true);
+        spyOn(person, "getBalance").and.returnValue(100); // debtor
+        
+        var creditor1 = balanceSheet.createPerson({name: "Creditor 1"});
+        var creditor2 = balanceSheet.createPerson({name: "Creditor 2"});
+        var otherDebtor = balanceSheet.createPerson({name: "Other debtor"});
+        
+        var debts = [
+                     {debtor: person, creditor: creditor1, amount: 10},
+                     {debtor: otherDebtor, creditor: creditor2, amount: 50}
+                    ];
+        debtService.computeDebts.and.returnValue(debts);
+        
+        vm.refresh();
+        
+        expect(debtService.computeDebts).toHaveBeenCalledWith(balanceSheet.participations);
+        expect(vm.debtsAsDebtor).toEqual([{debtor: person, creditor: creditor1, amount: 10}]);
+      });
+      
+      it("not computed when person is neither debtor nor creditor", function() {
+        spyOn(balanceSheet, "isBalanced").and.returnValue(true);
+        spyOn(person, "getBalance").and.returnValue(0); 
+        
+        vm.refresh();
+        
+        expect(debtService.computeDebts).not.toHaveBeenCalled();
+        expect(vm.debtsAsDebtor).not.toBeDefined();
+        expect(vm.debtsAsCreditor).not.toBeDefined();
+      });
+      
+      it("not computed when balance sheet not balanced", function() {
+        spyOn(balanceSheet, "isBalanced").and.returnValue(false);
+        spyOn(person, "getBalance").and.returnValue(10); 
+        
+        vm.refresh();
+        
+        expect(debtService.computeDebts).not.toHaveBeenCalled();
+        expect(vm.debtsAsDebtor).not.toBeDefined();
+        expect(vm.debtsAsCreditor).not.toBeDefined();
+      });
+      
+    });
+
   });
   
   describe("updateExpense", function() {
@@ -122,7 +185,7 @@ describe("PersonDetailCtrl", function() {
     var expense;
     
     beforeEach(function() {
-      expense = vm.balanceSheet.createExpense();
+      expense = balanceSheet.createExpense();
       spyOn(expense, "shareCost");
     });
         
@@ -157,7 +220,7 @@ describe("PersonDetailCtrl", function() {
     var expense;
     
     beforeEach(function() {
-      expense = vm.balanceSheet.createExpense();
+      expense = balanceSheet.createExpense();
       spyOn(expense, "shareCost");
     });
     

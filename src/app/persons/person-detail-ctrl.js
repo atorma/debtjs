@@ -32,6 +32,8 @@ function PersonDetailCtrl(balanceSheet, debtService, $state, $stateParams, $mdDi
     vm.isParticipant = getParticipationMap();
     vm.cost = vm.person.getCost();
     vm.sumOfShares = vm.person.getSumOfShares();
+    vm.balance = vm.person.getBalance();
+    computeDebts();
   }
 	
 	function getParticipationMap() {
@@ -64,6 +66,21 @@ function PersonDetailCtrl(balanceSheet, debtService, $state, $stateParams, $mdDi
     }
     updateExpense(expense);
   }
+	
+	function computeDebts() {
+	  if (balanceSheet.isBalanced()) {
+	    var balance = vm.person.getBalance();
+      if (balance > 0) {
+        vm.debtsAsDebtor = _.filter(debtService.computeDebts(balanceSheet.participations), function(d) {
+          return d.debtor.equals(vm.person);
+        });
+      } else if (balance < 0) {
+        vm.debtsAsCreditor = _.filter(debtService.computeDebts(balanceSheet.participations), function(d) {
+          return d.creditor.equals(vm.person);
+        });
+      }
+    }
+	}
 	
 	function removePerson() {
 	  $mdDialog.show(confirmRemovePerson)
