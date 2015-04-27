@@ -1,12 +1,91 @@
 <section>
-  <div layout="row" layout-margin-sides>
+
+  <div layout="row">
+  
     <h2 flex>
       <md-input-container class="no-margin, no-padding">
-        <input type="text" ng-model="person.name" required/>
+        <input type="text" ng-model="vm.person.name" ng-required="true"/>
       </md-input-container> 
     </h2>
-    <md-button class="md-icon-button md-warn" ng-click="removePerson()" aria-label="Delete person">
+    
+    <md-button class="md-icon-button md-warn" ng-click="vm.removePerson()" aria-label="delete">
+      <md-tooltip>Delete</md-tooltip>
       <md-icon md-svg-icon="action:ic_delete_24px"/>
     </md-button>
+    
+  </div>
+  
+  <div layout="column" >
+  
+    <div layout="row" layout-align="start center">
+      <div flex="20">Balance</div>
+      <div>{{vm.cost - vm.sumOfShares | currency:""}}</div>
+    </div>
+        
+  </div>
+  
+</section>
+
+
+<section>
+  <!-- Inputs and the new md-list-item do not to mix well. Animation stops etc. Sticking to a custom solution. -->
+
+  <div layout="column">
+    
+    <div ng-repeat="expense in vm.balanceSheet.expenses"
+      layout-sm="column" layout-align-sm="center start"
+      layout-gt-sm="row" layout-align-gt-sm="start center">
+
+      <div layout-fill flex-gt-sm layout="row" >
+        <md-checkbox ng-model="vm.isParticipant[expense.id]" ng-change="vm.setParticipation(expense, vm.isParticipant[expense.id])">{{expense.name}}</md-checkbox>
+        <span flex></span>
+        <md-button hide-gt-sm ng-href="#/expenses/{{expense.id}}" class="md-icon-button" aria-label="View details"><md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon></md-button>
+      </div>
+      
+      <div layout="row">
+        <md-input-container>
+          <label>Paid</label>
+          <input type="number" style="width: 8em" ng-required="vm.isParticipant[expense.id]" pattern="(0|[1-9][0-9]*)([,|\.][0-9]{0,2})?"
+            ng-model="vm.balanceSheet.getParticipation({person: vm.person, expense: expense}).paid" 
+            ng-change="vm.refresh()" 
+            ng-disabled="!vm.isParticipant[expense.id]" />
+        </md-input-container>
+        <md-input-container>
+          <label>Shared</label>
+          <input type="number" style="width: 8em" ng-required="vm.isParticipant[expense.id]" 
+            ng-model="vm.balanceSheet.getParticipation({person: vm.person, expense: expense}).share" 
+            ng-change="vm.refresh()"
+            ng-disabled="!vm.isParticipant[expense.id]"
+            ng-readonly="expense.sharing != 'custom'" />
+        </md-input-container>
+      </div>
+  
+      <md-button hide-sm ng-href="#/expenses/{{expense.id}}" class="md-icon-button" aria-label="View details"><md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon></md-button>
+
+    </div>
+    
+    <div
+      layout-sm="column" layout-align-sm="center start"
+      layout-gt-sm="row" layout-align-gt-sm="start center">
+    
+      <div layout-fill flex-gt-sm layout="row">
+        <span class="label">Total</span>
+      </div>
+      
+      <div layout="row" >
+        <md-input-container>
+          <label>Paid</label>
+          <input type="number" style="width: 8em" ng-model="vm.cost" ng-readonly="true" />
+        </md-input-container>
+        <md-input-container>
+          <label>Shared</label>
+          <input type="number" style="width: 8em" ng-model="vm.sumOfShares" ng-readonly="true"/>
+        </md-input-container>
+      </div>
+      
+      <div hide-sm style="width: 48px; height: 48px; margin-left: 6px; margin-right: 6px"></div>
+      
+    </div>
+    
   </div>
 </section>

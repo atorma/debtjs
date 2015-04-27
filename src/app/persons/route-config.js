@@ -9,7 +9,7 @@ function config($stateProvider) {
     .state("person", {
       url: "/persons/:id",
       templateUrl: "persons/person-detail.html",
-      controller: "PersonDetailCtrl",
+      controller: "PersonDetailCtrl as vm",
       resolve: {
         balanceSheet: function(balanceSheetService) {
           return balanceSheetService.balanceSheet;

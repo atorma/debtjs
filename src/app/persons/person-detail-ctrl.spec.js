@@ -65,72 +65,50 @@ describe("PersonDetailCtrl", function() {
   
 
   it("deletes person", function() {
-    vm.person = person;
     spyOn(balanceSheet, "removePerson");
     
     vm.removePerson();
     $scope.$digest();
     
-    expect(balanceSheet.removePerson).toHaveBeenCalledWith(person);
+    expect(vm.balanceSheet.removePerson).toHaveBeenCalledWith(vm.person);
     expect($state.go).toHaveBeenCalledWith("balanceSheet");
   });
   
   describe("refresh", function() {
     
-    beforeEach(function() {
-      spyOn(expense, "shareCost");
-      vm.expense = expense;
-    });
-    
-    xit("updates participation map", function() {
-      var participant1 = balanceSheet.createPerson();
-      var participant2 = balanceSheet.createPerson();
-      var nonParticipant = balanceSheet.createPerson();
+    it("updates participation map", function() {
+      var expense1 = vm.balanceSheet.createExpense();
+      var expense2 = vm.balanceSheet.createExpense();
+      var otherExpense = vm.balanceSheet.createExpense();
       
-      balanceSheet.createParticipation({person: participant1, expense: expense});
-      balanceSheet.createParticipation({person: participant2, expense: expense});
+      vm.balanceSheet.createParticipation({person: vm.person, expense: expense1});
+      vm.balanceSheet.createParticipation({person: vm.person, expense: expense2});
       
       vm.refresh();
       
-      expect(vm.isParticipant[participant1.id]).toBe(true);
-      expect(vm.isParticipant[participant2.id]).toBe(true);
-      expect(vm.isParticipant[nonParticipant.id]).toBe(false);
+      expect(vm.isParticipant[expense1.id]).toBe(true);
+      expect(vm.isParticipant[expense2.id]).toBe(true);
+      expect(vm.isParticipant[otherExpense.id]).toBe(false);
     });
     
-    xit("computes debts by debtor", function() {
-      var participations = [{person: "Dummy"}];
-      spyOn(expense, "getParticipations").and.returnValue(participations);
+    xit("computes who owns money and how much to the person when person is creditor", function() {
       
-      var debts = [{debtor: {id: 1, name: "Valtteri"}, creditor: {id: 9, name: "Anssi"}, amount: 10}];
-      debtService.computeDebts = function(input) {
-        expect(input).toBe(participations);
-        return debts;
-      };
-      
-      var debtsByDebtor = [{
-          debtor: {id: 1, name: "Valtteri"},
-          debts: [{creditor: {id: 9, name: "Anssi"}, amount: 10}]
-        }];
-      debtService.organizeByDebtor = function(input) {
-        expect(input).toBe(debts);
-        return debtsByDebtor;
-      };
-      
-      vm.refresh();
-      
-      expect(vm.debtsByDebtor).toBe(debtsByDebtor);
     });
     
-    xit("puts expense cost into scope variable", function() {
-      spyOn(expense, "getCost").and.returnValue(120);
+    xit("computes to whom the person owns money and how much when the person is debtor", function() {
+      
+    });
+    
+    it("puts person's total costs into scope variable", function() {
+      spyOn(vm.person, "getCost").and.returnValue(120);
       
       vm.refresh();
       
       expect(vm.cost).toBe(120);
     });
     
-    xit("puts expense sum of shares cost into scope variable", function() {
-      spyOn(expense, "getSumOfShares").and.returnValue(120);
+    it("puts person's sum of shares cost into scope variable", function() {
+      spyOn(vm.person, "getSumOfShares").and.returnValue(120);
       
       vm.refresh();
       
@@ -144,39 +122,38 @@ describe("PersonDetailCtrl", function() {
     var expense;
     
     beforeEach(function() {
-      expense = balanceSheet.createExpense();
+      expense = vm.balanceSheet.createExpense();
       spyOn(expense, "shareCost");
-      vm.person = expense;
     });
     
-    xit("creates or removes participation", function() {      
-      vm.setParticipation(person, true);
+    it("creates or removes participation", function() {      
+      vm.setParticipation(expense, true);
       
-      expect(expense.getParticipations().length).toBe(1);
-      expect(expense.getParticipations()[0].person).toBe(person);
+      expect(vm.person.getParticipations().length).toBe(1);
+      expect(vm.person.getParticipations()[0].expense).toBe(expense);
       
-      vm.setParticipation(person, false);
+      vm.setParticipation(expense, false);
       
-      expect(expense.getParticipations().length).toBe(0);
+      expect(vm.person.getParticipations().length).toBe(0);
     });
     
-    xit("shares cost of expense if sharing mode is 'equal'", function() {
+    it("shares cost of expense if sharing mode is 'equal'", function() {
       expense.sharing = 'equal';
-      vm.setParticipation(person, true);
+      vm.setParticipation(expense, true);
       
       expect(expense.shareCost).toHaveBeenCalled();
     });
     
-    xit("shares cost of expense if sharing mode is 'equal'", function() {
+    it("shares cost of expense if sharing mode is 'equal'", function() {
       expense.sharing = 'equal';
-      vm.setParticipation(person, false);
+      vm.setParticipation(expense, false);
       
       expect(expense.shareCost).toHaveBeenCalled();
     });
     
-    xit("does not share cost of expense if sharing mode is 'custom'", function() {
+    it("does not share cost of expense if sharing mode is 'custom'", function() {
       expense.sharing = 'custom';
-      vm.setParticipation(person, true);
+      vm.setParticipation(expense, true);
       
       expect(expense.shareCost).not.toHaveBeenCalled();
     });
