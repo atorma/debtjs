@@ -61,7 +61,8 @@
         <md-input-container>
           <label>Shared</label>
           <input type="number" style="width: 8em" ng-required="isParticipant[person.id]" 
-            ng-model="balanceSheet.getParticipation({person: person, expense: expense}).share" 
+            ng-model="balanceSheet.getParticipation({person: person, expense: expense}).share"
+            ng-change="vm.refresh()"
             ng-disabled="!isParticipant[person.id]"
             ng-readonly="expense.sharing != 'custom'" />
         </md-input-container>

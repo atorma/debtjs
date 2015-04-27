@@ -1,5 +1,7 @@
 "use strict";
 
+var _ = require('lodash');
+
 require("angular").module("debtApp")
 	.controller("ExpenseDetailCtrl", ExpenseDetailCtrl);
 
