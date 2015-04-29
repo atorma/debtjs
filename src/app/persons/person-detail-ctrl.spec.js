@@ -57,17 +57,27 @@ describe("PersonDetailCtrl", function() {
   });
   
 
-  it("deletes person", function() {
+  it("delete method deletes person and updates all expenses the person participates in", function() {
     spyOn(balanceSheet, "removePerson");
+    spyOn(vm, "updateExpense");
+    
+    var expense1 = vm.balanceSheet.createExpense({name: "Expense 1"});
+    vm.balanceSheet.createParticipation({person: person, expense: expense1});
+    var expense2 = vm.balanceSheet.createExpense({name: "Expense 2"});
+    vm.balanceSheet.createParticipation({person: person, expense: expense2});
+    var otherExpense = vm.balanceSheet.createExpense({name: "Other expense"});
     
     vm.removePerson();
     $scope.$digest();
     
     expect(vm.balanceSheet.removePerson).toHaveBeenCalledWith(vm.person);
+    expect(vm.updateExpense).toHaveBeenCalledWith(expense1);
+    expect(vm.updateExpense).toHaveBeenCalledWith(expense2);
+    expect(vm.updateExpense).not.toHaveBeenCalledWith(otherExpense);
     expect($state.go).toHaveBeenCalledWith("balanceSheet");
   });
   
-  describe("refresh", function() {
+  describe("refresh method", function() {
     
     it("updates participation map", function() {
       var expense1 = vm.balanceSheet.createExpense();
@@ -114,9 +124,9 @@ describe("PersonDetailCtrl", function() {
         balanceSheet.participations = [{person: "Dummy participation"}];
       });
       
-      it("computed as debtsAsCreditor when the person is creditor", function() {
+      it("computed with role creditor when person's balance is negative", function() {
         spyOn(balanceSheet, "isBalanced").and.returnValue(true);
-        spyOn(person, "getBalance").and.returnValue(-100); // creditor
+        spyOn(person, "getBalance").and.returnValue(-100);
 
         var debtor1 = balanceSheet.createPerson({name: "Debtor 1"});
         var debtor2 = balanceSheet.createPerson({name: "Debtor 2"});
@@ -131,12 +141,13 @@ describe("PersonDetailCtrl", function() {
         vm.refresh();
         
         expect(debtService.computeDebts).toHaveBeenCalledWith(balanceSheet.participations);
-        expect(vm.debtsAsCreditor).toEqual([{debtor: debtor2, creditor: person, amount: 50}]);
+        expect(vm.debtRole).toEqual("creditor");
+        expect(vm.debts).toEqual([{person: debtor2, amount: 50}]);
       });
       
-      it("computed as debtsAsDebtor when the person is debtor", function() {
+      it("computed with role debtor when person's balance is positive", function() {
         spyOn(balanceSheet, "isBalanced").and.returnValue(true);
-        spyOn(person, "getBalance").and.returnValue(100); // debtor
+        spyOn(person, "getBalance").and.returnValue(100);
         
         var creditor1 = balanceSheet.createPerson({name: "Creditor 1"});
         var creditor2 = balanceSheet.createPerson({name: "Creditor 2"});
@@ -150,30 +161,32 @@ describe("PersonDetailCtrl", function() {
         
         vm.refresh();
         
+        
         expect(debtService.computeDebts).toHaveBeenCalledWith(balanceSheet.participations);
-        expect(vm.debtsAsDebtor).toEqual([{debtor: person, creditor: creditor1, amount: 10}]);
+        expect(vm.debtRole).toEqual("debtor");
+        expect(vm.debts).toEqual([{person: creditor1, amount: 10}]);
       });
       
-      it("not computed when person is neither debtor nor creditor", function() {
+      it("not computed and role is settled when person's balance is zero", function() {
         spyOn(balanceSheet, "isBalanced").and.returnValue(true);
         spyOn(person, "getBalance").and.returnValue(0); 
         
         vm.refresh();
         
         expect(debtService.computeDebts).not.toHaveBeenCalled();
-        expect(vm.debtsAsDebtor).not.toBeDefined();
-        expect(vm.debtsAsCreditor).not.toBeDefined();
+        expect(vm.debtRole).toEqual("settled");
+        expect(vm.debts).not.toBeDefined();
       });
       
-      it("not computed when balance sheet not balanced", function() {
+      it("not computed and role is unbalanced", function() {
         spyOn(balanceSheet, "isBalanced").and.returnValue(false);
         spyOn(person, "getBalance").and.returnValue(10); 
         
         vm.refresh();
         
         expect(debtService.computeDebts).not.toHaveBeenCalled();
-        expect(vm.debtsAsDebtor).not.toBeDefined();
-        expect(vm.debtsAsCreditor).not.toBeDefined();
+        expect(vm.debtRole).toEqual("unbalanced");
+        expect(vm.debts).not.toBeDefined();
       });
       
     });
@@ -235,30 +248,14 @@ describe("PersonDetailCtrl", function() {
       expect(vm.person.getParticipations().length).toBe(0);
     });
     
-    it("shares cost of expense if sharing mode is 'equal'", function() {
-      expense.sharing = 'equal';
+    it("updates expense", function() {
+      spyOn(vm, "updateExpense").and.callThrough();
       
       vm.setParticipation(expense, true);
       
-      expect(expense.shareCost).toHaveBeenCalled();
+      expect(vm.updateExpense).toHaveBeenCalledWith(expense);
     });
-    
-    it("shares cost of expense if sharing mode is 'equal'", function() {
-      expense.sharing = 'equal';
-      
-      vm.setParticipation(expense, false);
-      
-      expect(expense.shareCost).toHaveBeenCalled();
-    });
-    
-    it("does not share cost of expense if sharing mode is 'custom'", function() {
-      expense.sharing = 'custom';
-      
-      vm.setParticipation(expense, true);
-      
-      expect(expense.shareCost).not.toHaveBeenCalled();
-    });
-    
+
   });
 
 });

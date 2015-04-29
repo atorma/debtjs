@@ -92,3 +92,20 @@
     
   </div>
 </section>
+
+<section>
+  <div layout="column">
+  
+    <div ng-switch="vm.debtRole">
+      <span ng-switch-when="debtor">{{vm.person.name}} owes</span>
+      <span ng-switch-when="creditor">{{vm.person.name}} is owed by</span>
+      <span ng-switch-when="settled">{{vm.person.name}} is settled up</span>
+      <span ng-switch-when="unbalanced">Debts cannot be computed. There are unbalanced expenses.</span>
+    </div>
+    
+    <div ng-repeat="d in vm.debts" style="margin-left: 16px;">
+        {{d.person.name}}: {{d.amount | currency:""}}
+    </div>
+    
+  </div>
+</section>

@@ -33,7 +33,9 @@ function PersonDetailCtrl(balanceSheet, debtService, $state, $stateParams, $mdDi
     vm.cost = vm.person.getCost();
     vm.sumOfShares = vm.person.getSumOfShares();
     vm.balance = vm.person.getBalance();
-    computeDebts();
+    var debtResult = computeDebts();
+    vm.debtRole = debtResult.role;
+    vm.debts = debtResult.debts;
   }
 	
 	function getParticipationMap() {
@@ -64,28 +66,55 @@ function PersonDetailCtrl(balanceSheet, debtService, $state, $stateParams, $mdDi
     } else {
       balanceSheet.removeParticipation({expense: expense, person: vm.person});
     }
-    updateExpense(expense);
+    vm.updateExpense(expense);
   }
 	
 	function computeDebts() {
-	  if (balanceSheet.isBalanced()) {
-	    var balance = vm.person.getBalance();
-      if (balance > 0) {
-        vm.debtsAsDebtor = _.filter(debtService.computeDebts(balanceSheet.participations), function(d) {
-          return d.debtor.equals(vm.person);
-        });
-      } else if (balance < 0) {
-        vm.debtsAsCreditor = _.filter(debtService.computeDebts(balanceSheet.participations), function(d) {
-          return d.creditor.equals(vm.person);
-        });
-      }
+	  var result = {
+	      role: undefined,
+	      debts: undefined
+	  };
+	  
+	  if (!balanceSheet.isBalanced()) {
+	    result.role = "unbalanced";
+	    return result;
+	  }
+	  
+    if (vm.balance > 0) {
+      result.role = "debtor";
+    } else if (vm.balance < 0) {
+      result.role = "creditor";
+    } else { 
+      result.role = "settled";
+      return result;
     }
+    
+    var counterRole = {
+      "debtor": "creditor",
+      "creditor": "debtor"
+    };
+        
+    var debts = debtService.computeDebts(balanceSheet.participations);
+    result.debts = _.chain(debts)
+    .filter(function(d) {
+      return d[result.role].equals(vm.person);
+    })
+    .map(function(d) {
+      return {person: d[counterRole[result.role]], amount: d.amount};
+    })
+    .value();
+    
+    return result;
 	}
 	
 	function removePerson() {
 	  $mdDialog.show(confirmRemovePerson)
     .then(function() {
+      var participations = vm.person.getParticipations();
       balanceSheet.removePerson(vm.person);
+      _.each(participations, function(pt) {
+          vm.updateExpense(pt.expense);
+      });
       $state.go("balanceSheet");
     });
 	}
