@@ -185,7 +185,7 @@ var BalanceSheet = function(data) {
     
     var _balance = _myParticipations
     .map(function(pt) {
-      return (new Decimal(pt.paid)).subtract(pt.share);
+      return (new Decimal(pt.share)).subtract(pt.paid);
     })
     .reduce(function(sum, b) {
       return sum.add(b);

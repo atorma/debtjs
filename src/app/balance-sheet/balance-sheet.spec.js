@@ -244,7 +244,7 @@ describe("Balance sheet", function () {
       expect(sheet.participations.length).toBe(2);
     });
     
-    it("balance is difference between sum paid and sum shared", function() {
+    it("balance is difference between sum shared and sum paid", function() {
       var expense1 = sheet.createExpense();
       var expense2 = sheet.createExpense();
       var person = sheet.createPerson();
@@ -252,7 +252,7 @@ describe("Balance sheet", function () {
       sheet.createParticipation({person: person, expense: expense1, paid: 20, share: 10});
       sheet.createParticipation({person: person, expense: expense2, paid: 0, share: 15});
       
-      expect(person.getBalance()).toBe(-5);
+      expect(person.getBalance()).toBe(5); // share is more than paid => debtor
     });
 
   });
