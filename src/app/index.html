@@ -39,13 +39,13 @@
         <div ui-view></div>
       </md-content>
       
-      <div ng-controller="FloatingActionCtrl">
+      <div ng-controller="FloatingActionCtrl as vm">
         <mfb-menu
           position="br" effect="zoomin" toggling-method="click"
           template-url="ng-mfb-menu-md.tpl.html" 
           resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px">
-          <mfb-button ng-click="createExpense()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_shopping_basket_24px" label="Add expense"></mfb-button>
-          <mfb-button ng-click="createPerson()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_face_24px" label="Add person"></mfb-button>
+          <mfb-button ng-click="vm.createExpense()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_shopping_basket_24px" label="Add expense"></mfb-button>
+          <mfb-button ng-click="vm.createPerson()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_face_24px" label="Add person"></mfb-button>
         </mfb-menu>
       </div>
     

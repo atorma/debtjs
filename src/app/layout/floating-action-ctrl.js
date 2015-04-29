@@ -3,10 +3,12 @@
 require("angular").module("debtApp")
   .controller("FloatingActionCtrl", FloatingActionCtrl);
 
-function FloatingActionCtrl($scope, balanceSheetService) {
+function FloatingActionCtrl(balanceSheetService) {
   
-  $scope.createPerson = createPerson;
-  $scope.createExpense = createExpense;
+  var vm = this;
+  
+  vm.createPerson = createPerson;
+  vm.createExpense = createExpense;
   
   function createPerson() {
     balanceSheetService.balanceSheet.createPerson();
