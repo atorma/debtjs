@@ -1,9 +1,10 @@
 "use strict";
 
+
 require("angular").module("debtApp")
   .controller("FloatingActionCtrl", FloatingActionCtrl);
 
-function FloatingActionCtrl(balanceSheetService) {
+function FloatingActionCtrl(balanceSheetService, openCreatePersonDialog) {
   
   var vm = this;
   
@@ -11,7 +12,10 @@ function FloatingActionCtrl(balanceSheetService) {
   vm.createExpense = createExpense;
   
   function createPerson() {
-    balanceSheetService.balanceSheet.createPerson();
+    openCreatePersonDialog()
+    .then(function(result) {
+      console.log(angular.toJson(result));
+    });
   }
   
   function createExpense() {

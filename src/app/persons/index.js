@@ -2,3 +2,4 @@
 
 require("./route-config");
 require("./person-detail-ctrl");
+require("./create-person-dialog");

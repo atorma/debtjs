@@ -1,0 +1,21 @@
+<!-- In angular-material 0.9.0-rc3, 
+dialog requires md-dialog-content instead of md-content -->
+
+<md-dialog>
+  <form name="form" novalidate>
+    <md-content>
+      <h2 class="md-heading">Create person</h2>
+      <p>
+          <md-input-container>
+            <label>Name</label>
+            <input type="text" ng-model="vm.options.person.name" ng-required="true"/>
+          </md-input-container>
+          <md-checkbox ng-model="vm.options.createParticipations">Participates in all expenses</md-checkbox>
+      </p>
+    </md-content>
+    <div class="md-actions">
+      <md-button ng-click="vm.cancel()">Cancel</md-button>
+      <md-button ng-click="vm.ok()" ng-disabled="!form.$valid" class="md-primary">Ok</md-button>
+    </div>
+  </form>
+</md-dialog>
