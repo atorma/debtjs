@@ -15,29 +15,33 @@ var paths = {
 	resources: ['src/resources/**'],
 	lib: ['bower_components/ng-mfb/src/mfb-directive.js'],
 	libResources: ['node_modules/angular-material-builds/angular-material.css', 'bower_components/ng-mfb/mfb/src/mfb.css*', 'src/lib/**/*.*', '!src/lib/**/*.js'],
-	tests: 'src/app/test-index.js',
-	testHtml: ['src/app/jasmine.spec.html'],
 	build: 'build'
 };
 
 var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
 
 
+// Builds the app and watches for changes
+gulp.task('build', ['js', 'html', 'watch:html', 'resources', 'watch:resources', 'lib', 'lib-resources']);
+
+gulp.task('js', bundleApp);
+
 var appBundler = watchify(browserify('./'+paths.main, watchify.args));
 //appBundler.transform(debowerify);
 appBundler.on('update', bundleApp);
 appBundler.on('log', gutil.log);
 
-
-var testBundler = watchify(browserify([paths.tests], watchify.args));
-//testBundler.transform(debowerify);
-testBundler.on('update', bundleTests); 
-testBundler.on('log', gutil.log); 
-
-
-gulp.task('build', ['js', 'html', 'watch:html', 'resources', 'watch:resources', 'lib', 'lib-resources']);
-
-gulp.task('js', bundleApp);
+function bundleApp() {
+  return appBundler.bundle()
+  .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+  .pipe(source('debt.js'))
+  // optional, remove if you don't want sourcemaps
+  .pipe(buffer())
+  .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
+  .pipe(sourcemaps.write('./')) // writes .map file
+  //
+  .pipe(gulp.dest(paths.build));
+}
 
 gulp.task('html', function() {
 	gulp.src(paths.html)
@@ -79,17 +83,6 @@ gulp.task('lib-resources', function() {
 });
 
 
-// Builds the application + Jasmine tests for running in browser
-gulp.task('build:test', ['js:test', 'html:test']); 
-
-gulp.task('js:test', bundleTests); 
-
-gulp.task('html:test', function() {
-	gulp.src(paths.testHtml)
-	.pipe(gulp.dest(paths.build));
-});
-
-
 //Run tests once and exit
 gulp.task('test', function(done) {
 	karma.start({
@@ -107,24 +100,3 @@ gulp.task('tdd', function(done) {
 
 
 
-function bundleApp() {
-	return appBundler.bundle()
-	.on('error', gutil.log.bind(gutil, 'Browserify Error'))
-	.pipe(source('debt.js'))
-	// optional, remove if you don't want sourcemaps
-	.pipe(buffer())
-	.pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-	.pipe(sourcemaps.write('./')) // writes .map file
-	//
-	.pipe(gulp.dest(paths.build));
-}
-
-function bundleTests() {
-	return testBundler.bundle()
-	.on('error', gutil.log.bind(gutil, 'Browserify Error'))
-	.pipe(source('debt.spec.js'))
-	.pipe(buffer())
-	.pipe(sourcemaps.init({loadMaps: true})) 
-	.pipe(sourcemaps.write('./')) 
-	.pipe(gulp.dest(paths.build));
-}
