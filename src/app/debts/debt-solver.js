@@ -222,7 +222,7 @@ function debtSolverFactory(solveLinearSystem) {
     var debts = [];
 
     for (var i = 0; i < debtVector.length; i++) {
-      if (debtVector[i] != 0) {
+      if (debtVector[i] !== 0) {
         var debtorIdx = Math.floor(i/roles.creditors.length);
         var creditorIdx = i - roles.creditors.length*debtorIdx;
         var amount = (new Decimal(debtVector[i])).divideBy(100).toNumber();

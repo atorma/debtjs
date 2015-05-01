@@ -98,7 +98,7 @@ function solve(input) {
 
 			// If maxRatio == 0, the coefficient of variable pivotToVariableMap[pivotIdx] is 0 in all the rest of the equations. 
 			// That is pivotToVariableMap[pivotIdx] is a free variable. Find the next suitable variable.
-			if (maxRatio == 0) {
+			if (maxRatio === 0) {
 				var currPivotVaribleIdx = pivotToVariableMap[pivotIdx];
 				knownFreeVariables[currPivotVaribleIdx] = true;     
 				
@@ -154,7 +154,7 @@ function solve(input) {
 			var pivotRowIdx = pivotToEquationMap[pivotIndex];
 			var pivotColIdx = pivotToVariableMap[pivotIndex];
 			
-			if (coefMatrix[pivotRowIdx][pivotColIdx] == 0) {
+			if (coefMatrix[pivotRowIdx][pivotColIdx] === 0) {
 				continue;
 			}
 			
@@ -172,7 +172,7 @@ function solve(input) {
 		// Normalize the coeffients in each row and the rhs value by the coeffient of the pivot variable in the row
 		for (pivotIndex = 0; pivotIndex < Math.min(m, n); ++pivotIndex) {
 			
-			if (coefMatrix[pivotToEquationMap[pivotIndex]][pivotToVariableMap[pivotIndex]] == 0) {
+			if (coefMatrix[pivotToEquationMap[pivotIndex]][pivotToVariableMap[pivotIndex]] === 0) {
 				continue; 
 			}
 
@@ -193,7 +193,7 @@ function solve(input) {
 		for (j=0; j<n; ++j) {
 			rows:
 			for (i=0; i<m; ++i) { 
-				if (i != j && coefMatrix[pivotToEquationMap[i]][pivotToVariableMap[j]] != 0) {
+				if (i != j && coefMatrix[pivotToEquationMap[i]][pivotToVariableMap[j]] !== 0) {
 					break columns;
 				}
 				else if (i == j && coefMatrix[pivotToEquationMap[i]][pivotToVariableMap[j]] != 1) {
@@ -209,7 +209,7 @@ function solve(input) {
 		var b2IsZero = true;
 
 		for (var i = rank; i < m; ++i) {
-			if (constVector[pivotToEquationMap[i]] != 0) {
+			if (constVector[pivotToEquationMap[i]] !== 0) {
 				b2IsZero = false;
 				break;
 			}
@@ -225,7 +225,7 @@ function solve(input) {
 	}
 
 	function determineSolution() {
-		if (numberOfSolutions == 0) {
+		if (numberOfSolutions === 0) {
 			xVector = undefined;
 		} else {
 			xVector = initArray(n);

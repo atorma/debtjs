@@ -29,7 +29,7 @@ function ExpenseDetailCtrl(balanceSheet, debtService, $scope, $mdDialog, $stateP
 		confirmRemoveExpense = $mdDialog.confirm()
     .content("Really delete this expense?")
     .ok("Ok").cancel("Cancel");
-	};
+	}
 	
 	function refresh() {
     if ($scope.expense.sharing === 'equal') {

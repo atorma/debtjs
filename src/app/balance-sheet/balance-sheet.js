@@ -387,7 +387,7 @@ var BalanceSheet = function(data) {
 	  });
 	
 	  throwErrorIfInvalid();
-	};
+	}
 	
 	function isValid() {
 	  try {
@@ -395,7 +395,7 @@ var BalanceSheet = function(data) {
 	    return true;
 	  } catch (e) {
 	    return false;
-	  };
+	  }
 	}
 	
 	function throwErrorIfInvalid() {

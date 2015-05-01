@@ -22,7 +22,7 @@ function BalanceSheetSaveCtrl(balanceSheetService, $scope, $log, $timeout) {
       }
     });
     
-  };
+  }
 
   function tryToSave() {
     try {
