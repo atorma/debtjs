@@ -1,7 +1,10 @@
 "use strict";
 
-require("angular").module("debtApp")
-.factory("debtService", debtService);
+var angular = require("angular");
+
+angular
+  .module("debtApp")
+    .factory("debtService", debtService);
 
 
 function debtService(solveDebts) {

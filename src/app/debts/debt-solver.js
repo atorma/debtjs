@@ -1,9 +1,13 @@
 "use strict";
 
-require("angular").module("debtApp")
-.factory("solveDebts", debtSolverFactory);
-
+var angular = require("angular");
 var Decimal = require("simple-decimal-money");
+
+angular
+  .module("debtApp")
+    .factory("solveDebts", debtSolverFactory);
+
+
 
 
 /**

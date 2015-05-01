@@ -1,9 +1,11 @@
 "use strict";
 
 var _ = require('lodash');
+var angular = require("angular");
 
-require("angular").module("debtApp")
-	.controller("ExpenseDetailCtrl", ExpenseDetailCtrl);
+angular
+  .module("debtApp")
+    .controller("ExpenseDetailCtrl", ExpenseDetailCtrl);
 
 function ExpenseDetailCtrl(balanceSheet, debtService, $scope, $mdDialog, $stateParams, $state) {
   var confirmRemoveExpense;

@@ -1,8 +1,10 @@
 "use strict";
 
+var angular = require("angular");
 
-require("angular").module("debtApp")
-  .controller("FloatingActionCtrl", FloatingActionCtrl);
+angular
+  .module("debtApp")
+    .controller("FloatingActionCtrl", FloatingActionCtrl);
 
 function FloatingActionCtrl(balanceSheetService, openCreatePersonDialog) {
   
