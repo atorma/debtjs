@@ -15,8 +15,8 @@ function FloatingActionCtrl(balanceSheetService, openCreatePersonDialog) {
   
   function createPerson() {
     openCreatePersonDialog()
-    .then(function(result) {
-      console.log(angular.toJson(result));
+    .then(function(options) {
+      balanceSheetService.createPerson(options);
     });
   }
   
