@@ -1,0 +1,26 @@
+<!-- In angular-material 0.9.0-rc3, 
+dialog requires md-dialog-content instead of md-content -->
+
+<md-dialog>
+  <form name="form" novalidate>
+    <md-content>
+      <h2 class="md-heading">Create expense</h2>
+      <p layout="column">
+        <md-input-container>
+          <label>Name</label>
+          <input type="text" ng-model="vm.expense.name" ng-required="true"/>
+        </md-input-container>
+        <span>Share</span>
+        <md-radio-group ng-model="vm.expense.sharing">
+          <md-radio-button value="equal">Equally</md-radio-button>
+          <md-radio-button value="custom">Custom</md-radio-button>
+        </md-radio-group>
+        <md-checkbox ng-model="vm.options.createParticipations" class="no-margin">Everyone participates</md-checkbox>
+      </p>
+    </md-content>
+    <div class="md-actions">
+      <md-button ng-click="vm.cancel()">Cancel</md-button>
+      <md-button ng-click="vm.ok()" ng-disabled="!form.$valid" class="md-primary">Ok</md-button>
+    </div>
+  </form>
+</md-dialog>

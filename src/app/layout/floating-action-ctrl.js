@@ -6,7 +6,7 @@ angular
   .module("debtApp")
     .controller("FloatingActionCtrl", FloatingActionCtrl);
 
-function FloatingActionCtrl(balanceSheetService, openCreatePersonDialog) {
+function FloatingActionCtrl(balanceSheetService, openCreatePersonDialog, openCreateExpenseDialog) {
   
   var vm = this;
   
@@ -21,6 +21,9 @@ function FloatingActionCtrl(balanceSheetService, openCreatePersonDialog) {
   }
   
   function createExpense() {
-    balanceSheetService.balanceSheet.createExpense();
+    openCreateExpenseDialog()
+    .then(function(dialogResult) {
+      balanceSheetService.createExpense(dialogResult.expense, dialogResult.options);
+    });
   }
 }
