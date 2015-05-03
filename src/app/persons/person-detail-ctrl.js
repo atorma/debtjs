@@ -109,7 +109,7 @@ function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams
 	function removePerson() {
 	  $mdDialog.show(confirmRemovePerson)
     .then(function() {
-      balanceSheetService.removePerson(vm.person);
+      vm.balanceSheet.removePerson(vm.person);
       $state.go("balanceSheet");
     });
 	}

@@ -81,9 +81,13 @@ var BalanceSheet = function(data) {
 	
 	function removePerson(toRemove) {
     toRemove = getPerson(toRemove.id);
+    
+    if (!toRemove) return;
+    
     _.remove(persons, function(e) {
       return e.equals(toRemove);
     });
+    
     _.forEach(toRemove.getParticipations(), function(pt) {
       removeParticipation(pt);
     });
@@ -117,9 +121,13 @@ var BalanceSheet = function(data) {
 	
 	function removeExpense(toRemove) {
 	  toRemove = getExpense(toRemove.id);
+	  
+	  if (!toRemove) return;
+	  
 		_.remove(expenses, function(e) {
 		  return e.equals(toRemove);
 		});
+		
 		_.forEach(toRemove.getParticipations(), function(pt) {
 			removeParticipation(pt);
 		});
@@ -137,16 +145,25 @@ var BalanceSheet = function(data) {
 		if (getParticipation(data)) {
       throw "Duplicate participation";
     }
+		
 		var participation = new Participation(data); 
 		participations.push(participation);
+		
+		participation.expense.shareCost();
+		
 		return participation;
 	}
 
 	function removeParticipation(toRemove) {
 	  toRemove = getParticipation(toRemove);
+	  
+	  if (!toRemove) return;
+	  
 		_.remove(participations, function(pt) {
 			return pt.equals(toRemove);
 		});
+		
+		toRemove.expense.shareCost();
 	}
 	
 

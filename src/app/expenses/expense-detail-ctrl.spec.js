@@ -164,38 +164,29 @@ describe("ExpenseDetailCtrl", function() {
     
     beforeEach(function() {
       person = balanceSheet.createPerson();
-      spyOn(expense, "shareCost");
+      spyOn(balanceSheet, "createParticipation");
+      spyOn(balanceSheet, "removeParticipation");
       $scope.expense = expense;
     });
     
     it("creates or removes participation", function() {      
       $scope.setParticipation(person, true);
-      
-      expect(expense.getParticipations().length).toBe(1);
-      expect(expense.getParticipations()[0].person).toBe(person);
+      expect(balanceSheet.createParticipation).toHaveBeenCalledWith({person: person, expense: $scope.expense});
       
       $scope.setParticipation(person, false);
-      
-      expect(expense.getParticipations().length).toBe(0);
-    });
-    
-    it("shares cost of expense", function() {
-      $scope.setParticipation(person, true);
-      expect(expense.shareCost.calls.count()).toBe(1);
-      
-      $scope.setParticipation(person, false);
-      expect(expense.shareCost.calls.count()).toBe(2);
+      expect(balanceSheet.createParticipation).toHaveBeenCalledWith({person: person, expense: $scope.expense});
     });
 
   });
   
   it("deletes expense", function() {
+    spyOn(balanceSheet, "removeExpense");
     $scope.expense = expense;
     
     $scope.removeExpense();
     $scope.$digest();
     
-    expect(balanceSheetService.removeExpense).toHaveBeenCalledWith(expense);
+    expect(balanceSheet.removeExpense).toHaveBeenCalledWith(expense);
     expect($state.go).toHaveBeenCalledWith("balanceSheet");
   });
   

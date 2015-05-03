@@ -247,6 +247,8 @@ describe("Balance sheet", function () {
     it("balance is difference between sum shared and sum paid", function() {
       var expense1 = sheet.createExpense();
       var expense2 = sheet.createExpense();
+      expense1.sharing = "custom";
+      expense2.sharing = "custom";
       var person = sheet.createPerson();
       
       sheet.createParticipation({person: person, expense: expense1, paid: 20, share: 10});
@@ -358,8 +360,7 @@ describe("Balance sheet", function () {
       expect(sheet.expenses.length).toBe(1);
       expect(sheet.expenses[0].equals(expense2)).toBe(true);
     });
-    
-    
+
   });
 
   describe("participation", function() {
@@ -427,16 +428,21 @@ describe("Balance sheet", function () {
     beforeEach(function() {
       expense1 = sheet.createExpense();
       expense2 = sheet.createExpense();
+      expense1.sharing = "custom";
+      expense2.sharing = "custom";
+      spyOn(expense1, "shareCost").and.callThrough();
+      spyOn(expense2, "shareCost").and.callThrough();
+      
       person1 = sheet.createPerson();
       person2 = sheet.createPerson();
     });
 
-    it("of an expense is initially zero", function() {
+    it("of an expense are initially zero", function() {
       expect(expense1.getCost()).toBe(0);
       expect(expense1.getSumOfShares()).toBe(0);
     });
     
-    it("paid by a person is initially zero", function() {
+    it("of a person are initially zero", function() {
       expect(person1.getCost()).toBe(0);
       expect(person1.getSumOfShares()).toBe(0);
     });
@@ -473,20 +479,20 @@ describe("Balance sheet", function () {
       expect(person2.getSumOfShares()).toBe(8);
     });
 
-    it("are updated when payment is updated", function() {
-      var payment1 = sheet.createParticipation({person: person1, expense: expense1, paid: 10, share: 10});
-      payment1.paid = 200;
+    it("are updated when participation is updated", function() {
+      var participation = sheet.createParticipation({person: person1, expense: expense1, paid: 10, share: 10});
+      participation.paid = 200;
       expect(expense1.getCost()).toBe(200);
       expect(expense1.getSumOfShares()).toBe(10);
       expect(person1.getCost()).toBe(200);
       expect(person1.getSumOfShares()).toBe(10);
     });
 
-    it("are updated when payment is deleted", function() {
-      var payment1 = sheet.createParticipation({person: person1, expense: expense1, paid: 10, share: 12.5});
-      var payment2 = sheet.createParticipation({person: person2, expense: expense1, paid: 15, share: 12.5});
+    it("are updated when participation is deleted", function() {
+      var pt1 = sheet.createParticipation({person: person1, expense: expense1, paid: 10, share: 12.5});
+      var pt2 = sheet.createParticipation({person: person2, expense: expense1, paid: 15, share: 12.5});
 
-      sheet.removeParticipation(payment2);
+      sheet.removeParticipation(pt2);
       
       expect(expense1.getCost()).toBe(10);
       expect(expense1.getSumOfShares()).toBe(12.5);
@@ -533,6 +539,31 @@ describe("Balance sheet", function () {
       expect(function() {
         expense1.shareCost();
       }).not.toThrow();
+    });
+    
+    it("expense is re-shared when participation is created or removed", function() {
+      var pt = sheet.createParticipation({person: person1, expense: expense1});
+      expect(expense1.shareCost.calls.count()).toBe(1);
+      
+      sheet.removeParticipation(pt);
+      expect(expense1.shareCost.calls.count()).toBe(2);
+      
+      expect(expense2.shareCost.calls.count()).toBe(0);
+    });
+    
+    it("all expenses a person participates in are removed when person is removed", function() {
+      sheet.createParticipation({person: person1, expense: expense1});
+      sheet.createParticipation({person: person1, expense: expense2});
+      
+      var otherExpense = sheet.createExpense();
+      sheet.createParticipation({person: person2, expense: otherExpense}); // don't track this call
+      spyOn(otherExpense, "shareCost");
+      
+      sheet.removePerson(person1);
+      
+      expect(expense1.shareCost).toHaveBeenCalled();
+      expect(expense2.shareCost).toHaveBeenCalled();
+      expect(otherExpense.shareCost).not.toHaveBeenCalled();
     });
     
   });

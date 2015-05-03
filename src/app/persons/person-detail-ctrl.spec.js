@@ -20,7 +20,7 @@ describe("PersonDetailCtrl", function() {
     balanceSheet = new BalanceSheet();
     person = balanceSheet.createPerson();
     
-    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["removePerson"]);
+    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["dummy"]);
     balanceSheetService.balanceSheet = balanceSheet;
       
     debtService = jasmine.createSpyObj("debtService", ["computeDebts", "organizeByDebtor", "organizeByCreditor"]);
@@ -62,10 +62,12 @@ describe("PersonDetailCtrl", function() {
   
 
   it("delete method deletes person", function() {
+    spyOn(balanceSheet, "removePerson");
+    
     vm.removePerson();
     $scope.$digest();
     
-    expect(balanceSheetService.removePerson).toHaveBeenCalledWith(vm.person);
+    expect(balanceSheet.removePerson).toHaveBeenCalledWith(vm.person);
     expect($state.go).toHaveBeenCalledWith("balanceSheet");
   });
   
@@ -208,26 +210,16 @@ describe("PersonDetailCtrl", function() {
     
     beforeEach(function() {
       expense = balanceSheet.createExpense();
-      spyOn(expense, "shareCost");
+      spyOn(balanceSheet, "createParticipation");
+      spyOn(balanceSheet, "removeParticipation");
     });
     
     it("creates or removes participation", function() {      
       vm.setParticipation(expense, true);
-      
-      expect(vm.person.getParticipations().length).toBe(1);
-      expect(vm.person.getParticipations()[0].expense).toBe(expense);
-      
+      expect(balanceSheet.createParticipation).toHaveBeenCalledWith({person: vm.person, expense: expense});
+
       vm.setParticipation(expense, false);
-      
-      expect(vm.person.getParticipations().length).toBe(0);
-    });
-    
-    it("updates expense", function() {
-      spyOn(vm, "updateExpense").and.callThrough();
-      
-      vm.setParticipation(expense, true);
-      
-      expect(vm.updateExpense).toHaveBeenCalledWith(expense);
+      expect(balanceSheet.removeParticipation).toHaveBeenCalledWith({person: vm.person, expense: expense});
     });
 
   });
