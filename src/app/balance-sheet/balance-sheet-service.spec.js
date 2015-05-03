@@ -123,15 +123,17 @@ describe("BalanceSheetService", function() {
 
     beforeEach(function() {
       balanceSheet = new BalanceSheet();
-      balanceSheet.createExpense();
-      balanceSheet.createExpense();
+      var e1 = balanceSheet.createExpense();
+      spyOn(e1, "shareCost");
+      var e2 = balanceSheet.createExpense();
+      spyOn(e2, "shareCost");
       spyOn(balanceSheet, "createPerson").and.callThrough();
       spyOn(balanceSheet, "createParticipation");
       
       balanceSheetService.balanceSheet = balanceSheet;
     });
     
-    it("with option to participate in all expenses so far", function() {
+    it("with option to participate in all expenses so far, which requires sharing costs", function() {
       var personData1 = {name: "Anssi"};
       var options1 = {createParticipations: true};
       var person1 = balanceSheetService.createPerson(personData1, options1);
@@ -140,8 +142,11 @@ describe("BalanceSheetService", function() {
       expect(balanceSheet.createPerson).toHaveBeenCalledWith(personData1);
       _.each(balanceSheet.expenses, function(e) {
         expect(balanceSheet.createParticipation).toHaveBeenCalledWith({person: person1, expense: e});
+        expect(e.shareCost).toHaveBeenCalled();
       });
-      
+    });
+    
+    it("with option not to participate in any expenses", function() {
       var personData2 = {name: "Malla", createParticipations: false};
       var person2 = balanceSheetService.createPerson(personData2);
       
@@ -168,7 +173,7 @@ describe("BalanceSheetService", function() {
       balanceSheetService.balanceSheet = balanceSheet;
     });
     
-    it("with option to participate in all expenses so far", function() {
+    it("with option to add every person so far as participant", function() {
       var expenseData1 = {name: "Stuff", sharing: "equal"};
       var options1 = {createParticipations: true};
       var expense1 = balanceSheetService.createExpense(expenseData1, options1);
@@ -178,7 +183,9 @@ describe("BalanceSheetService", function() {
       _.each(balanceSheet.persons, function(p) {
         expect(balanceSheet.createParticipation).toHaveBeenCalledWith({person: p, expense: expense1});
       });
-      
+    });
+    
+    it("with option to not add anyone as participant", function() {
       var expenseData2 = {name: "More stuff", sharing: "custom"};
       var expense2 = balanceSheetService.createExpense(expenseData2);
       

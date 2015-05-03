@@ -49,6 +49,7 @@ function balanceSheetService(localStorageService) {
     if (options && options.createParticipations === true) {
       _.each(service.balanceSheet.expenses, function(e) {
         service.balanceSheet.createParticipation({person: person, expense: e});
+        e.shareCost();
       });
     }
     return person;
