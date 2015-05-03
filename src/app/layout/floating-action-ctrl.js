@@ -15,8 +15,8 @@ function FloatingActionCtrl(balanceSheetService, openCreatePersonDialog) {
   
   function createPerson() {
     openCreatePersonDialog()
-    .then(function(options) {
-      balanceSheetService.createPerson(options);
+    .then(function(dialogResult) {
+      balanceSheetService.createPerson(dialogResult.person, dialogResult.options);
     });
   }
   

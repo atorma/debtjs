@@ -132,20 +132,21 @@ describe("BalanceSheetService", function() {
     });
     
     it("with option to participate in all expenses so far", function() {
-      var options1 = {name: "Anssi", createParticipations: true};
-      var person1 = balanceSheetService.createPerson(options1);
+      var personData1 = {name: "Anssi"};
+      var options1 = {createParticipations: true};
+      var person1 = balanceSheetService.createPerson(personData1, options1);
       
       expect(person1).toBeDefined();
-      expect(balanceSheet.createPerson).toHaveBeenCalledWith(options1);
+      expect(balanceSheet.createPerson).toHaveBeenCalledWith(personData1);
       _.each(balanceSheet.expenses, function(e) {
         expect(balanceSheet.createParticipation).toHaveBeenCalledWith({person: person1, expense: e});
       });
       
-      var options2 = {name: "Malla", createParticipations: false};
-      var person2 = balanceSheetService.createPerson(options2);
+      var personData2 = {name: "Malla", createParticipations: false};
+      var person2 = balanceSheetService.createPerson(personData2);
       
       expect(person2).toBeDefined();
-      expect(balanceSheet.createPerson).toHaveBeenCalledWith(options2);
+      expect(balanceSheet.createPerson).toHaveBeenCalledWith(personData2);
       _.each(balanceSheet.expenses, function(e) {
         expect(balanceSheet.createParticipation).not.toHaveBeenCalledWith({person: person2, expense: e});
       });
@@ -168,20 +169,21 @@ describe("BalanceSheetService", function() {
     });
     
     it("with option to participate in all expenses so far", function() {
-      var options1 = {name: "Stuff", sharing: "equal", createParticipations: true};
-      var expense1 = balanceSheetService.createExpense(options1);
+      var expenseData1 = {name: "Stuff", sharing: "equal"};
+      var options1 = {createParticipations: true};
+      var expense1 = balanceSheetService.createExpense(expenseData1, options1);
      
       expect(expense1).toBeDefined();
-      expect(balanceSheet.createExpense).toHaveBeenCalledWith(options1);
+      expect(balanceSheet.createExpense).toHaveBeenCalledWith(expenseData1);
       _.each(balanceSheet.persons, function(p) {
         expect(balanceSheet.createParticipation).toHaveBeenCalledWith({person: p, expense: expense1});
       });
       
-      var options2 = {name: "More stuff", sharing: "custom", createParticipations: false};
-      var expense2 = balanceSheetService.createExpense(options2);
+      var expenseData2 = {name: "More stuff", sharing: "custom"};
+      var expense2 = balanceSheetService.createExpense(expenseData2);
       
       expect(expense2).toBeDefined();
-      expect(balanceSheet.createExpense).toHaveBeenCalledWith(options2);
+      expect(balanceSheet.createExpense).toHaveBeenCalledWith(expenseData2);
       _.each(balanceSheet.persons, function(p) {
         expect(balanceSheet.createParticipation).not.toHaveBeenCalledWith({person: p, expense: expense2});
       });

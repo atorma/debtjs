@@ -29,16 +29,16 @@ function DialogController($mdDialog) {
   
   
   function init() {
+    vm.person = {
+      name: undefined
+    };
     vm.options = {
-      person: {
-          name: undefined
-      },
       createParticipations: true
     };
   }
 
   function ok() {
-    $mdDialog.hide(vm.options);
+    $mdDialog.hide({person: vm.person, options: vm.options});
   }
   
   function cancel() {

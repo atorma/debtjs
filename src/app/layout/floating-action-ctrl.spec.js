@@ -36,14 +36,17 @@ describe("FloatingActionCtrl", function() {
     
   }));
 
-  it("creates person using options from dialog", function() {
-    var personOptions = {name: "Anssi"};
-    openCreatePersonDialog.and.returnValue($q.when(personOptions));
+  it("creates person using data and options from dialog", function() {
+    var dialogResult = {
+        person: {name: "Anssi"},
+        options: {createParticipations: true}
+    };
+    openCreatePersonDialog.and.returnValue($q.when(dialogResult));
     
     vm.createPerson();
     $scope.$digest();
     
-    expect(balanceSheetService.createPerson).toHaveBeenCalledWith(personOptions);
+    expect(balanceSheetService.createPerson).toHaveBeenCalledWith(dialogResult.person, dialogResult.options);
   });
 
 });

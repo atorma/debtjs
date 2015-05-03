@@ -44,9 +44,9 @@ function balanceSheetService(localStorageService) {
     return angular.toJson(data);
   }
   
-  function createPerson(options) {
-    var person = service.balanceSheet.createPerson(options);
-    if (options.createParticipations === true) {
+  function createPerson(data, options) {
+    var person = service.balanceSheet.createPerson(data);
+    if (options && options.createParticipations === true) {
       _.each(service.balanceSheet.expenses, function(e) {
         service.balanceSheet.createParticipation({person: person, expense: e});
       });
@@ -54,9 +54,9 @@ function balanceSheetService(localStorageService) {
     return person;
   }
   
-  function createExpense(options) {
-    var expense = service.balanceSheet.createExpense(options);
-    if (options.createParticipations === true) {
+  function createExpense(data, options) {
+    var expense = service.balanceSheet.createExpense(data);
+    if (options && options.createParticipations === true) {
       _.each(service.balanceSheet.persons, function(p) {
         service.balanceSheet.createParticipation({person: p, expense: expense});
       });
