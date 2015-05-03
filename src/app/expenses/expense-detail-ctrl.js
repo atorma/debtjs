@@ -15,7 +15,6 @@ function ExpenseDetailCtrl(balanceSheetService, debtService, $scope, $mdDialog, 
   $scope.setParticipation = setParticipation;
   $scope.refresh = refresh;
   $scope.removeExpense = removeExpense;
-  $scope.setAllParticipations = setAllParticipations;
   
 	init();
 	
@@ -36,7 +35,6 @@ function ExpenseDetailCtrl(balanceSheetService, debtService, $scope, $mdDialog, 
 	function refresh() {
     $scope.expense.shareCost();
     $scope.isParticipant = getParticipationMap();
-    $scope.isEveryoneParticipant = isEveryoneParticipant();
     $scope.debtsByDebtor = computeDebts();
     $scope.cost = $scope.expense.getCost();
     $scope.sumOfShares = $scope.expense.getSumOfShares();
@@ -56,17 +54,7 @@ function ExpenseDetailCtrl(balanceSheetService, debtService, $scope, $mdDialog, 
 	  
 	  return map;
 	}
-	
-	function isEveryoneParticipant() {
-	  var result = true;
-    angular.forEach($scope.isParticipant, function(value) {
-      if (value === false) {
-        result = false;
-      }
-    });
-    return result;
-	}
-	
+		
 	function setParticipation(person, isParticipant) {
 	  if (isParticipant) {
 	    $scope.balanceSheet.createParticipation({expense: $scope.expense, person: person});
@@ -76,20 +64,6 @@ function ExpenseDetailCtrl(balanceSheetService, debtService, $scope, $mdDialog, 
 	  refresh();
 	}
 	
-	function setAllParticipations(value) {
-    angular.forEach($scope.balanceSheet.persons, function(p) {
-      if (value === true) {
-        var data = {expense: $scope.expense, person: p};
-        if (!$scope.balanceSheet.getParticipation(data)) {
-          $scope.balanceSheet.createParticipation(data);
-        }
-      } else {
-        $scope.balanceSheet.removeParticipation({expense: $scope.expense, person: p});
-      }
-    });
-    refresh();
-  }
-
 	function removeExpense() {
 	  $mdDialog.show(confirmRemoveExpense)
 	  .then(function() {

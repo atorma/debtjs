@@ -89,27 +89,7 @@ describe("ExpenseDetailCtrl", function() {
       expect($scope.isParticipant[participant2.id]).toBe(true);
       expect($scope.isParticipant[nonParticipant.id]).toBe(false);
     });
-    
-    it("determines if every person participates in expense", function() {
-      var person1 = balanceSheet.createPerson();
-      var person2 = balanceSheet.createPerson();
-      var person3 = balanceSheet.createPerson();
-      
-      $scope.setParticipation(person1, true);
-      $scope.setParticipation(person2, true);
-      $scope.setParticipation(person3, true);
-      
-      $scope.refresh();
 
-      expect($scope.isEveryoneParticipant).toBe(true);
-      
-      $scope.setParticipation(person2, false);
-      
-      $scope.refresh();
-
-      expect($scope.isEveryoneParticipant).toBe(false);
-    });
-    
     it("shares cost of expense", function() {
       $scope.refresh();
       
@@ -189,27 +169,6 @@ describe("ExpenseDetailCtrl", function() {
     expect(balanceSheet.removeExpense).toHaveBeenCalledWith(expense);
     expect($state.go).toHaveBeenCalledWith("balanceSheet");
   });
-  
-  
-  it("can set everyone as participants", function() {
-    var person1 = balanceSheet.createPerson();
-    var person2 = balanceSheet.createPerson();
-    var person3 = balanceSheet.createPerson();
 
-    $scope.setAllParticipations(true);
-    
-    expect($scope.isParticipant[person1.id]).toBe(true);
-    expect($scope.isParticipant[person2.id]).toBe(true);
-    expect($scope.isParticipant[person3.id]).toBe(true);
-    expect($scope.isEveryoneParticipant).toBe(true);
-    expect(expense.getParticipations().length).toBe(3);
-    
-    balanceSheet.removeParticipation({person: person2, expense: expense});
-    $scope.refresh();
-    expect($scope.isEveryoneParticipant).toBe(false);
-    
-    $scope.setAllParticipations(true);
-    expect($scope.isEveryoneParticipant).toBe(true);
-  });
 });
 
