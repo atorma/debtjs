@@ -5,10 +5,11 @@ var _ = require('lodash');
 require("angular").module("debtApp")
 	.controller("PersonDetailCtrl", PersonDetailCtrl);
 
-function PersonDetailCtrl(balanceSheet, debtService, $state, $stateParams, $mdDialog, $log) {
+function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams, $mdDialog, $log) {
   
   var vm = this;
   var confirmRemovePerson;
+  var balanceSheet = balanceSheetService.balanceSheet;
   
   vm.init = init;
   vm.refresh = refresh;
@@ -54,9 +55,7 @@ function PersonDetailCtrl(balanceSheet, debtService, $state, $stateParams, $mdDi
   }
 	
 	function updateExpense(expense) {
-	  if (expense.sharing === 'equal') {
-      expense.shareCost();
-    }
+    expense.shareCost();
     refresh();
 	}
 	
@@ -110,11 +109,7 @@ function PersonDetailCtrl(balanceSheet, debtService, $state, $stateParams, $mdDi
 	function removePerson() {
 	  $mdDialog.show(confirmRemovePerson)
     .then(function() {
-      var participations = vm.person.getParticipations();
-      balanceSheet.removePerson(vm.person);
-      _.each(participations, function(pt) {
-          vm.updateExpense(pt.expense);
-      });
+      balanceSheetService.removePerson(vm.person);
       $state.go("balanceSheet");
     });
 	}

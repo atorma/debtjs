@@ -16,6 +16,7 @@ function balanceSheetService(localStorageService) {
     exportToJson: exportToJson,
     init: init,
     createPerson: createPerson,
+    removePerson: removePerson,
     createExpense: createExpense
   };
   service.init();
@@ -55,6 +56,16 @@ function balanceSheetService(localStorageService) {
     return person;
   }
   
+  function removePerson(person) {
+    if (!person) return;
+    
+    var participations = person.getParticipations();
+    service.balanceSheet.removePerson(person);
+    _.each(participations, function(pt) {
+        pt.expense.shareCost();
+    });
+  }
+  
   function createExpense(data, options) {
     var expense = service.balanceSheet.createExpense(data);
     if (options && options.createParticipations === true) {
@@ -64,6 +75,7 @@ function balanceSheetService(localStorageService) {
     }
     return expense;
   }
+  
 }
 
 

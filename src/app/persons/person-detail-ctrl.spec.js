@@ -11,6 +11,7 @@ describe("PersonDetailCtrl", function() {
   var $stateParams;
   var $state;
   var balanceSheet;
+  var balanceSheetService;
   var debtService;
   var person;
   var vm;
@@ -19,6 +20,9 @@ describe("PersonDetailCtrl", function() {
     balanceSheet = new BalanceSheet();
     person = balanceSheet.createPerson();
     
+    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["removePerson"]);
+    balanceSheetService.balanceSheet = balanceSheet;
+      
     debtService = jasmine.createSpyObj("debtService", ["computeDebts", "organizeByDebtor", "organizeByCreditor"]);
     
     $stateParams = {
@@ -42,7 +46,7 @@ describe("PersonDetailCtrl", function() {
     };
     
     vm = $controller("PersonDetailCtrl", {
-      balanceSheet: balanceSheet,
+      balanceSheetService: balanceSheetService,
       debtService: debtService,
       $stateParams: $stateParams,
       $state: $state,
@@ -57,23 +61,11 @@ describe("PersonDetailCtrl", function() {
   });
   
 
-  it("delete method deletes person and updates all expenses the person participates in", function() {
-    spyOn(balanceSheet, "removePerson");
-    spyOn(vm, "updateExpense");
-    
-    var expense1 = vm.balanceSheet.createExpense({name: "Expense 1"});
-    vm.balanceSheet.createParticipation({person: person, expense: expense1});
-    var expense2 = vm.balanceSheet.createExpense({name: "Expense 2"});
-    vm.balanceSheet.createParticipation({person: person, expense: expense2});
-    var otherExpense = vm.balanceSheet.createExpense({name: "Other expense"});
-    
+  it("delete method deletes person", function() {
     vm.removePerson();
     $scope.$digest();
     
-    expect(vm.balanceSheet.removePerson).toHaveBeenCalledWith(vm.person);
-    expect(vm.updateExpense).toHaveBeenCalledWith(expense1);
-    expect(vm.updateExpense).toHaveBeenCalledWith(expense2);
-    expect(vm.updateExpense).not.toHaveBeenCalledWith(otherExpense);
+    expect(balanceSheetService.removePerson).toHaveBeenCalledWith(vm.person);
     expect($state.go).toHaveBeenCalledWith("balanceSheet");
   });
   
@@ -202,30 +194,12 @@ describe("PersonDetailCtrl", function() {
       spyOn(expense, "shareCost");
     });
         
-    it("shares cost of expense if sharing mode is 'equal'", function() {
-      expense.sharing = 'equal';
-      
+    it("shares cost of expense", function() {
       vm.updateExpense(expense);
       
       expect(expense.shareCost).toHaveBeenCalled();
     });
-    
-    it("shares cost of expense if sharing mode is 'equal'", function() {
-      expense.sharing = 'equal';
-      
-      vm.updateExpense(expense);
-      
-      expect(expense.shareCost).toHaveBeenCalled();
-    });
-    
-    it("does not share cost of expense if sharing mode is 'custom'", function() {
-      expense.sharing = 'custom';
-      
-      vm.updateExpense(expense, true);
-      
-      expect(expense.shareCost).not.toHaveBeenCalled();
-    });
-    
+       
   });
   
   describe("setParticipation", function() {

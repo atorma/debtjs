@@ -106,18 +106,10 @@ describe("ExpenseDetailCtrl", function() {
       expect($scope.isEveryoneParticipant).toBe(false);
     });
     
-    it("shares cost of expense if sharing mode is 'equal'", function() {
-      expense.sharing = 'equal';
+    it("shares cost of expense", function() {
       $scope.refresh();
       
       expect(expense.shareCost).toHaveBeenCalled();
-    });
-    
-    it("does not share cost of expense if sharing mode is 'custom'", function() {
-      expense.sharing = 'custom';
-      $scope.refresh();
-      
-      expect(expense.shareCost).not.toHaveBeenCalled();
     });
 
     it("computes debts by debtor into $scope", function() {
@@ -183,27 +175,14 @@ describe("ExpenseDetailCtrl", function() {
       expect(expense.getParticipations().length).toBe(0);
     });
     
-    it("shares cost of expense if sharing mode is 'equal'", function() {
-      expense.sharing = 'equal';
+    it("shares cost of expense", function() {
       $scope.setParticipation(person, true);
+      expect(expense.shareCost.calls.count()).toBe(1);
       
-      expect(expense.shareCost).toHaveBeenCalled();
-    });
-    
-    it("shares cost of expense if sharing mode is 'equal'", function() {
-      expense.sharing = 'equal';
       $scope.setParticipation(person, false);
-      
-      expect(expense.shareCost).toHaveBeenCalled();
+      expect(expense.shareCost.calls.count()).toBe(2);
     });
-    
-    it("does not share cost of expense if sharing mode is 'custom'", function() {
-      expense.sharing = 'custom';
-      $scope.setParticipation(person, true);
-      
-      expect(expense.shareCost).not.toHaveBeenCalled();
-    });
-    
+
   });
   
   it("deletes expense", function() {

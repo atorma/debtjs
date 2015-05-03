@@ -34,9 +34,7 @@ function ExpenseDetailCtrl(balanceSheet, debtService, $scope, $mdDialog, $stateP
 	}
 	
 	function refresh() {
-    if ($scope.expense.sharing === 'equal') {
-      $scope.expense.shareCost();
-    }
+    $scope.expense.shareCost();
     $scope.isParticipant = getParticipationMap();
     $scope.isEveryoneParticipant = isEveryoneParticipant();
     $scope.debtsByDebtor = computeDebts();

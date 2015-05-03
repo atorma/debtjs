@@ -159,6 +159,32 @@ describe("BalanceSheetService", function() {
     
   });
   
+  it("removes person and re-shares all expenses the person participated in", function() {
+    var balanceSheet = balanceSheetService.balanceSheet;
+    spyOn(balanceSheet, "removePerson");
+    
+    var person = balanceSheet.createPerson({name: "Person"});
+    
+    var expense1 = balanceSheet.createExpense({name: "Expense 1"});
+    balanceSheet.createParticipation({person: person, expense: expense1});
+    spyOn(expense1, "shareCost");
+    
+    var expense2 = balanceSheet.createExpense({name: "Expense 2"});
+    balanceSheet.createParticipation({person: person, expense: expense2});
+    spyOn(expense2, "shareCost");
+    
+    var otherExpense = balanceSheet.createExpense({name: "Other expense"});
+    spyOn(otherExpense, "shareCost");
+    
+    balanceSheetService.removePerson(person);
+    
+    expect(balanceSheet.removePerson).toHaveBeenCalledWith(person);
+    expect(expense1.shareCost).toHaveBeenCalled();
+    expect(expense2.shareCost).toHaveBeenCalled();
+    expect(otherExpense.shareCost).not.toHaveBeenCalled();
+    
+  });
+  
   describe("creates expense", function() {
     
     var balanceSheet;
