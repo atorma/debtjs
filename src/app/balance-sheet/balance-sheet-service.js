@@ -14,9 +14,7 @@ function balanceSheetService(localStorageService) {
     save: save,
     loadFromJson: loadFromJson,
     exportToJson: exportToJson,
-    init: init,
-    createPerson: createPerson,
-    createExpense: createExpense,
+    init: init
   };
   service.init();
   
@@ -43,28 +41,7 @@ function balanceSheetService(localStorageService) {
     var data = service.balanceSheet.exportData(); 
     return angular.toJson(data);
   }
-  
-  function createPerson(data, options) {
-    var person = service.balanceSheet.createPerson(data);
-    if (options && options.createParticipations === true) {
-      _.each(service.balanceSheet.expenses, function(e) {
-        service.balanceSheet.createParticipation({person: person, expense: e});
-        e.shareCost();
-      });
-    }
-    return person;
-  }
-  
-  function createExpense(data, options) {
-    var expense = service.balanceSheet.createExpense(data);
-    if (options && options.createParticipations === true) {
-      _.each(service.balanceSheet.persons, function(p) {
-        service.balanceSheet.createParticipation({person: p, expense: expense});
-      });
-    }
-    return expense;
-  }
-  
+
 }
 
 

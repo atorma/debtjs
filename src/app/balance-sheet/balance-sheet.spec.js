@@ -207,6 +207,20 @@ describe("Balance sheet", function () {
       expect(person3.name).toBe("Person 3");
     });
     
+    it("can be created with option to participate in all expenses so far, which requires sharing costs", function() {
+      var expense1 = sheet.createExpense();
+      var expense2 = sheet.createExpense();
+      spyOn(expense1, "shareCost");
+      spyOn(expense2, "shareCost");
+      
+      var person = sheet.createPerson({}, {createParticipations: true});
+      
+      expect(_.find(person.getParticipations(), {expense: expense1})).toBeDefined();
+      expect(_.find(person.getParticipations(), {expense: expense2})).toBeDefined();
+      expect(expense1.shareCost).toHaveBeenCalled();
+      expect(expense2.shareCost).toHaveBeenCalled();
+    });
+    
     it("can return its participations", function() {
       var expense1 = sheet.createExpense();
       var expense2 = sheet.createExpense();
@@ -306,6 +320,16 @@ describe("Balance sheet", function () {
 
       var expense3 = sheet.createExpense();
       expect(expense3.name).toBe("Expense 3");
+    });
+    
+    it("can be created with option to add every person so far as participant", function() {
+      var person1 = sheet.createPerson();
+      var person2 = sheet.createPerson();
+
+      var expense = sheet.createExpense({}, {createParticipations: true});
+     
+      expect(_.find(expense.getParticipations(), {person: person1})).toBeDefined();
+      expect(_.find(expense.getParticipations(), {person: person2})).toBeDefined();
     });
 
     it("has sharing mode 'equal' by default", function() {

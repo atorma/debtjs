@@ -16,14 +16,14 @@ function FloatingActionCtrl(balanceSheetService, openCreatePersonDialog, openCre
   function createPerson() {
     openCreatePersonDialog()
     .then(function(dialogResult) {
-      balanceSheetService.createPerson(dialogResult.person, dialogResult.options);
+      balanceSheetService.balanceSheet.createPerson(dialogResult.person, dialogResult.options);
     });
   }
   
   function createExpense() {
     openCreateExpenseDialog()
     .then(function(dialogResult) {
-      balanceSheetService.createExpense(dialogResult.expense, dialogResult.options);
+      balanceSheetService.balanceSheet.createExpense(dialogResult.expense, dialogResult.options);
     });
   }
 }

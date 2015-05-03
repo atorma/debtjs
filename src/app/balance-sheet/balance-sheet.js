@@ -62,7 +62,7 @@ var BalanceSheet = function(data) {
 	}
 	
 	
-	function createPerson(data) {
+	function createPerson(data, options) {
 		if (!data) {
 			data = {};
 		}
@@ -76,6 +76,14 @@ var BalanceSheet = function(data) {
 		
 		var person = new Person(data);
 		persons.push(person);
+		
+		if (options && options.createParticipations === true) {
+      _.each(expenses, function(e) {
+        createParticipation({person: person, expense: e});
+        e.shareCost();
+      });
+    }
+		
 		return person;
 	}
 	
@@ -99,7 +107,7 @@ var BalanceSheet = function(data) {
 	  });
 	}
 
-	function createExpense(data) {
+	function createExpense(data, options) {
 		if (!data) {
 			data = {};
 		}
@@ -116,6 +124,13 @@ var BalanceSheet = function(data) {
 		
 		var expense = new Expense(data);
 		expenses.push(expense);
+		
+		if (options && options.createParticipations === true) {
+      _.each(persons, function(p) {
+        createParticipation({person: p, expense: expense});
+      });
+    }
+		
 		return expense;
 	}
 	

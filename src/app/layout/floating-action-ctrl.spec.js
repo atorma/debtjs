@@ -10,11 +10,15 @@ describe("FloatingActionCtrl", function() {
   var $scope, $q;
   
   var balanceSheetService;
+  var balanceSheet;
   var openCreatePersonDialog;
   var openCreateExpenseDialog;
   
   beforeEach(function() {
-    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["createPerson", "createExpense"]);
+    balanceSheet = jasmine.createSpyObj("balanceSheet", ["createPerson", "createExpense"]);
+    
+    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["dummy"]);
+    balanceSheetService.balanceSheet = balanceSheet;
 
     openCreatePersonDialog = jasmine.createSpy("openCreatePersonDialog");
     openCreateExpenseDialog = jasmine.createSpy("openCreateExpenseDialog");
@@ -49,7 +53,7 @@ describe("FloatingActionCtrl", function() {
     vm.createPerson();
     $scope.$digest();
     
-    expect(balanceSheetService.createPerson).toHaveBeenCalledWith(dialogResult.person, dialogResult.options);
+    expect(balanceSheet.createPerson).toHaveBeenCalledWith(dialogResult.person, dialogResult.options);
   });
   
   it("creates expense using data and options from dialog", function() {
@@ -62,7 +66,7 @@ describe("FloatingActionCtrl", function() {
     vm.createExpense();
     $scope.$digest();
     
-    expect(balanceSheetService.createExpense).toHaveBeenCalledWith(dialogResult.expense, dialogResult.options);
+    expect(balanceSheet.createExpense).toHaveBeenCalledWith(dialogResult.expense, dialogResult.options);
   });
 
 });
