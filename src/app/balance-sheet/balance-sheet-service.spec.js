@@ -224,5 +224,16 @@ describe("BalanceSheetService", function() {
     
   });
   
+  it("removes expense", function() {
+    var balanceSheet = balanceSheetService.balanceSheet;
+    spyOn(balanceSheet, "removeExpense");
+    
+    var expense = balanceSheet.createExpense({name: "Stuff"});
+    
+    balanceSheetService.removeExpense(expense);
+    
+    expect(balanceSheet.removeExpense).toHaveBeenCalledWith(expense);
+  });
+  
 });
 

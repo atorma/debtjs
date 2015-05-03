@@ -9,12 +9,7 @@ function config($stateProvider) {
 		.state("expense", {
 			url: "/expenses/:id",
 	    templateUrl: "expenses/expense-detail.html",
-      controller: "ExpenseDetailCtrl",
-      resolve: {
-        balanceSheet: function(balanceSheetService) {
-          return balanceSheetService.balanceSheet;
-        }
-      }
+      controller: "ExpenseDetailCtrl"
 		})
 		;
 }

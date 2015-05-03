@@ -7,7 +7,7 @@ angular
   .module("debtApp")
     .controller("ExpenseDetailCtrl", ExpenseDetailCtrl);
 
-function ExpenseDetailCtrl(balanceSheet, debtService, $scope, $mdDialog, $stateParams, $state) {
+function ExpenseDetailCtrl(balanceSheetService, debtService, $scope, $mdDialog, $stateParams, $state) {
   var confirmRemoveExpense;
   
   this.init = init;
@@ -22,8 +22,8 @@ function ExpenseDetailCtrl(balanceSheet, debtService, $scope, $mdDialog, $stateP
 	/////////////////////////////////////////////////////////////
 	
 	function init() {
-		$scope.balanceSheet = balanceSheet;
-		$scope.expense = balanceSheet.getExpense($stateParams.id);
+		$scope.balanceSheet = balanceSheetService.balanceSheet;
+		$scope.expense = $scope.balanceSheet.getExpense($stateParams.id);
 		$scope.isParticipant = {};
 		$scope.everyoneParticipates = true;
 		refresh();
@@ -69,22 +69,22 @@ function ExpenseDetailCtrl(balanceSheet, debtService, $scope, $mdDialog, $stateP
 	
 	function setParticipation(person, isParticipant) {
 	  if (isParticipant) {
-	    balanceSheet.createParticipation({expense: $scope.expense, person: person});
+	    $scope.balanceSheet.createParticipation({expense: $scope.expense, person: person});
 	  } else {
-	    balanceSheet.removeParticipation({expense: $scope.expense, person: person});
+	    $scope.balanceSheet.removeParticipation({expense: $scope.expense, person: person});
 	  }
 	  refresh();
 	}
 	
 	function setAllParticipations(value) {
-    angular.forEach(balanceSheet.persons, function(p) {
+    angular.forEach($scope.balanceSheet.persons, function(p) {
       if (value === true) {
         var data = {expense: $scope.expense, person: p};
-        if (!balanceSheet.getParticipation(data)) {
-          balanceSheet.createParticipation(data);
+        if (!$scope.balanceSheet.getParticipation(data)) {
+          $scope.balanceSheet.createParticipation(data);
         }
       } else {
-        balanceSheet.removeParticipation({expense: $scope.expense, person: p});
+        $scope.balanceSheet.removeParticipation({expense: $scope.expense, person: p});
       }
     });
     refresh();
@@ -93,7 +93,7 @@ function ExpenseDetailCtrl(balanceSheet, debtService, $scope, $mdDialog, $stateP
 	function removeExpense() {
 	  $mdDialog.show(confirmRemoveExpense)
 	  .then(function() {
-      balanceSheet.removeExpense($scope.expense);
+      balanceSheetService.removeExpense($scope.expense);
       $state.go("balanceSheet");
     });
 	}

@@ -9,7 +9,6 @@ function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams
   
   var vm = this;
   var confirmRemovePerson;
-  var balanceSheet = balanceSheetService.balanceSheet;
   
   vm.init = init;
   vm.refresh = refresh;
@@ -20,8 +19,9 @@ function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams
 	init();
 	
 	function init() {
-		vm.person = balanceSheet.getPerson($stateParams.id);
-		vm.balanceSheet = balanceSheet;
+	  vm.balanceSheet = balanceSheetService.balanceSheet;
+		vm.person = vm.balanceSheet.getPerson($stateParams.id);
+		
 		refresh();
 		
 		confirmRemovePerson = $mdDialog.confirm()
@@ -42,7 +42,7 @@ function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams
 	function getParticipationMap() {
     var map = {};
     
-    _.forEach(balanceSheet.expenses, function(expense) {
+    _.forEach(vm.balanceSheet.expenses, function(expense) {
       map[expense.id] = false;
       _.forEach(vm.person.getParticipations(), function(pt) {
         if (pt.expense.equals(expense)) {
@@ -61,9 +61,9 @@ function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams
 	
 	function setParticipation(expense, isParticipant) {
     if (isParticipant) {
-      balanceSheet.createParticipation({expense: expense, person: vm.person});
+      vm.balanceSheet.createParticipation({expense: expense, person: vm.person});
     } else {
-      balanceSheet.removeParticipation({expense: expense, person: vm.person});
+      vm.balanceSheet.removeParticipation({expense: expense, person: vm.person});
     }
     vm.updateExpense(expense);
   }
@@ -74,7 +74,7 @@ function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams
 	      debts: undefined
 	  };
 	  
-	  if (!balanceSheet.isBalanced()) {
+	  if (!vm.balanceSheet.isBalanced()) {
 	    result.role = "unbalanced";
 	    return result;
 	  }
@@ -93,7 +93,7 @@ function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams
       "creditor": "debtor"
     };
         
-    var debts = debtService.computeDebts(balanceSheet.participations);
+    var debts = debtService.computeDebts(vm.balanceSheet.participations);
     result.debts = _.chain(debts)
     .filter(function(d) {
       return d[result.role].equals(vm.person);

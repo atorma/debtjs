@@ -11,6 +11,7 @@ describe("ExpenseDetailCtrl", function() {
   var $stateParams;
   var $state;
   var balanceSheet;
+  var balanceSheetService;
   var debtService;
   var expense;
   var controller;
@@ -18,6 +19,9 @@ describe("ExpenseDetailCtrl", function() {
   beforeEach(function() {
     balanceSheet = new BalanceSheet();
     expense = balanceSheet.createExpense();
+    
+    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["removeExpense"]);
+    balanceSheetService.balanceSheet = balanceSheet;
     
     debtService = {
       computeDebts: function() {
@@ -48,7 +52,7 @@ describe("ExpenseDetailCtrl", function() {
     };
     
     controller = $controller("ExpenseDetailCtrl", {
-      balanceSheet: balanceSheet,
+      balanceSheetService: balanceSheetService,
       debtService: debtService,
       $scope: $scope,
       $stateParams: $stateParams,
@@ -187,12 +191,11 @@ describe("ExpenseDetailCtrl", function() {
   
   it("deletes expense", function() {
     $scope.expense = expense;
-    spyOn(balanceSheet, "removeExpense");
     
     $scope.removeExpense();
     $scope.$digest();
     
-    expect(balanceSheet.removeExpense).toHaveBeenCalledWith(expense);
+    expect(balanceSheetService.removeExpense).toHaveBeenCalledWith(expense);
     expect($state.go).toHaveBeenCalledWith("balanceSheet");
   });
   

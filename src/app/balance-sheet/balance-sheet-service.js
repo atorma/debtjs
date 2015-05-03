@@ -17,7 +17,8 @@ function balanceSheetService(localStorageService) {
     init: init,
     createPerson: createPerson,
     removePerson: removePerson,
-    createExpense: createExpense
+    createExpense: createExpense,
+    removeExpense: removeExpense
   };
   service.init();
   
@@ -76,6 +77,11 @@ function balanceSheetService(localStorageService) {
     return expense;
   }
   
+  function removeExpense(expense) {
+    if (!expense) return;
+    
+    service.balanceSheet.removeExpense(expense);
+  }
 }
 
 
