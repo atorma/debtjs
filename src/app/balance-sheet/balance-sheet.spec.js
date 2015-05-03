@@ -196,7 +196,7 @@ describe("Balance sheet", function () {
       expect(person1.equals(expense1)).toBe(false);
     });
 
-    it("creates person with numbered name when no name given", function() {
+    it("created with numbered name when no name given", function() {
       var person1 = sheet.createPerson();
       expect(person1.name).toBe("Person 1");
 
@@ -295,7 +295,7 @@ describe("Balance sheet", function () {
       expect(expense1.equals(person1)).toBe(false);
     });
 
-    it("creates expense with numbered name when no name given", function() {
+    it("created with numbered name when no name given", function() {
       var expense1 = sheet.createExpense();
       expect(expense1.name).toBe("Expense 1");
 
@@ -496,7 +496,8 @@ describe("Balance sheet", function () {
       expect(person2.getSumOfShares()).toBe(0);
     });
 
-    it("can be shared equally among participants in cent accuracy without loss of money", function() {
+    it("shareCost() shares cost equally among participants in cent accuracy without loss of money when sharing is 'equal'", function() {
+      expense1.sharing = "equal";
       var person3 = sheet.createPerson();
       var nonParticipant = sheet.createPerson();
 
@@ -511,8 +512,24 @@ describe("Balance sheet", function () {
       expect(part2.share).toBe(3.33);
       expect(part3.share).toBe(3.34);
     });
+    
+    it("shareCost() is a noop when sharing is 'custom'", function() {
+      expense1.sharing = "custom";
+      var person3 = sheet.createPerson();
+      var nonParticipant = sheet.createPerson();
 
-    it("is shared as noop without error when no participations", function() {
+      var part1 = sheet.createParticipation({person: person1, expense: expense1, paid: 10});
+      var part2 = sheet.createParticipation({person: person2, expense: expense1, paid: 0});
+      var part3 = sheet.createParticipation({person: person3, expense: expense1, paid: 0});
+
+      expense1.shareCost();
+
+      expect(part1.share).toBe(0);
+      expect(part2.share).toBe(0);
+      expect(part3.share).toBe(0);
+    });
+
+    it("shareCost() is a noop without error when no participations", function() {
       expect(function() {
         expense1.shareCost();
       }).not.toThrow();

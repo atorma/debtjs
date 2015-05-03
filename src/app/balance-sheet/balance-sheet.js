@@ -285,21 +285,27 @@ var BalanceSheet = function(data) {
 		}
 		
 		function shareCost() {
+			if (_this.sharing === "equal") {
+			  shareEqually();
+			}
+		}
+		
+		function shareEqually() {
 		  var participations = _this.getParticipations();
-		  if (participations.length === 0) {
-		    return;
-		  }
-		  
-			var cost = new Decimal(_this.getCost());
-			var share = cost.divideBy(participations.length);
-			var lastShare = cost.subtract(share.multiply(participations.length - 1));
+      if (participations.length === 0) {
+        return;
+      }
+      
+		  var cost = new Decimal(_this.getCost());
+      var share = cost.divideBy(participations.length);
+      var lastShare = cost.subtract(share.multiply(participations.length - 1));
 
-			_.forEach(participations, function(p, i) {
-			  if (i < participations.length - 1) {
-			    p.share = share.toNumber();
-			  }
-			});
-			_.last(participations).share = lastShare.toNumber();
+      _.forEach(participations, function(p, i) {
+        if (i < participations.length - 1) {
+          p.share = share.toNumber();
+        }
+      });
+      _.last(participations).share = lastShare.toNumber();
 		}
 		
 		function equals(other) {
