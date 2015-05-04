@@ -20,14 +20,26 @@ var paths = {
 
 var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
 
+var packageJson = require('./package.json');
+var dependencies = _(packageJson && packageJson.dependencies || {}).keys().without('material-design-icons').value();
 
 // Builds the app and watches for changes
-gulp.task('build', ['js', 'html', 'watch:html', 'resources', 'watch:resources', 'lib', 'lib-resources']);
+gulp.task('build', ['js-lib', 'js-app', 'html', 'watch:html', 'resources', 'watch:resources', 'lib', 'lib-resources']);
 
-gulp.task('js', bundleApp);
+gulp.task('js-lib', function() {
+  return browserify()
+    .require(dependencies)
+    .bundle()
+    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    .pipe(source('libs.js'))
+    .pipe(gulp.dest(paths.build));
+});
+
+gulp.task('js-app', bundleApp);
 
 var appBundler = watchify(browserify('./'+paths.main, watchify.args));
 //appBundler.transform(debowerify);
+appBundler.external(dependencies);
 appBundler.on('update', bundleApp);
 appBundler.on('log', gutil.log);
 
