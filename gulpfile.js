@@ -26,34 +26,41 @@ var dependencies = _(packageJson && packageJson.dependencies || {}).keys().witho
 // Builds the app and watches for changes
 gulp.task('build', ['js-lib', 'js-app', 'html', 'watch:html', 'resources', 'watch:resources', 'lib', 'lib-resources']);
 
+
 gulp.task('js-lib', function() {
+  
   return browserify()
-    .require(dependencies)
-    .bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-    .pipe(source('libs.js'))
-    .pipe(gulp.dest(paths.build));
+  .require(dependencies)
+  .bundle()
+  .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+  .pipe(source('libs.js'))
+  .pipe(gulp.dest(paths.build));
+  
 });
 
-gulp.task('js-app', bundleApp);
+gulp.task('js-app', function() {
+  
+  var bundler = watchify(browserify('./'+paths.main, watchify.args));
+  //bundler.transform(debowerify);
+  bundler.external(dependencies);
+  bundler.on('update', bundle);
+  bundler.on('log', gutil.log);
+  
+  return bundle();
 
-var appBundler = watchify(browserify('./'+paths.main, watchify.args));
-//appBundler.transform(debowerify);
-appBundler.external(dependencies);
-appBundler.on('update', bundleApp);
-appBundler.on('log', gutil.log);
-
-function bundleApp() {
-  return appBundler.bundle()
-  .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-  .pipe(source('debt.js'))
-  // optional, remove if you don't want sourcemaps
-  .pipe(buffer())
-  .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-  .pipe(sourcemaps.write('./')) // writes .map file
-  //
-  .pipe(gulp.dest(paths.build));
-}
+  function bundle() {
+    return bundler.bundle()
+    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    .pipe(source('debt.js'))
+      // optional, remove if you don't want sourcemaps
+    .pipe(buffer())
+    .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
+    .pipe(sourcemaps.write('./')) // writes .map file
+    //
+    .pipe(gulp.dest(paths.build));
+  }
+  
+});
 
 gulp.task('html', function() {
 	gulp.src(paths.html)
