@@ -8,7 +8,7 @@ require("angular-aria");
 require("angular-route");
 require("angular-ui-router");
 require("angular-local-storage");
-//require("ng-mfb");
+require("ng-mfb");
 
 var _ = require("lodash");
 

@@ -13,15 +13,26 @@ var paths = {
 	main: 'src/app/debt.js',
 	html: ['src/app/**/*.html', '!src/app/**/*.spec.html'],
 	resources: ['src/resources/**'],
-	lib: ['bower_components/ng-mfb/src/mfb-directive.js'],
-	libResources: ['node_modules/angular-material-builds/angular-material.css', 'bower_components/ng-mfb/mfb/src/mfb.css*', 'src/lib/**/*.*', '!src/lib/**/*.js'],
+	lib: [],
+	libResources: ['node_modules/angular-material-builds/angular-material.css', 'node_modules/ng-material-floating-button/mfb/dist/mfb.css*', 'src/lib/**/*.*', '!src/lib/**/*.js'],
 	build: 'build'
 };
 
 var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
 
+/*
+ * Dependencies
+ * material-design-icons: 
+ *  Breaks browserify. This is an icon package and does not have package.json main or index.js
+ * ng-material-floating-button: 
+ *  Breaks browserify. It has an array in package.json main (problem as such) and one of them refers to a css file. 
+ *  Handled separately as "ng-mfb".
+ */
 var packageJson = require('./package.json');
-var dependencies = _(packageJson && packageJson.dependencies || {}).keys().without('material-design-icons').value();
+var dependencies = _(packageJson && packageJson.dependencies || {})
+  .keys()
+  .without('material-design-icons', 'ng-material-floating-button')
+  .value();
 
 // Builds the app and watches for changes
 gulp.task('build', ['js-lib', 'js-app', 'html', 'watch:html', 'resources', 'watch:resources', 'lib', 'lib-resources']);
@@ -31,6 +42,7 @@ gulp.task('js-lib', function() {
   
   return browserify()
   .require(dependencies)
+  .require('./node_modules/ng-material-floating-button/src/mfb-directive.js', {expose: 'ng-mfb'})
   .bundle()
   .on('error', gutil.log.bind(gutil, 'Browserify Error'))
   .pipe(source('libs.js'))
@@ -43,6 +55,7 @@ gulp.task('js-app', function() {
   var bundler = watchify(browserify('./'+paths.main, watchify.args));
   //bundler.transform(debowerify);
   bundler.external(dependencies);
+  bundler.external('ng-mfb');
   bundler.on('update', bundle);
   bundler.on('log', gutil.log);
   

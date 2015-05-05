@@ -4,8 +4,10 @@
   "description": "Debt app",
   "main": "",
   "directories": {},
-  "browser": {},
-  "browserify-shim": {},
+  "browser": {
+  },
+  "browserify-shim": {
+  },
   "browserify": {
     "transform": [
       "browserify-shim"
@@ -21,6 +23,7 @@
     "angular-ui-router": "0.2.13",
     "lodash": "3.6.0",
     "material-design-icons": "1.0.1",
+    "ng-material-floating-button": "0.5.1",
     "simple-decimal-money": "0.2.3"
   },
   "devDependencies": {
