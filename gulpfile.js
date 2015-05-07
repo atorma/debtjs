@@ -1,11 +1,13 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
+var del = require('del');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
+var globby = require('globby');
+var through = require('through2');
 var watchify = require('watchify');
 var browserify = require('browserify');
-var debowerify = require('debowerify');
 var karma = require('karma').server;
 var _ = require('lodash');
 
@@ -15,6 +17,7 @@ var paths = {
 	resources: ['src/resources/**'],
 	lib: [],
 	libResources: ['node_modules/angular-material-builds/angular-material.css', 'node_modules/ng-material-floating-button/mfb/dist/mfb.css*', 'src/lib/**/*.*', '!src/lib/**/*.js'],
+	tests: 'src/app/**/*.spec.js',
 	build: 'build'
 };
 
@@ -34,8 +37,18 @@ var dependencies = _(packageJson && packageJson.dependencies || {})
   .without('material-design-icons', 'ng-material-floating-button')
   .value();
 
-// Builds the app and watches for changes
-gulp.task('build', ['js-lib', 'js-app', 'html', 'watch:html', 'resources', 'watch:resources', 'lib', 'lib-resources']);
+// Builds the app and tests and watches for changes
+gulp.task('build', [
+                    'js-lib', 
+                    'js-app', 
+                    'html', 
+                    'watch:html', 
+                    'resources', 
+                    'watch:resources', 
+                    'lib', 
+                    'lib-resources',
+                    'js-tests'
+                    ]);
 
 
 gulp.task('js-lib', function() {
@@ -52,12 +65,11 @@ gulp.task('js-lib', function() {
 
 gulp.task('js-app', function() {
   
-  var bundler = watchify(browserify('./'+paths.main, watchify.args));
-  //bundler.transform(debowerify);
-  bundler.external(dependencies);
-  bundler.external('ng-mfb');
-  bundler.on('update', bundle);
-  bundler.on('log', gutil.log);
+  var bundler = watchify(browserify('./'+paths.main, watchify.args))
+  .external(dependencies)
+  .external('ng-mfb')
+  .on('update', bundle)
+  .on('log', gutil.log);
   
   return bundle();
 
@@ -65,7 +77,7 @@ gulp.task('js-app', function() {
     return bundler.bundle()
     .on('error', gutil.log.bind(gutil, 'Browserify Error'))
     .pipe(source('debt.js'))
-      // optional, remove if you don't want sourcemaps
+    // optional, remove if you don't want sourcemaps
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
     .pipe(sourcemaps.write('./')) // writes .map file
@@ -115,6 +127,53 @@ gulp.task('lib-resources', function() {
 });
 
 
+// TODO don't bundle app files into tests.js
+// but don't break Karma tests, either
+gulp.task('js-tests', function() {
+  
+  // Based on Browserify + Globs
+  // https://github.com/gulpjs/gulp/blob/4d35560d9e2e992037886897c671518cfe49fd7f/docs/recipes/browserify-with-globs.md
+  
+  var bundledStream;
+  
+  globby('./' + paths.tests, function(err, entries) {
+
+    
+    var bundler = watchify(browserify(watchify.args))
+    .add(entries)
+    .external(dependencies)
+    .external('ng-mfb')
+    .on('update', bundle)
+    .on('log', gutil.log);
+    
+    bundle();
+    
+    function bundle() {
+      bundledStream = through();
+      
+      if (err) {
+        bundledStream.emit('error', err);
+        return;
+      }
+      
+      bundledStream
+      .pipe(source('tests.js'))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({loadMaps: true}))
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest(paths.build));
+      
+      return bundler
+      .bundle()
+      .pipe(bundledStream)
+      .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    }
+    
+  });
+  
+  return bundledStream;
+});
+
 //Run tests once and exit
 gulp.task('test', function(done) {
 	karma.start({
@@ -131,4 +190,6 @@ gulp.task('tdd', function(done) {
 });
 
 
-
+gulp.task('clean', function(cb) {
+  del(paths.build, cb);
+});

@@ -1,18 +1,9 @@
 module.exports = function(config) {
 	config.set({
-		basePath : '',
-		frameworks : [ 'browserify', 'jasmine' ],
-		files : [
-		         {pattern: 'src/app/**/*.spec.js'},
-		         {pattern: 'bower_components/ng-mfb/src/mfb-directive.js'}
-		         ],
+		basePath : 'build',
+		files : [ 'libs.js', 'tests.js' ],
 		exclude : [],
-		preprocessors : {
-			'src/app/**/*.spec.js' : [ 'browserify' ]
-		},
-		browserify : {
-			debug : true
-		},
+		frameworks : [ 'jasmine' ],
 		reporters : [ 'progress' ],
 		port : 9876,
 		colors : true,
@@ -22,3 +13,4 @@ module.exports = function(config) {
 		singleRun : false
 	});
 };
+
