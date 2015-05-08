@@ -144,6 +144,8 @@ gulp.task('js-tests', function() {
   
   // Based on Browserify + Globs
   // https://github.com/gulpjs/gulp/blob/4d35560d9e2e992037886897c671518cfe49fd7f/docs/recipes/browserify-with-globs.md
+  
+  var bundledStream = through(); // a stream with which to tell gulp about the first build 
 
   globby('./' + paths.tests, function(err, entries) {
 
@@ -151,21 +153,19 @@ gulp.task('js-tests', function() {
     .add(entries)
     .external(dependencies)
     .external('ng-mfb')
-    .on('update', bundle)
+    .on('update', reBundle)
     .on('log', gutil.log);
     
-    return bundle();
+    return bundle(bundledStream);
 
-    function bundle() {
-      var bundledStream = through();
-      
+    function bundle(bundledStream) {
       if (err) {
         bundledStream.emit('error', err);
         return;
       }
       
       bundledStream
-      .pipe(source('tests.js'))
+      .pipe(source('debt.spec.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true}))
       .pipe(sourcemaps.write('./'))
@@ -177,7 +177,13 @@ gulp.task('js-tests', function() {
       .on('error', gutil.log.bind(gutil, 'Browserify Error'));
     }
     
+    function reBundle() {
+      return bundle(through());
+    }
+    
   });
+  
+  return bundledStream;
 
 });
 
@@ -205,5 +211,5 @@ gulp.task('webserver', function() {
 });
 
 gulp.task('develop', function(cb) {
-  runSequence('clean-build', ['webserver'], cb);
+  runSequence('build', ['tdd', 'webserver'], cb);
 });
