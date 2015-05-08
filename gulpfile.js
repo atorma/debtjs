@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var del = require('del');
+var runSequence = require('run-sequence');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
@@ -9,6 +10,7 @@ var through = require('through2');
 var watchify = require('watchify');
 var browserify = require('browserify');
 var karma = require('karma').server;
+var webserver = require('gulp-webserver');
 var _ = require('lodash');
 
 var paths = {
@@ -51,6 +53,14 @@ gulp.task('build', [
                     ]);
 
 
+gulp.task('clean', function(cb) {
+  del(paths.build, cb);
+});
+
+gulp.task('clean-build', function(cb) {
+  runSequence('clean', 'build', cb);
+});
+
 gulp.task('js-lib', function() {
   
   return browserify()
@@ -88,7 +98,7 @@ gulp.task('js-app', function() {
 });
 
 gulp.task('html', function() {
-	gulp.src(paths.html)
+	return gulp.src(paths.html)
 	.pipe(gulp.dest(paths.build));
 });
 
@@ -97,20 +107,20 @@ gulp.task('watch:html', function() {
 });
 
 gulp.task('resources', function() {
-	gulp.src(paths.resources)
+	return gulp.src(paths.resources)
 	.pipe(gulp.dest(paths.build + '/resources'));
 });
 
 gulp.task('watch:resources', function() {
-	gulp.watch(paths.resources, ['resources']);
+  gulp.watch(paths.resources, ['resources']);
 });
 
 gulp.task('lib', function() {
-  gulp.src(paths.lib)
+  return gulp.src(paths.lib)
   .pipe(gulp.dest(paths.build));
 });
 
-gulp.task('lib-resources', function() {
+gulp.task('lib-resources', function(done) {
 	gulp.src(paths.libResources)
 	.pipe(gulp.dest(paths.build + '/resources'));
 	
@@ -124,6 +134,7 @@ gulp.task('lib-resources', function() {
 	  .pipe(gulp.dest(paths.build + '/resources/icons/'));
 	});
 	
+	done();
 });
 
 
@@ -133,12 +144,9 @@ gulp.task('js-tests', function() {
   
   // Based on Browserify + Globs
   // https://github.com/gulpjs/gulp/blob/4d35560d9e2e992037886897c671518cfe49fd7f/docs/recipes/browserify-with-globs.md
-  
-  var bundledStream;
-  
+
   globby('./' + paths.tests, function(err, entries) {
 
-    
     var bundler = watchify(browserify(watchify.args))
     .add(entries)
     .external(dependencies)
@@ -146,10 +154,10 @@ gulp.task('js-tests', function() {
     .on('update', bundle)
     .on('log', gutil.log);
     
-    bundle();
-    
+    return bundle();
+
     function bundle() {
-      bundledStream = through();
+      var bundledStream = through();
       
       if (err) {
         bundledStream.emit('error', err);
@@ -166,20 +174,19 @@ gulp.task('js-tests', function() {
       return bundler
       .bundle()
       .pipe(bundledStream)
-      .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+      .on('error', gutil.log.bind(gutil, 'Browserify Error'));
     }
     
   });
-  
-  return bundledStream;
+
 });
 
 //Run tests once and exit
-gulp.task('test', function(done) {
-	karma.start({
+gulp.task('test', function() {
+	return karma.start({
 		configFile : __dirname + '/karma.conf.js',
 		singleRun : true
-	}, done);
+	});
 });
 
 // Watch for file changes and re-run tests on each change
@@ -189,7 +196,14 @@ gulp.task('tdd', function(done) {
 	}, done);
 });
 
+gulp.task('webserver', function() {
+  gulp.src(paths.build)
+  .pipe(webserver({
+    port: 8080,
+    livereload: true
+  }));
+});
 
-gulp.task('clean', function(cb) {
-  del(paths.build, cb);
+gulp.task('develop', function(cb) {
+  runSequence('clean-build', ['webserver'], cb);
 });

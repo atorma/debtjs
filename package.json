@@ -34,6 +34,7 @@
     "gulp": "3.8.11",
     "gulp-sourcemaps": "1.5.1",
     "gulp-util": "3.0.4",
+    "gulp-webserver": "^0.9.1",
     "jasmine-core": "2.2.0",
     "karma": "0.12.31",
     "karma-browserify": "4.1.2",
@@ -42,13 +43,15 @@
     "karma-ie-launcher": "0.1.5",
     "karma-jasmine": "0.3.5",
     "karma-phantomjs-launcher": "0.1.4",
+    "run-sequence": "^1.1.0",
     "through2": "0.6.5",
     "vinyl-buffer": "1.0.0",
     "vinyl-source-stream": "1.1.0",
     "watchify": "3.1.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "gulp build",
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
