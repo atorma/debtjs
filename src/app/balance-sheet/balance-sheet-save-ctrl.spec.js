@@ -1,5 +1,6 @@
 "use strict";
 
+var _ = require("lodash");
 var angular = require("angular");
 require("angular-mocks/ngMock");
 require("../debt");
@@ -17,11 +18,7 @@ describe("BalanceSheetSaveCtrl", function() {
   beforeEach(function() {
     
     balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["save"]);
-    
-    $timeout = function(command) {
-      command();
-    };
-    
+        
   });
   
   beforeEach(angular.mock.module("debtApp", function($provide) {
@@ -33,36 +30,51 @@ describe("BalanceSheetSaveCtrl", function() {
     
     controller = $controller("BalanceSheetSaveCtrl", {
       balanceSheetService: balanceSheetService,
-      $scope: $rootScope,
-      $timeout: $timeout
+      balanceSheetSaveCtrlConfig: {wait: 0},
+      $scope: $rootScope
     });
     
   }));
   
   describe("save function", function() {
     
-    it("saves balance sheet on scope digest", function() {
+    it("saves balance sheet on scope digest", function(done) {
       $scope.$digest();
       
-      expect(balanceSheetService.save).toHaveBeenCalled();
+      afterTimeout(function() {
+        expect(balanceSheetService.save).toHaveBeenCalled();
+        done();
+      });
+      
     });
     
-    it("displays error message if saving fails", function() {
+    it("displays error message if saving fails", function(done) {
       balanceSheetService.save.and.throwError("Some error");
       
       $scope.$digest();
       
-      expect($scope.errorMessage).toEqual("Cannot save: Some error");
+      afterTimeout(function() {
+        expect($scope.errorMessage).toEqual("Cannot save: Some error");
+        done();
+      });
+      
     });
     
-    it("clears error message if saving succeeds", function() {
+    it("clears error message if saving succeeds", function(done) {
       $scope.errorMessage = "Unable to save";
       
       $scope.$digest();
       
-      expect($scope.errorMessage).toBe(undefined);
+      afterTimeout(function() {
+        expect($scope.errorMessage).toBe(undefined);
+        done();
+      });
+
     });
     
+    function afterTimeout(fun) {
+      setTimeout(fun, 0);
+    }
     
   });
 

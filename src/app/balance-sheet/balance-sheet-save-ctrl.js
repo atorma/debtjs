@@ -1,9 +1,12 @@
 "use strict";
 
+var _ = require("lodash"); 
+
 require("angular").module("debtApp")
+  .value("balanceSheetSaveCtrlConfig", {wait: 500})
   .controller("BalanceSheetSaveCtrl", BalanceSheetSaveCtrl);
 
-function BalanceSheetSaveCtrl(balanceSheetService, $scope, $log, $timeout) {
+function BalanceSheetSaveCtrl(balanceSheetService, balanceSheetSaveCtrlConfig, $scope, $log) {
   
   this.init = init;
   init();
@@ -12,15 +15,8 @@ function BalanceSheetSaveCtrl(balanceSheetService, $scope, $log, $timeout) {
   
   function init() {
     
-    var timeoutPromise = null;
-    $scope.$watch(function() {
-      if (timeoutPromise === null) {
-        timeoutPromise = $timeout(function() {
-          tryToSave();
-          timeoutPromise = null;
-        }, 0, false);
-      }
-    });
+    var debouncedSave = _.debounce(tryToSave, balanceSheetSaveCtrlConfig.wait);
+    $scope.$watch(debouncedSave);
     
   }
 
