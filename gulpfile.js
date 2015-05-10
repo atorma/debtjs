@@ -12,6 +12,7 @@ var browserify = require('browserify');
 var karma = require('karma').server;
 var webserver = require('gulp-webserver');
 var _ = require('lodash');
+var manifest = require('gulp-manifest');
 
 var paths = {
 	main: 'src/app/debt.js',
@@ -40,17 +41,18 @@ var dependencies = _(packageJson && packageJson.dependencies || {})
   .value();
 
 // Builds the app and tests and watches for changes
-gulp.task('build', [
-                    'js-lib', 
-                    'js-app', 
-                    'html', 
-                    'watch:html', 
-                    'resources', 
-                    'watch:resources', 
-                    'lib', 
-                    'lib-resources',
-                    'js-tests'
-                    ]);
+gulp.task('build', function(cb) {
+  runSequence([
+      'js-lib',
+      'js-app',
+      'html', 
+      'resources', 
+      'lib', 
+      'lib-resources',
+      'js-tests'
+      ], 'manifest', cb);
+  
+});
 
 
 gulp.task('clean', function(cb) {
@@ -62,39 +64,42 @@ gulp.task('clean-build', function(cb) {
 });
 
 gulp.task('js-lib', function() {
-  
   return browserify()
   .require(dependencies)
   .require('./node_modules/ng-material-floating-button/src/mfb-directive.js', {expose: 'ng-mfb'})
   .bundle()
   .on('error', gutil.log.bind(gutil, 'Browserify Error'))
   .pipe(source('libs.js'))
+  .pipe(buffer())
+  .pipe(sourcemaps.init({loadMaps: true}))
+  .pipe(sourcemaps.write('./'))
   .pipe(gulp.dest(paths.build));
-  
 });
 
-gulp.task('js-app', function() {
-  
-  var bundler = watchify(browserify('./'+paths.main, watchify.args))
-  .external(dependencies)
-  .external('ng-mfb')
-  .on('update', bundle)
-  .on('log', gutil.log);
-  
-  return bundle();
+var appBundler = browserify('./'+paths.main, watchify.args)
+.external(dependencies)
+.external('ng-mfb')
+.on('log', gutil.log);
 
-  function bundle() {
-    return bundler.bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-    .pipe(source('debt.js'))
-    // optional, remove if you don't want sourcemaps
-    .pipe(buffer())
-    .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-    .pipe(sourcemaps.write('./')) // writes .map file
-    //
-    .pipe(gulp.dest(paths.build));
-  }
-  
+function bundleApp(bundler) {
+  return bundler.bundle()
+  .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+  .pipe(source('debt.js'))
+  .pipe(buffer())
+  .pipe(sourcemaps.init({loadMaps: true}))
+  .pipe(sourcemaps.write('./'))
+  .pipe(gulp.dest(paths.build));
+}
+
+gulp.task('js-app', function() {
+  return bundleApp(appBundler);
+});
+
+gulp.task('watch:js-app', function() {
+  var bundler = watchify(appBundler)
+  .on('update', function() {
+    return bundleApp(bundler);
+  });
 });
 
 gulp.task('html', function() {
@@ -135,6 +140,18 @@ gulp.task('lib-resources', function(done) {
 	});
 	
 	done();
+});
+
+gulp.task('manifest', function() {
+  return gulp.src([paths.build + '/**/*', '!' + paths.build + '/**/*.map'])
+  .pipe(manifest({
+    hash: true,
+    preferOnline: true,
+    network: ['http://*', 'https://*', '*'],
+    filename: 'debt.manifest',
+    exclude: 'debt.manifest'
+   }))
+  .pipe(gulp.dest(paths.build));
 });
 
 
@@ -211,5 +228,5 @@ gulp.task('webserver', function() {
 });
 
 gulp.task('develop', function(cb) {
-  runSequence('build', ['tdd', 'webserver'], cb);
+  runSequence(['build', 'watch:js-app', 'watch:html', 'watch:resources'], ['tdd', 'webserver'], cb);
 });
