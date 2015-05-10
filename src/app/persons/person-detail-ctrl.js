@@ -5,7 +5,7 @@ var _ = require('lodash');
 require("angular").module("debtApp")
 	.controller("PersonDetailCtrl", PersonDetailCtrl);
 
-function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams, $mdDialog, $log) {
+function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams, $mdDialog, $scope, $log) {
   
   var vm = this;
   var confirmRemovePerson;
@@ -27,6 +27,8 @@ function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams
 		confirmRemovePerson = $mdDialog.confirm()
     .content("Deleting removes this person from all expenses and can change their costs and balances. Go ahead with deleting?")
     .ok("Ok").cancel("Cancel");
+		
+		$scope.$on("balanceSheetUpdated", vm.refresh);
 	}
 	
 	function refresh() {

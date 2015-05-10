@@ -56,7 +56,8 @@ describe("ExpenseDetailCtrl", function() {
       debtService: debtService,
       $stateParams: $stateParams,
       $state: $state,
-      $mdDialog: $mdDialog
+      $mdDialog: $mdDialog,
+      $scope: $scope
     });
     
   }));
@@ -133,6 +134,15 @@ describe("ExpenseDetailCtrl", function() {
       vm.refresh();
       
       expect(vm.sumOfShares).toBe(120);
+    });
+    
+    it("is done on balanceSheetUpdated event", function() {
+      vm.refresh = jasmine.createSpy("refresh");
+      vm.init();
+      
+      $scope.$root.$broadcast("balanceSheetUpdated");
+      
+      expect(vm.refresh).toHaveBeenCalled();
     });
     
   });
