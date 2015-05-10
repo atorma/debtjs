@@ -7,6 +7,7 @@ var BalanceSheet = require("../balance-sheet/balance-sheet");
   
 describe("ExpenseDetailCtrl", function() {
 
+  var vm;
   var $scope;
   var $stateParams;
   var $state;
@@ -14,7 +15,6 @@ describe("ExpenseDetailCtrl", function() {
   var balanceSheetService;
   var debtService;
   var expense;
-  var controller;
   
   beforeEach(function() {
     balanceSheet = new BalanceSheet();
@@ -44,17 +44,16 @@ describe("ExpenseDetailCtrl", function() {
   }));
   
   beforeEach(angular.mock.inject(function($rootScope, $controller, $q, $mdDialog) {
-    $scope = $rootScope;
+    $scope = $rootScope.$new();
     
     // Dialog always results in "OK"
     $mdDialog.show = function() {
       return $q.when();
     };
     
-    controller = $controller("ExpenseDetailCtrl", {
+    vm = $controller("ExpenseDetailCtrl", {
       balanceSheetService: balanceSheetService,
       debtService: debtService,
-      $scope: $scope,
       $stateParams: $stateParams,
       $state: $state,
       $mdDialog: $mdDialog
@@ -62,9 +61,9 @@ describe("ExpenseDetailCtrl", function() {
     
   }));
 
-  it("adds balance sheet and expense into $scope", function() {
-    expect($scope.balanceSheet).toBe(balanceSheet);
-    expect($scope.expense).toBe(expense);
+  it("exposes balance sheet and expense", function() {
+    expect(vm.balanceSheet).toBe(balanceSheet);
+    expect(vm.expense).toBe(expense);
   });
   
 
@@ -72,7 +71,7 @@ describe("ExpenseDetailCtrl", function() {
     
     beforeEach(function() {
       spyOn(expense, "shareCost");
-      $scope.expense = expense;
+      vm.expense = expense;
     });
     
     it("updates participation map", function() {
@@ -83,20 +82,20 @@ describe("ExpenseDetailCtrl", function() {
       balanceSheet.createParticipation({person: participant1, expense: expense});
       balanceSheet.createParticipation({person: participant2, expense: expense});
       
-      $scope.refresh();
+      vm.refresh();
       
-      expect($scope.isParticipant[participant1.id]).toBe(true);
-      expect($scope.isParticipant[participant2.id]).toBe(true);
-      expect($scope.isParticipant[nonParticipant.id]).toBe(false);
+      expect(vm.isParticipant[participant1.id]).toBe(true);
+      expect(vm.isParticipant[participant2.id]).toBe(true);
+      expect(vm.isParticipant[nonParticipant.id]).toBe(false);
     });
 
     it("shares cost of expense", function() {
-      $scope.refresh();
+      vm.refresh();
       
       expect(expense.shareCost).toHaveBeenCalled();
     });
 
-    it("computes debts by debtor into $scope", function() {
+    it("computes debts by debtor", function() {
       var participations = [{person: "Dummy"}];
       spyOn(expense, "getParticipations").and.returnValue(participations);
       
@@ -115,25 +114,25 @@ describe("ExpenseDetailCtrl", function() {
         return debtsByDebtor;
       };
       
-      $scope.refresh();
+      vm.refresh();
       
-      expect($scope.debtsByDebtor).toBe(debtsByDebtor);
+      expect(vm.debtsByDebtor).toBe(debtsByDebtor);
     });
     
     it("puts expense cost into scope variable", function() {
       spyOn(expense, "getCost").and.returnValue(120);
       
-      $scope.refresh();
+      vm.refresh();
       
-      expect($scope.cost).toBe(120);
+      expect(vm.cost).toBe(120);
     });
     
     it("puts expense sum of shares cost into scope variable", function() {
       spyOn(expense, "getSumOfShares").and.returnValue(120);
       
-      $scope.refresh();
+      vm.refresh();
       
-      expect($scope.sumOfShares).toBe(120);
+      expect(vm.sumOfShares).toBe(120);
     });
     
   });
@@ -146,24 +145,24 @@ describe("ExpenseDetailCtrl", function() {
       person = balanceSheet.createPerson();
       spyOn(balanceSheet, "createParticipation");
       spyOn(balanceSheet, "removeParticipation");
-      $scope.expense = expense;
+      vm.expense = expense;
     });
     
     it("creates or removes participation", function() {      
-      $scope.setParticipation(person, true);
-      expect(balanceSheet.createParticipation).toHaveBeenCalledWith({person: person, expense: $scope.expense});
+      vm.setParticipation(person, true);
+      expect(balanceSheet.createParticipation).toHaveBeenCalledWith({person: person, expense: vm.expense});
       
-      $scope.setParticipation(person, false);
-      expect(balanceSheet.createParticipation).toHaveBeenCalledWith({person: person, expense: $scope.expense});
+      vm.setParticipation(person, false);
+      expect(balanceSheet.createParticipation).toHaveBeenCalledWith({person: person, expense: vm.expense});
     });
 
   });
   
   it("deletes expense", function() {
     spyOn(balanceSheet, "removeExpense");
-    $scope.expense = expense;
+    vm.expense = expense;
     
-    $scope.removeExpense();
+    vm.removeExpense();
     $scope.$digest();
     
     expect(balanceSheet.removeExpense).toHaveBeenCalledWith(expense);

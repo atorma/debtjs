@@ -7,24 +7,24 @@ angular
   .module("debtApp")
     .controller("ExpenseDetailCtrl", ExpenseDetailCtrl);
 
-function ExpenseDetailCtrl(balanceSheetService, debtService, $scope, $mdDialog, $stateParams, $state) {
+function ExpenseDetailCtrl(balanceSheetService, debtService, $mdDialog, $stateParams, $state) {
+  var vm = this;
   var confirmRemoveExpense;
   
-  this.init = init;
-  
-  $scope.setParticipation = setParticipation;
-  $scope.refresh = refresh;
-  $scope.removeExpense = removeExpense;
+  vm.init = init;
+  vm.setParticipation = setParticipation;
+  vm.refresh = refresh;
+  vm.removeExpense = removeExpense;
   
 	init();
 	
 	/////////////////////////////////////////////////////////////
 	
 	function init() {
-		$scope.balanceSheet = balanceSheetService.balanceSheet;
-		$scope.expense = $scope.balanceSheet.getExpense($stateParams.id);
-		$scope.isParticipant = {};
-		$scope.everyoneParticipates = true;
+		vm.balanceSheet = balanceSheetService.balanceSheet;
+		vm.expense = vm.balanceSheet.getExpense($stateParams.id);
+		vm.isParticipant = {};
+		vm.everyoneParticipates = true;
 		refresh();
 
 		confirmRemoveExpense = $mdDialog.confirm()
@@ -33,19 +33,19 @@ function ExpenseDetailCtrl(balanceSheetService, debtService, $scope, $mdDialog, 
 	}
 	
 	function refresh() {
-    $scope.expense.shareCost();
-    $scope.isParticipant = getParticipationMap();
-    $scope.debtsByDebtor = computeDebts();
-    $scope.cost = $scope.expense.getCost();
-    $scope.sumOfShares = $scope.expense.getSumOfShares();
+    vm.expense.shareCost();
+    vm.isParticipant = getParticipationMap();
+    vm.debtsByDebtor = computeDebts();
+    vm.cost = vm.expense.getCost();
+    vm.sumOfShares = vm.expense.getSumOfShares();
   }
 
 	function getParticipationMap() {
 	  var map = {};
 	  
-	  angular.forEach($scope.balanceSheet.persons, function(person) {
+	  angular.forEach(vm.balanceSheet.persons, function(person) {
 	    map[person.id] = false;
-	    angular.forEach($scope.expense.getParticipations(), function(p) {
+	    angular.forEach(vm.expense.getParticipations(), function(p) {
 	      if (p.person.equals(person)) {
 	        map[person.id] = true;
 	      }
@@ -57,9 +57,9 @@ function ExpenseDetailCtrl(balanceSheetService, debtService, $scope, $mdDialog, 
 		
 	function setParticipation(person, isParticipant) {
 	  if (isParticipant) {
-	    $scope.balanceSheet.createParticipation({expense: $scope.expense, person: person});
+	    vm.balanceSheet.createParticipation({expense: vm.expense, person: person});
 	  } else {
-	    $scope.balanceSheet.removeParticipation({expense: $scope.expense, person: person});
+	    vm.balanceSheet.removeParticipation({expense: vm.expense, person: person});
 	  }
 	  refresh();
 	}
@@ -67,17 +67,17 @@ function ExpenseDetailCtrl(balanceSheetService, debtService, $scope, $mdDialog, 
 	function removeExpense() {
 	  $mdDialog.show(confirmRemoveExpense)
 	  .then(function() {
-      $scope.balanceSheet.removeExpense($scope.expense);
+      vm.balanceSheet.removeExpense(vm.expense);
       $state.go("balanceSheet");
     });
 	}
 	
 	function computeDebts() {
-	  if (!$scope.expense.isBalanced()) {
+	  if (!vm.expense.isBalanced()) {
 	    return [];
 	  }
 	 
-	  var debts = debtService.computeDebts($scope.expense.getParticipations());
+	  var debts = debtService.computeDebts(vm.expense.getParticipations());
 	  return debtService.organizeByDebtor(debts);
 	}
 
