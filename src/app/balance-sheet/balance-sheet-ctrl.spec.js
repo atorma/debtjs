@@ -7,10 +7,11 @@ var BalanceSheet = require("./balance-sheet");
   
 describe("BalanceSheetCtrl", function() {
 
+  var vm;
   var $scope;
   var balanceSheet;
   var debtService;
-  var controller;
+  
 
   beforeEach(angular.mock.module("debtApp"));
   
@@ -24,7 +25,7 @@ describe("BalanceSheetCtrl", function() {
   beforeEach(angular.mock.inject(function($rootScope, $controller, $q) {
     $scope = $rootScope.$new();
 
-    controller = $controller("BalanceSheetCtrl", {
+    vm = $controller("BalanceSheetCtrl", {
       balanceSheet: balanceSheet,
       debtService: debtService,
       $scope: $scope
@@ -32,13 +33,13 @@ describe("BalanceSheetCtrl", function() {
     
   }));
 
-  it("adds balance sheet into $scope", function() {
-    expect($scope.balanceSheet).toBe(balanceSheet);
+  it("exposes balance sheet", function() {
+    expect(vm.balanceSheet).toBe(balanceSheet);
   });
   
   describe("refresh", function() {
     
-    it("computes debts by debtor into $scope", function() {
+    it("computes debts by debtor", function() {
       
       balanceSheet.participations = "Dummy participations";
 
@@ -48,19 +49,20 @@ describe("BalanceSheetCtrl", function() {
       var debtsByDebtor = "Dummy debts by debtor";
       debtService.organizeByDebtor.and.returnValue(debtsByDebtor);
       
-      $scope.refresh();
+      vm.refresh();
       
       expect(debtService.computeDebts).toHaveBeenCalledWith(balanceSheet.participations);
       expect(debtService.organizeByDebtor).toHaveBeenCalledWith(debts);
-      expect($scope.debtsByDebtor).toBe(debtsByDebtor);
+      expect(vm.debtsByDebtor).toBe(debtsByDebtor);
     });
     
     it("is done on balanceSheetUpdated event", function() {
-      balanceSheet.participations = "Updated";
+      vm.refresh = jasmine.createSpy("refresh");
+      vm.init();
       
       $scope.$root.$broadcast("balanceSheetUpdated");
       
-      expect(debtService.computeDebts).toHaveBeenCalledWith(balanceSheet.participations);
+      expect(vm.refresh).toHaveBeenCalled();
     });
     
   });

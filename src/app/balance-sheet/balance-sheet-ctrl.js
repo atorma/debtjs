@@ -4,24 +4,24 @@ require("angular").module("debtApp")
   .controller("BalanceSheetCtrl", BalanceSheetCtrl);
 
 function BalanceSheetCtrl(balanceSheet, debtService, $scope) {
+  var vm = this;
   
-  this.init = init;
-  
-  $scope.refresh = refresh;
+  vm.init = init;
+  vm.refresh = refresh;
   
   init();
   
   /////////////////////////////////////////////////////////////
   
   function init() {
-    $scope.balanceSheet = balanceSheet;
+    vm.balanceSheet = balanceSheet;
     refresh();
     
-    $scope.$on("balanceSheetUpdated", $scope.refresh);
+    $scope.$on("balanceSheetUpdated", vm.refresh);
   }
   
   function refresh() {
-    $scope.debtsByDebtor = computeDebts();
+    vm.debtsByDebtor = computeDebts();
   }
   
   function computeDebts() {

@@ -1,7 +1,7 @@
 <md-subheader class="md-primary">Expenses</md-subheader>
 <md-card>
   <md-list class="menu">
-    <md-list-item class="md-2-line" ng-repeat="expense in balanceSheet.expenses">
+    <md-list-item class="md-2-line" ng-repeat="expense in vm.balanceSheet.expenses">
       <div class="md-list-item-text" layout="column">
         <a href="#/expenses/{{expense.id}}" layout="row" layout-align="start center">
           <span>{{expense.name}}</span>
@@ -12,7 +12,7 @@
       </div>
       <md-divider ng-if="!$last"></md-divider>
     </md-list-item>
-    <md-list-item class="md-2-line" ng-if="balanceSheet.expenses.length == 0">
+    <md-list-item class="md-2-line" ng-if="vm.balanceSheet.expenses.length == 0">
       <div class="md-list-item-text">
           No expenses.
       </div>
@@ -23,7 +23,7 @@
 <md-subheader class="md-primary">People</md-subheader>
 <md-card>
   <md-list class="menu">
-    <md-list-item class="md-2-line" ng-repeat="person in balanceSheet.persons"">
+    <md-list-item class="md-2-line" ng-repeat="person in vm.balanceSheet.persons"">
       <div class="md-list-item-text" layout="column">
         <a href="#/persons/{{person.id}}" layout="row" layout-align="start center">
           <span>{{person.name}}</span>
@@ -33,7 +33,7 @@
       </div>
       <md-divider ng-if="!$last"></md-divider>
     </md-list-item>
-    <md-list-item class="md-2-line" ng-if="balanceSheet.persons.length == 0">
+    <md-list-item class="md-2-line" ng-if="vm.balanceSheet.persons.length == 0">
       <div class="md-list-item-text">
           No people.
       </div>
@@ -44,8 +44,8 @@
 <md-subheader class="md-primary">Debts</md-subheader>
 <md-card>
   <md-card-content>
-    <div ng-if="debtsByDebtor.length > 0">
-      <div ng-repeat="d in debtsByDebtor">
+    <div ng-if="vm.debtsByDebtor.length > 0">
+      <div ng-repeat="d in vm.debtsByDebtor">
         <p layout="column">
           <span>{{d.debtor.name}} owes</span>
           <span ng-repeat="c in d.debts" style="margin-left: 16px;">
@@ -54,8 +54,8 @@
         </p>
       </div>
     </div>
-    <div ng-if="balanceSheet.persons.length == 0 || balanceSheet.expenses.length == 0">Add some people and expenses first. Debts settling up all the expenses will appear here.</div>
-    <div ng-if="debtsByDebtor.length == 0 && balanceSheet.persons.length > 0 && balanceSheet.expenses.length > 0">All expenses are settled up!</div>
-    <div ng-if="!balanceSheet.isBalanced()">Cannot compute debts. There are unbalanced expenses.</div>
+    <div ng-if="vm.balanceSheet.persons.length == 0 || vm.balanceSheet.expenses.length == 0">Add some people and expenses first. Debts settling up all the expenses will appear here.</div>
+    <div ng-if="vm.debtsByDebtor.length == 0 && vm.balanceSheet.persons.length > 0 && vm.balanceSheet.expenses.length > 0">All expenses are settled up!</div>
+    <div ng-if="!vm.balanceSheet.isBalanced()">Cannot compute debts. There are unbalanced expenses.</div>
   </md-card-content>
 </md-card>
