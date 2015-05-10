@@ -8,8 +8,6 @@ var BalanceSheet = require("./balance-sheet");
 describe("BalanceSheetCtrl", function() {
 
   var $scope;
-  var $stateParams;
-  var $state;
   var balanceSheet;
   var debtService;
   var controller;
@@ -19,31 +17,17 @@ describe("BalanceSheetCtrl", function() {
   beforeEach(function() {
     balanceSheet = new BalanceSheet();
     
-    debtService = {
-      computeDebts: function() {
-        return [];
-      },
-      organizeByDebtor: function() {
-        return [];
-      }
-    };
+    debtService = jasmine.createSpyObj("debtService", ["computeDebts", "organizeByDebtor"]);
     
-    $state = jasmine.createSpyObj("$state", ["go"]);
-
   });
 
-  beforeEach(angular.mock.inject(function($rootScope, $controller, $q, $mdDialog) {
-    $scope = $rootScope;
-    
-    // Dialog always results in "OK"
-    $mdDialog.show = function() {
-      return $q.when();
-    };
-    
+  beforeEach(angular.mock.inject(function($rootScope, $controller, $q) {
+    $scope = $rootScope.$new();
+
     controller = $controller("BalanceSheetCtrl", {
       balanceSheet: balanceSheet,
       debtService: debtService,
-      $scope: $rootScope
+      $scope: $scope
     });
     
   }));
@@ -59,20 +43,24 @@ describe("BalanceSheetCtrl", function() {
       balanceSheet.participations = "Dummy participations";
 
       var debts = "Dummy debts";
-      debtService.computeDebts = function(input) {
-        expect(input).toBe(balanceSheet.participations);
-        return debts;
-      };
+      debtService.computeDebts.and.returnValue(debts);
       
       var debtsByDebtor = "Dummy debts by debtor";
-      debtService.organizeByDebtor = function(input) {
-        expect(input).toBe(debts);
-        return debtsByDebtor;
-      };
+      debtService.organizeByDebtor.and.returnValue(debtsByDebtor);
       
       $scope.refresh();
       
+      expect(debtService.computeDebts).toHaveBeenCalledWith(balanceSheet.participations);
+      expect(debtService.organizeByDebtor).toHaveBeenCalledWith(debts);
       expect($scope.debtsByDebtor).toBe(debtsByDebtor);
+    });
+    
+    it("is done on balanceSheetUpdated event", function() {
+      balanceSheet.participations = "Updated";
+      
+      $scope.$root.$broadcast("balanceSheetUpdated");
+      
+      expect(debtService.computeDebts).toHaveBeenCalledWith(balanceSheet.participations);
     });
     
   });
