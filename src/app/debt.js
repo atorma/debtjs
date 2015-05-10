@@ -19,6 +19,7 @@ angular
     .run(makeStateAvailableInScope)
     ;
 
+require("./debt-app-ctrl");
 require("./route-config");
 require("./debts");
 require("./balance-sheet");

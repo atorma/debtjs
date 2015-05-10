@@ -16,6 +16,8 @@ function BalanceSheetCtrl(balanceSheet, debtService, $scope) {
   function init() {
     $scope.balanceSheet = balanceSheet;
     refresh();
+    
+    $scope.$on("balanceSheetUpdated", refresh);
   }
   
   function refresh() {
