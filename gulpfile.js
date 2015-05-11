@@ -40,7 +40,7 @@ var dependencies = _(packageJson && packageJson.dependencies || {})
   .without('material-design-icons', 'ng-material-floating-button')
   .value();
 
-// Builds the app and tests and watches for changes
+// Builds the app and tests once
 gulp.task('build', function(cb) {
   runSequence([
       'js-lib',
@@ -155,25 +155,38 @@ gulp.task('manifest', function() {
 });
 
 
-// TODO don't bundle app files into tests.js
-// but don't break Karma tests, either
-gulp.task('js-tests', function() {
+
+//TODO don't bundle app files into tests.js
+//but don't break Karma tests, either
+// TODO why doesn't watchify work without executing bundling?
+function bundleTests(options) {
+  
+  options = _.extend({}, options);
   
   // Based on Browserify + Globs
   // https://github.com/gulpjs/gulp/blob/4d35560d9e2e992037886897c671518cfe49fd7f/docs/recipes/browserify-with-globs.md
   
-  var bundledStream = through(); // a stream with which to tell gulp about the first build 
+  // a stream with which to tell gulp about the first build 
+  var bundledStream = through();
 
   globby('./' + paths.tests, function(err, entries) {
-
-    var bundler = watchify(browserify(watchify.args))
+    
+    var bundler = browserify(watchify.args)
     .add(entries)
     .external(dependencies)
     .external('ng-mfb')
-    .on('update', reBundle)
     .on('log', gutil.log);
     
+    if (options.watchify) {
+      bundler = watchify(bundler)
+      .on('update', reBundle);
+    }
+    
     return bundle(bundledStream);
+    
+    function reBundle() {
+      return bundle(through());
+    }
 
     function bundle(bundledStream) {
       if (err) {
@@ -193,18 +206,20 @@ gulp.task('js-tests', function() {
       .pipe(bundledStream)
       .on('error', gutil.log.bind(gutil, 'Browserify Error'));
     }
-    
-    function reBundle() {
-      return bundle(through());
-    }
-    
-  });
-  
-  return bundledStream;
 
+  });
+
+  return bundledStream;
+}
+
+gulp.task('js-tests', function() {
+  return bundleTests({watchify: false});
 });
 
-//Run tests once and exit
+gulp.task('watch:js-tests', function() {
+  bundleTests({watchify: true});
+});
+
 gulp.task('test', function() {
 	return karma.start({
 		configFile : __dirname + '/karma.conf.js',
@@ -212,7 +227,6 @@ gulp.task('test', function() {
 	});
 });
 
-// Watch for file changes and re-run tests on each change
 gulp.task('tdd', function(done) {
 	karma.start({
 		configFile : __dirname + '/karma.conf.js'
@@ -228,5 +242,5 @@ gulp.task('webserver', function() {
 });
 
 gulp.task('develop', function(cb) {
-  runSequence(['build', 'watch:js-app', 'watch:html', 'watch:resources'], ['tdd', 'webserver'], cb);
+  runSequence(['build', 'watch:js-app', 'watch:html', 'watch:resources', 'watch:js-tests'], ['tdd', 'webserver'], cb);
 });
