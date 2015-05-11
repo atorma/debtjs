@@ -1,7 +1,7 @@
 module.exports = function(config) {
 	config.set({
 		basePath : './build',
-		files : ['libs.js', 'debt.js', 'debt.spec.js', {pattern: '**/*.js.map', included: false}],
+		files : ['libs.js', 'test-libs.js', 'debt.spec.js', {pattern: '**/*.js.map', included: false}],
 		exclude : [],
 		frameworks : ['jasmine'],
 		reporters : ['mocha'],

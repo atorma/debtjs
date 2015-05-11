@@ -43,12 +43,13 @@ var dependencies = _(packageJson && packageJson.dependencies || {})
 // Builds the app and tests once
 gulp.task('build', function(cb) {
   runSequence([
-      'js-lib',
+      'js-libs',
       'js-app',
       'html', 
       'resources', 
       'lib', 
       'lib-resources',
+      'js-test-libs',
       'js-tests'
       ], 'manifest', cb);
   
@@ -63,7 +64,7 @@ gulp.task('clean-build', function(cb) {
   runSequence('clean', 'build', cb);
 });
 
-gulp.task('js-lib', function() {
+gulp.task('js-libs', function() {
   return browserify()
   .require(dependencies)
   .require('./node_modules/ng-material-floating-button/src/mfb-directive.js', {expose: 'ng-mfb'})
@@ -71,7 +72,7 @@ gulp.task('js-lib', function() {
   .on('error', gutil.log.bind(gutil, 'Browserify Error'))
   .pipe(source('libs.js'))
   .pipe(buffer())
-  .pipe(sourcemaps.init({loadMaps: true}))
+  .pipe(sourcemaps.init({loadMaps: false}))
   .pipe(sourcemaps.write('./'))
   .pipe(gulp.dest(paths.build));
 });
@@ -155,9 +156,21 @@ gulp.task('manifest', function() {
 });
 
 
+var testLibBundler = browserify()
+.require('angular-mocks/ngMock');
 
-//TODO don't bundle app files into tests.js
-//but don't break Karma tests, either
+gulp.task('js-test-libs', function() {
+  return testLibBundler
+  .bundle()
+  .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+  .pipe(source('test-libs.js'))
+  .pipe(buffer())
+  .pipe(sourcemaps.init({loadMaps: true}))
+  .pipe(sourcemaps.write('./'))
+  .pipe(gulp.dest(paths.build));
+});
+
+// TODO why cannot separate app code into its own bundle without breaking tests?
 // TODO why doesn't watchify work without executing bundling?
 function bundleTests(options) {
   
@@ -173,6 +186,7 @@ function bundleTests(options) {
     
     var bundler = browserify(watchify.args)
     .add(entries)
+    .external(testLibBundler)
     .external(dependencies)
     .external('ng-mfb')
     .on('log', gutil.log);
@@ -197,7 +211,7 @@ function bundleTests(options) {
       bundledStream
       .pipe(source('debt.spec.js'))
       .pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true}))
+      .pipe(sourcemaps.init({loadMaps: false}))
       .pipe(sourcemaps.write('./'))
       .pipe(gulp.dest(paths.build));
       
@@ -217,7 +231,7 @@ gulp.task('js-tests', function() {
 });
 
 gulp.task('watch:js-tests', function() {
-  bundleTests({watchify: true});
+  return bundleTests({watchify: true});
 });
 
 gulp.task('test', function() {
