@@ -21,7 +21,8 @@ var paths = {
 	lib: [],
 	libResources: ['node_modules/angular-material-builds/angular-material.css', 'node_modules/ng-material-floating-button/mfb/dist/mfb.css*', 'src/lib/**/*.*', '!src/lib/**/*.js'],
 	tests: 'src/app/**/*.spec.js',
-	build: 'build'
+	build: 'build',
+	manifestFiles: ['build/**/*', '!/build/**/*.map', '!build/**/*.manifest']
 };
 
 var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
@@ -51,7 +52,9 @@ gulp.task('build', function(cb) {
       'lib-resources',
       'js-test-libs',
       'js-tests'
-      ], 'manifest', cb);
+      ], 
+      'manifest', 
+      cb);
   
 });
 
@@ -144,9 +147,9 @@ gulp.task('lib-resources', function(done) {
 });
 
 gulp.task('manifest', function() {
-  return gulp.src([paths.build + '/**/*', '!' + paths.build + '/**/*.map'])
+  return gulp.src(paths.manifestFiles)
   .pipe(manifest({
-    hash: true,
+    timestamp: true,
     preferOnline: true,
     network: ['http://*', 'https://*', '*'],
     filename: 'debt.manifest',
@@ -155,6 +158,9 @@ gulp.task('manifest', function() {
   .pipe(gulp.dest(paths.build));
 });
 
+gulp.task('watch:manifest', function() {
+  gulp.watch(paths.manifestFiles, ['manifest']);
+});
 
 var testLibBundler = browserify()
 .require('angular-mocks/ngMock');
@@ -256,5 +262,17 @@ gulp.task('webserver', function() {
 });
 
 gulp.task('develop', function(cb) {
-  runSequence(['build', 'watch:js-app', 'watch:html', 'watch:resources', 'watch:js-tests'], ['tdd', 'webserver'], cb);
+  runSequence([
+               'build', 
+               'watch:js-app', 
+               'watch:html', 
+               'watch:resources', 
+               'watch:manifest', 
+               'watch:js-tests'
+               ], 
+               [
+                'tdd', 
+                'webserver'
+               ], 
+               cb);
 });
