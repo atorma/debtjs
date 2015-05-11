@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html manifest="debt.manifest">
   <head>
     <title>Debt.js</title>
     
@@ -17,7 +17,7 @@
 
   <body ng-app="debtApp" layout="column" ng-controller="DebtAppCtrl as vm">
   
-    <md-toolbar ng-controller="ToolbarCtrl">
+    <md-toolbar ng-controller="ToolbarCtrl as vm">
       <div class="md-toolbar-tools">
         <md-button ng-href="#/" class="md-icon-button" aria-label="Home">
           <md-icon md-svg-icon="action:ic_home_24px"></md-icon>

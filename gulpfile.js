@@ -22,7 +22,7 @@ var paths = {
 	libResources: ['node_modules/angular-material-builds/angular-material.css', 'node_modules/ng-material-floating-button/mfb/dist/mfb.css*', 'src/lib/**/*.*', '!src/lib/**/*.js'],
 	tests: 'src/app/**/*.spec.js',
 	build: 'build',
-	manifestFiles: ['build/**/*', '!/build/**/*.map', '!build/**/*.manifest']
+	manifestFiles: ['build/**/*', '!build/**/*.spec.*', '!build/**/*.map', '!build/**/*.manifest']
 };
 
 var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
@@ -169,7 +169,7 @@ gulp.task('js-test-libs', function() {
   return testLibBundler
   .bundle()
   .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-  .pipe(source('test-libs.js'))
+  .pipe(source('libs.spec.js'))
   .pipe(buffer())
   .pipe(sourcemaps.init({loadMaps: true}))
   .pipe(sourcemaps.write('./'))
