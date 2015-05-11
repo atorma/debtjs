@@ -19,8 +19,8 @@ dialog requires md-dialog-content instead of md-content -->
       </p>
     </md-content>
     <div class="md-actions">
-      <md-button ng-click="vm.cancel()">Cancel</md-button>
-      <md-button ng-click="vm.ok()" ng-disabled="!form.$valid" class="md-primary">Ok</md-button>
+      <md-button type="button" ng-click="vm.cancel()">Cancel</md-button>
+      <md-button type="submit" ng-click="vm.ok()" ng-disabled="!form.$valid" class="md-primary">Ok</md-button>
     </div>
   </form>
 </md-dialog>
