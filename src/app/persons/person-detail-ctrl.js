@@ -25,7 +25,7 @@ function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams
 		refresh();
 		
 		confirmRemovePerson = $mdDialog.confirm()
-    .content("Deleting removes this person from all expenses and can change their costs and balances. Go ahead with deleting?")
+    .content("Really delete this person?")
     .ok("Ok").cancel("Cancel");
 		
 		$scope.$on("balanceSheetUpdated", vm.refresh);
