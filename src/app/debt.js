@@ -1,8 +1,7 @@
 "use strict";
 
 var angular = require("angular");
-//require("angular-material"); // uncomment when they release 0.9.0
-require("angular-material-builds");
+require("angular-material");
 require("angular-animate");
 require("angular-aria");
 require("angular-route");
