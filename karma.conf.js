@@ -5,17 +5,22 @@ module.exports = function(config) {
 	  basePath: '',
 		files: [
 		         'build/libs.js', 
+		         {pattern: 'build/libs.js.map', included: false},
 		         'src/app/**/*.spec.js'
 		         ],
 		exclude: [],
 		frameworks: ['browserify', 'jasmine'],
 		reporters: ['mocha'],
 		preprocessors: {
-      'build/libs.js': ['sourcemap'],
       'src/app/**/*.spec.js': ['browserify']
     },
     browserify: {
-      debug: true
+      debug: true,
+      configure: function(bundle) {
+        bundle.on('prebundle', function() {
+          bundle.external(bundles.appDependencies);
+        });
+      }
     },
 		port: 9876,
 		colors: true,

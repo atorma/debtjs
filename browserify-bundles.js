@@ -23,13 +23,15 @@ var libBundle = browserify()
 .require(dependencies)
 .require('./node_modules/ng-material-floating-button/src/mfb-directive.js', {expose: 'ng-mfb'});
 
+var appDependencies = dependencies.concat(['ng-mfb']);
+
 var appBundle = browserify(watchify.args)
 .add('./src/app/debt.js')
-.external(dependencies)
-.external('ng-mfb')
+.external(appDependencies);
 
 
 module.exports = {
     libBundle: libBundle,
-    appBundle: appBundle
+    appBundle: appBundle,
+    appDependencies: appDependencies
 };
