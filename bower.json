@@ -10,6 +10,5 @@
     "tests"
   ],
   "dependencies": {
-    "ng-mfb": "~0.4.0"
   }
 }
