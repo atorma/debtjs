@@ -1,6 +1,8 @@
 "use strict";
 
-require("angular").module("debtApp")
+var angular = require("angular");
+
+angular.module("debtApp")
   .config(config);
 
 function config($stateProvider) {
@@ -9,12 +11,7 @@ function config($stateProvider) {
     .state("balanceSheet", {
       url: "/",
       templateUrl : "balance-sheet/balance-sheet.html",
-      controller : "BalanceSheetCtrl as vm",
-      resolve: {
-        balanceSheet : function(balanceSheetService) {
-          return balanceSheetService.balanceSheet;
-        }
-      }
+      controller : "BalanceSheetCtrl as vm"
     });
   
 }

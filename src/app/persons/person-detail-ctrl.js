@@ -1,8 +1,9 @@
 "use strict";
 
+var angular = require("angular");
 var _ = require('lodash');
 
-require("angular").module("debtApp")
+angular.module("debtApp")
 	.controller("PersonDetailCtrl", PersonDetailCtrl);
 
 function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams, $mdDialog, $scope, $log) {

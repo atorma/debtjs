@@ -9,6 +9,7 @@ describe("BalanceSheetCtrl", function() {
 
   var vm;
   var $scope;
+  var balanceSheetService;
   var balanceSheet;
   var debtService;
   
@@ -18,6 +19,9 @@ describe("BalanceSheetCtrl", function() {
   beforeEach(function() {
     balanceSheet = new BalanceSheet();
     
+    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["save", "loadFromJson", "exportToJson", "init"]);
+    balanceSheetService.balanceSheet = balanceSheet;
+    
     debtService = jasmine.createSpyObj("debtService", ["computeDebts", "organizeByDebtor"]);
     
   });
@@ -26,7 +30,7 @@ describe("BalanceSheetCtrl", function() {
     $scope = $rootScope.$new();
 
     vm = $controller("BalanceSheetCtrl", {
-      balanceSheet: balanceSheet,
+      balanceSheetService: balanceSheetService,
       debtService: debtService,
       $scope: $scope
     });

@@ -1,8 +1,9 @@
 "use strict";
 
+var angular = require("angular");
 var _ = require("lodash"); 
 
-require("angular").module("debtApp")
+angular.module("debtApp")
   .value("balanceSheetSaveCtrlConfig", {wait: 500})
   .controller("DebtAppCtrl", DebtAppCtrl);
 

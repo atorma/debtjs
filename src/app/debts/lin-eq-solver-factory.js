@@ -1,8 +1,9 @@
 "use strict";
 
-var solve = require('./lin-eq-solver');
+var solve = require("./lin-eq-solver");
+var angular = require("angular");
 
-require("angular").module("debtApp")
+angular.module("debtApp")
 .factory("solveLinearSystem", solveLinearSystem);
 
 function solveLinearSystem() {

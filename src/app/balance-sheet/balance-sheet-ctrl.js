@@ -1,9 +1,11 @@
 "use strict";
 
-require("angular").module("debtApp")
+var angular = require("angular");
+
+angular.module("debtApp")
   .controller("BalanceSheetCtrl", BalanceSheetCtrl);
 
-function BalanceSheetCtrl(balanceSheet, debtService, $scope) {
+function BalanceSheetCtrl(balanceSheetService, debtService, $scope) {
   var vm = this;
   
   vm.init = init;
@@ -14,7 +16,7 @@ function BalanceSheetCtrl(balanceSheet, debtService, $scope) {
   /////////////////////////////////////////////////////////////
   
   function init() {
-    vm.balanceSheet = balanceSheet;
+    vm.balanceSheet = balanceSheetService.balanceSheet;
     refresh();
     
     $scope.$on("balanceSheetUpdated", vm.refresh);
@@ -25,8 +27,8 @@ function BalanceSheetCtrl(balanceSheet, debtService, $scope) {
   }
   
   function computeDebts() {
-    if (balanceSheet.isBalanced()) {
-      var debts = debtService.computeDebts(balanceSheet.participations);
+    if (vm.balanceSheet.isBalanced()) {
+      var debts = debtService.computeDebts(vm.balanceSheet.participations);
       return debtService.organizeByDebtor(debts);
     } else {
       return undefined;

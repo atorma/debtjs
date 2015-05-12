@@ -13,6 +13,9 @@ var karma = require('karma').server;
 var webserver = require('gulp-webserver');
 var _ = require('lodash');
 var manifest = require('gulp-manifest');
+var jshint = require('gulp-jshint');
+var uglify = require('gulp-uglify');
+var ngAnnotate = require('gulp-ng-annotate');
 
 var paths = {
 	main: 'src/app/debt.js',
@@ -76,9 +79,18 @@ gulp.task('js-libs', function() {
   .pipe(source('libs.js'))
   .pipe(buffer())
   .pipe(sourcemaps.init({loadMaps: false}))
+  .pipe(uglify())
   .pipe(sourcemaps.write('./'))
   .pipe(gulp.dest(paths.build));
 });
+
+
+gulp.task('jshint', function() {
+  gulp.src('src/app/**/*.js')
+  .pipe(jshint())
+  .pipe(jshint.reporter('default'));
+});
+
 
 var appBundler = browserify('./'+paths.main, watchify.args)
 .external(dependencies)
@@ -90,7 +102,9 @@ function bundleApp(bundler) {
   .on('error', gutil.log.bind(gutil, 'Browserify Error'))
   .pipe(source('debt.js'))
   .pipe(buffer())
+  .pipe(ngAnnotate())
   .pipe(sourcemaps.init({loadMaps: true}))
+  .pipe(uglify())
   .pipe(sourcemaps.write('./'))
   .pipe(gulp.dest(paths.build));
 }

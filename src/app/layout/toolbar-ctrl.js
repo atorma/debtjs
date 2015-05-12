@@ -1,6 +1,8 @@
 "use strict";
 
-require("angular").module("debtApp")
+var angular = require("angular");
+
+angular.module("debtApp")
   .controller("ToolbarCtrl", ToolbarCtrl);
 
 function ToolbarCtrl($scope, $mdSidenav) {
