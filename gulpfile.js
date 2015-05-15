@@ -200,8 +200,7 @@ gulp.task('develop', function(cb) {
        'build-dev', 
        'watch:js-app',
        'watch:html', 
-       'watch:resources', 
-       'watch:manifest'
+       'watch:resources'
       ], 
       [
        'tdd', 
