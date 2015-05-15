@@ -33,11 +33,24 @@ var bundles = require('./browserify-bundles');
 
 var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
 
-var environment = "development";
+var DEVELOPMENT = "development";
+var PRODUCTION = "production";
+var context = {
+  environment: DEVELOPMENT
+};
+
+function ifEnv(env, fun) {
+  if (context.environment == env) {
+    return fun();
+  } else {
+    return gutil.noop();
+  }
+}
+
 
 
 gulp.task('build-dev', function(cb) {
-  environment = "development";
+  context.environment = DEVELOPMENT;
   runSequence(
       [
        'js-libs',
@@ -51,7 +64,7 @@ gulp.task('build-dev', function(cb) {
 });
 
 gulp.task('build-prod', function(cb) {
-  environment = "production";
+  context.environment = PRODUCTION;
   runSequence(
       'clean',
       [
@@ -77,8 +90,8 @@ gulp.task('js-libs', function() {
   .on('error', gutil.log.bind(gutil, 'Browserify Error'))
   .pipe(source('libs.js'))
   .pipe(buffer())
-  .pipe(sourcemaps.init({loadMaps: false}))
-  .pipe(uglify())
+  .pipe(sourcemaps.init({loadMaps: true}))
+  .pipe(ifEnv(PRODUCTION, uglify))
   .pipe(sourcemaps.write('./'))
   .pipe(gulp.dest(paths.build));
 });
@@ -98,7 +111,7 @@ function bundleApp(bundler) {
   .pipe(buffer())
   .pipe(ngAnnotate())
   .pipe(sourcemaps.init({loadMaps: true}))
-  .pipe(uglify())
+  .pipe(ifEnv(PRODUCTION, uglify))
   .pipe(sourcemaps.write('./'))
   .pipe(gulp.dest(paths.build));
 }
@@ -116,7 +129,7 @@ gulp.task('watch:js-app', function() {
 
 gulp.task('html', function() {
 	return gulp.src(paths.html)
-	.pipe(preprocess({context: {environment: environment}}))
+	.pipe(preprocess({context: context}))
 	.pipe(gulp.dest(paths.build));
 });
 
