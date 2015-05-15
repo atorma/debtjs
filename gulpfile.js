@@ -37,26 +37,22 @@ var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
 
 // Builds the app and tests once
 gulp.task('build', function(cb) {
-  runSequence([
-      'js-libs',
-      'js-app',
-      'html', 
-      'resources', 
-      'lib', 
-      'lib-resources'
+  runSequence(
+      [
+       'js-libs',
+       'js-app',
+       'html', 
+       'resources', 
+       'lib', 
+       'lib-resources'
       ], 
       'manifest', 
       cb);
-  
 });
 
 
 gulp.task('clean', function(cb) {
-  del(paths.build, cb);
-});
-
-gulp.task('clean-build', function(cb) {
-  runSequence('clean', 'build', cb);
+  del(paths.build+'/**/*.*', cb);
 });
 
 gulp.task('js-libs', function() {
@@ -181,15 +177,18 @@ gulp.task('webserver', function() {
 });
 
 gulp.task('develop', function(cb) {
-  runSequence(['build', 
-               'watch:js-app', 
-               'watch:html', 
-               'watch:resources', 
-               'watch:manifest'
-               ], 
-               [
-                'tdd', 
-                'webserver'
-               ], 
-               cb);
+  runSequence(
+      'clean', 
+      [
+       'build', 
+       'watch:js-app',
+       'watch:html', 
+       'watch:resources', 
+       'watch:manifest'
+      ], 
+      [
+       'tdd', 
+       'webserver'
+      ], 
+      cb);
 });
