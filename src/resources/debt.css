@@ -1,10 +1,5 @@
 @CHARSET "ISO-8859-1";
 
-[layout-margin-sides], [layout-margin-sides] > [flex] {
-  margin-left: 8px;
-  margin-right: 8px;
-}
-
 .no-padding-bottom, .no-padding-bottom * {
   padding-bottom: 0;
 }
@@ -79,4 +74,11 @@ md-dialog > form {
   -ms-flex-direction: column;
   flex-direction: column;
   overflow: auto;
+}
+
+[icon-button-strut] {
+  width: 48px; 
+  height: 48px; 
+  margin-left: 6px; 
+  margin-right: 6px
 }
