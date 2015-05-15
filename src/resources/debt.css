@@ -76,7 +76,7 @@ md-dialog > form {
   overflow: auto;
 }
 
-[icon-button-strut] {
+icon-button-strut {
   width: 48px; 
   height: 48px; 
   margin-left: 6px; 
