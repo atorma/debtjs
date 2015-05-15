@@ -26,7 +26,7 @@
       <div flex>Share equally</div>
       <md-switch ng-model="vm.expense.sharing" ng-change="vm.refresh()" 
         ng-true-value="'equal'" ng-false-value="'custom'" 
-        aria-label="Share equally">
+        class="md-primary" aria-label="Share equally">
       </md-switch>
     </div>
 
@@ -45,7 +45,8 @@
       layout-gt-sm="row" layout-align-gt-sm="start center">
 
       <div layout-fill flex-gt-sm layout="row" >
-        <md-checkbox ng-model="vm.isParticipant[person.id]" ng-change="vm.setParticipation(person, vm.isParticipant[person.id])">{{person.name}}</md-checkbox>
+        <md-checkbox class="md-primary no-margin" ng-model="vm.isParticipant[person.id]" 
+          ng-change="vm.setParticipation(person, vm.isParticipant[person.id])">{{person.name}}</md-checkbox>
         <span flex></span>
         <md-button hide-gt-sm ng-href="#/persons/{{person.id}}" class="md-icon-button" aria-label="View details"><md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon></md-button>
       </div>
@@ -78,7 +79,7 @@
     
       <div layout-fill flex-gt-sm layout="row">
         <span ng-if="!vm.expense.isBalanced()" style="color: red;">
-          <md-icon class="md-warn" md-svg-icon="alert:ic_error_24px"></md-icon> Unbalanced
+          <md-icon class="md-warn no-margin-left no-padding-left" md-svg-icon="alert:ic_error_24px"></md-icon> Unbalanced
         </span>
         <span ng-if="vm.expense.isBalanced()" class="label">Total</span>
       </div>
