@@ -18,18 +18,18 @@
   <div layout="column" >
   
     <div layout="row" layout-align="start center">
-      <div flex="20">Cost</div>
-      <div>{{vm.cost | currency:""}}</div>
+      <div flex>Cost</div>
+      <div style="margin: 15px; padding-right: 8px">{{vm.cost | currency:""}}</div>
     </div>
     
     <div layout="row" layout-align="start center">
-      <div flex="20">Share</div>
-      <md-radio-group layout="row" ng-model="vm.expense.sharing" ng-change="vm.refresh()">
-        <md-radio-button value="equal" style="margin-left: 0">Equally</md-radio-button>
-        <md-radio-button value="custom">Custom</md-radio-button>
-      </md-radio-group>
+      <div flex>Share equally</div>
+      <md-switch ng-model="vm.expense.sharing" ng-change="vm.refresh()" 
+        ng-true-value="'equal'" ng-false-value="'custom'" 
+        aria-label="Share equally">
+      </md-switch>
     </div>
-    
+
   </div>
   
 </section>

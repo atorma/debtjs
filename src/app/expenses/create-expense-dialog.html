@@ -7,11 +7,6 @@
           <label>Name</label>
           <input type="text" ng-model="vm.expense.name" ng-required="true"/>
         </md-input-container>
-        <span>Share</span>
-        <md-radio-group ng-model="vm.expense.sharing">
-          <md-radio-button value="equal">Equally</md-radio-button>
-          <md-radio-button value="custom">Custom</md-radio-button>
-        </md-radio-group>
         <md-checkbox ng-model="vm.options.createParticipations" class="no-margin">Everyone participates</md-checkbox>
       </div>
     </md-dialog-content>
