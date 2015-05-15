@@ -16,6 +16,7 @@ var manifest = require('gulp-manifest');
 var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
 var ngAnnotate = require('gulp-ng-annotate');
+var preprocess = require('gulp-preprocess');
 
 var paths = {
 	main: 'src/app/debt.js',
@@ -32,11 +33,11 @@ var bundles = require('./browserify-bundles');
 
 var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
 
+var environment = "development";
 
 
-
-// Builds the app and tests once
-gulp.task('build', function(cb) {
+gulp.task('build-dev', function(cb) {
+  environment = "development";
   runSequence(
       [
        'js-libs',
@@ -46,7 +47,22 @@ gulp.task('build', function(cb) {
        'lib', 
        'lib-resources'
       ], 
-      'manifest', 
+      cb);
+});
+
+gulp.task('build-prod', function(cb) {
+  environment = "production";
+  runSequence(
+      'clean',
+      [
+       'js-libs',
+       'js-app',
+       'html', 
+       'resources', 
+       'lib', 
+       'lib-resources'
+      ],
+      'manifest',
       cb);
 });
 
@@ -100,6 +116,7 @@ gulp.task('watch:js-app', function() {
 
 gulp.task('html', function() {
 	return gulp.src(paths.html)
+	.pipe(preprocess({context: {environment: environment}}))
 	.pipe(gulp.dest(paths.build));
 });
 
@@ -180,7 +197,7 @@ gulp.task('develop', function(cb) {
   runSequence(
       'clean', 
       [
-       'build', 
+       'build-dev', 
        'watch:js-app',
        'watch:html', 
        'watch:resources', 
