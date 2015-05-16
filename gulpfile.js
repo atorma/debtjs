@@ -5,8 +5,6 @@ var runSequence = require('run-sequence');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
-var globby = require('globby');
-var through = require('through2');
 var watchify = require('watchify');
 var browserify = require('browserify');
 var karma = require('karma').server;
@@ -175,7 +173,8 @@ gulp.task('manifest', function() {
     preferOnline: true,
     network: ['http://*', 'https://*', '*'],
     filename: 'debt.manifest',
-    exclude: 'debt.manifest'
+    exclude: 'debt.manifest',
+    fallback: ['/ /offline.html']
    }))
   .pipe(gulp.dest(paths.build));
 });
