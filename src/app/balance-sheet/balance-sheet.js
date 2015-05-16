@@ -362,16 +362,12 @@ var BalanceSheet = function(data) {
 
 		if (_.isUndefined(data.paid)) {
 			this.paid = 0;
-		} else if (!_.isNumber(data.paid)) {
-			throw "'paid' is not a number";
 		} else {
 			this.paid = data.paid;
 		}
 		
 		if (_.isUndefined(data.share)) {
 			this.share = 0;
-		} else if (!_.isNumber(data.share)) {
-			throw "'share' is not a number";
 		} else {
 			this.share = data.share;
 		}
@@ -442,20 +438,11 @@ var BalanceSheet = function(data) {
 	    if (!_.isNumber(p.id)) {
 	      throw new Error("Person has no id"); 
 	    }
-	    if (!_.isString(p.name)) {
-	      throw new Error("Person has no name");
-	    }
 	  });
 	  
 	  _.each(expenses, function(e) {
 	    if (!_.isNumber(e.id)) {
         throw new Error("Expense has no id"); 
-      }
-      if (!_.isString(e.name)) {
-        throw new Error("Expense has no name");
-      }
-      if (!(e.sharing === "equal" || e.sharing === "custom")) {
-        throw new Error("Expense sharing is not 'equal' or 'custom'");
       }
 	  });
 	  
@@ -478,18 +465,6 @@ var BalanceSheet = function(data) {
       }
       if (!idToEntity[pt.expense.id]) {
         throw new Error("Participation expense is unknown");
-      }
-      if (!_.isNumber(pt.share)) {
-        throw new Error("Participation share is not a number");
-      }
-      if (pt.share < 0) {
-        throw new Error("Participation share is negative");
-      }
-      if (!_.isNumber(pt.paid)) {
-        throw new Error("Participation paid is not a number");
-      }
-      if (pt.paid < 0) {
-        throw new Error("Participation paid is negative");
       }
 	  });
 	  

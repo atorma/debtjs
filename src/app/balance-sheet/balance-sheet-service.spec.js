@@ -69,7 +69,7 @@ describe("BalanceSheetService", function() {
     
     it("with error thrown if creating sheet from localStorage data fails", function() {
       balanceSheetService.balanceSheet = undefined;
-      balanceSheetData.participations[0].paid = "aargh";
+      delete balanceSheetData.participations[0].personId;
       expect(balanceSheetService.init).toThrow();
       expect(balanceSheetService.balanceSheet).not.toBeDefined();
     });
@@ -89,7 +89,7 @@ describe("BalanceSheetService", function() {
     
     it("and throws error if the JSON is invalid", function() {
       balanceSheetService.balanceSheet = undefined;
-      balanceSheetData.participations[0].paid = "aargh";
+      delete balanceSheetData.participations[0].personId;
       expect(function() {
         balanceSheetService.loadFromJson(JSON.stringify(balanceSheetData));
       }).toThrow();

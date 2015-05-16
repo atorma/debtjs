@@ -91,13 +91,13 @@ describe("Balance sheet", function () {
     });
     
     it("as invalid when a person is missing an id", function() {
-      delete sheet.persons[0].name;
+      delete sheet.persons[0].id;
       expect(sheet.isValid()).toBe(false);        
     });
     
-    it("as invalid when a person is missing a name", function() {
+    it("as valid even though a person is missing a name", function() {
       delete sheet.persons[0].name;
-      expect(sheet.isValid()).toBe(false);        
+      expect(sheet.isValid()).toBe(true);        
     });
     
     it("as invalid when an expense is missing an id", function() {
@@ -105,20 +105,20 @@ describe("Balance sheet", function () {
       expect(sheet.isValid()).toBe(false);        
     });
     
-    it("as invalid when an expense is missing a name", function() {
+    it("as valid even though an expense is missing a name", function() {
       delete sheet.expenses[0].name;
-      expect(sheet.isValid()).toBe(false);        
+      expect(sheet.isValid()).toBe(true);        
     });
     
-    it("as invalid when an expense is missing share mode", function() {
+    it("as valid even though an expense is missing share mode", function() {
       delete sheet.expenses[0].sharing;
-      expect(sheet.isValid()).toBe(false);        
+      expect(sheet.isValid()).toBe(true);        
       
     });
     
-    it("as invalid when an expense has unknown share mode", function() {
+    it("as valid when an expense has unknown share mode", function() {
       sheet.expenses[0].sharing = "wtf";
-      expect(sheet.isValid()).toBe(false);        
+      expect(sheet.isValid()).toBe(true);        
     });
     
     it("as invalid when a participation person is not found", function() {
@@ -131,26 +131,26 @@ describe("Balance sheet", function () {
       expect(sheet.isValid()).toBe(false);        
     });
     
-    it("as invalid when a participation does not have a non-negative payment", function() {
+    it("as valid even when a participation has a non-negative payment", function() {
       sheet.participations[0].paid = null;
-      expect(sheet.isValid()).toBe(false);
+      expect(sheet.isValid()).toBe(true);
       
       sheet.participations[0].paid = "aargh";
-      expect(sheet.isValid()).toBe(false); 
+      expect(sheet.isValid()).toBe(true); 
       
       sheet.participations[0].paid = -10;
-      expect(sheet.isValid()).toBe(false);  
+      expect(sheet.isValid()).toBe(true);  
     });
     
-    it("as invalid when a participation does not have a non-negative share", function() {
+    it("as valid even when participation does not have a non-negative share", function() {
       sheet.participations[0].share = null;
-      expect(sheet.isValid()).toBe(false);
+      expect(sheet.isValid()).toBe(true);
       
       sheet.participations[0].share = "aargh";
-      expect(sheet.isValid()).toBe(false); 
+      expect(sheet.isValid()).toBe(true); 
       
       sheet.participations[0].share = -10;
-      expect(sheet.isValid()).toBe(false);  
+      expect(sheet.isValid()).toBe(true);  
     });
  
   });
