@@ -1,4 +1,4 @@
-<md-dialog flex="33">
+<md-dialog>
   <form name="form" novalidate>
     <md-dialog-content class="sticky-container">
       <h2 class="md-headline">Create person</h2>
@@ -8,7 +8,7 @@
             <input type="text" ng-model="vm.person.name" ng-required="true"/>
           </md-input-container>
           <md-checkbox ng-model="vm.options.createParticipations" class="md-primary no-margin">
-            Participates in all expenses
+            Shares all expenses
           </md-checkbox>
       </div>
     </md-dialog-content>
