@@ -65,17 +65,6 @@ md-content > section {
   color: rgba(0,0,0,0.54);
 }
 
-/* Fix for Angular Material 0.9.2 */
-md-dialog > form {
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  overflow: auto;
-}
-
 icon-button-strut {
   width: 48px; 
   height: 48px; 
