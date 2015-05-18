@@ -28,7 +28,7 @@
         <a href="#/persons/{{person.id}}" layout="row" layout-align="start center">
           <span>{{person.name}}</span>
           <span flex></span>
-          <span>{{expense.getBalance() | currency:""}}</span>
+          <span>{{person.getBalance() | balance}}</span>
         </a>
       </div>
       <md-divider ng-if="!$last"></md-divider>
