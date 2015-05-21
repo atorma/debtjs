@@ -44,7 +44,7 @@
       layout-sm="column" layout-align-sm="center start"
       layout-gt-sm="row" layout-align-gt-sm="start center">
 
-      <div layout-fill flex-gt-sm layout="row" >
+      <div layout-fill flex-gt-sm layout="row" layout-align="start center" >
         <md-checkbox class="md-primary no-margin" ng-model="vm.isParticipant[person.id]" 
           ng-change="vm.setParticipation(person, vm.isParticipant[person.id])">{{person.name}}</md-checkbox>
         <span flex></span>
