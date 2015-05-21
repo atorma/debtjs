@@ -8,7 +8,7 @@
       </md-input-container> 
     </h2>
     
-    <md-button class="md-icon-button md-warn" ng-click="vm.removePerson()" aria-label="delete">
+    <md-button class="md-icon-button" ng-click="vm.removePerson()" aria-label="delete">
       <md-tooltip>Delete</md-tooltip>
       <md-icon md-svg-icon="action:ic_delete_24px"/>
     </md-button>
@@ -37,11 +37,8 @@
       layout-gt-sm="row" layout-align-gt-sm="start center">
 
       <div layout-fill flex-gt-sm layout="row" layout-align="start center" >
-        <md-checkbox class="md-primary no-margin" ng-model="vm.isParticipant[expense.id]" 
+        <md-checkbox class="md-primary no-margin" ng-class="{'md-warn': !expense.isBalanced()}" ng-model="vm.isParticipant[expense.id]" 
           ng-change="vm.setParticipation(expense, vm.isParticipant[expense.id])">{{expense.name}}</md-checkbox>
-        <span ng-if="!expense.isBalanced()" class="warning">
-          <md-icon md-svg-icon="alert:ic_warning_24px"></md-icon> Unbalanced  
-        </span> 
         <span flex></span>
         <md-button hide-gt-sm ng-href="#/expenses/{{expense.id}}" class="md-icon-button" aria-label="View details"><md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon></md-button>
       </div>

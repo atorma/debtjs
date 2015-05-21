@@ -4,11 +4,11 @@
     <md-list-item class="md-2-line" ng-repeat="expense in vm.balanceSheet.expenses">
       <div class="md-list-item-text" layout="column">
         <a href="#/expenses/{{expense.id}}" layout="row" layout-align="start center">
+          <md-icon ng-if="!expense.isBalanced()" class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
           <span>{{expense.name}}</span>
           <span flex></span>
           <span>{{expense.getCost() | currency:""}}</span>
         </a>
-        <div ng-if="!expense.isBalanced()" style="color: red;">Costs and shares unbalanced</div>
       </div>
       <md-divider ng-if="!$last"></md-divider>
     </md-list-item>
@@ -43,7 +43,7 @@
 
 <md-subheader class="md-primary">Debts</md-subheader>
 <md-card>
-  <md-list class="menu">
+  <md-list>
     <md-list-item class="md-2-line" ng-repeat="d in vm.debtsByDebtor">
       <div class="md-list-item-text" layout="column">
         <span>{{d.debtor.name}} owes</span>
@@ -53,8 +53,15 @@
       </div>
       <md-divider ng-if="!$last"></md-divider>
     </md-list-item>
-    <md-list-item ng-if="vm.balanceSheet.persons.length == 0 || vm.balanceSheet.expenses.length == 0">Add some people and expenses first. Debts that settle up all the expenses will appear here.</div>
-    <md-list-item ng-if="vm.debtsByDebtor.length == 0 && vm.balanceSheet.persons.length > 0 && vm.balanceSheet.expenses.length > 0">Everyone is settled up!</div>
-    <md-list-item ng-if="!vm.balanceSheet.isBalanced()">Cannot compute debts. There are unbalanced expenses.</div>
+    <md-list-item ng-if="vm.balanceSheet.persons.length == 0 || vm.balanceSheet.expenses.length == 0">
+      <p>Add some people and expenses first. Debts that settle up all the expenses will appear here.</p>
+    </md-list-item>
+    <md-list-item ng-if="vm.debtsByDebtor.length == 0 && vm.balanceSheet.persons.length > 0 && vm.balanceSheet.expenses.length > 0">
+      <p>Everyone is settled up!</p>
+    </md-list-item>
+    <md-list-item ng-if="!vm.balanceSheet.isBalanced()">
+      <md-icon class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
+      <p>Cannot compute debts. There are unbalanced expenses.</p>
+    </md-list-item>
   </md-list>
 </md-card>

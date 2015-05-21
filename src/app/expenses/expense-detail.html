@@ -1,3 +1,11 @@
+<md-toolbar ng-if="!vm.expense.isBalanced()" class="md-warn">
+  <div class="md-toolbar-tools">
+    <md-icon md-svg-icon="alert:ic_warning_24px"></md-icon>
+    <span>Costs and shares are not equal</span>
+    <span flex></span>
+  </div>
+</md-toolbar>
+
 <section>
 
   <div layout="row">
@@ -8,7 +16,7 @@
       </md-input-container> 
     </h2>
     
-    <md-button class="md-icon-button md-warn" ng-click="vm.removeExpense()" aria-label="delete">
+    <md-button class="md-icon-button" ng-click="vm.removeExpense()" aria-label="delete">
       <md-tooltip>Delete</md-tooltip>
       <md-icon md-svg-icon="action:ic_delete_24px"/>
     </md-button>
@@ -79,7 +87,7 @@
     
       <div layout-fill flex-gt-sm layout="row">
         <span ng-if="!vm.expense.isBalanced()" style="color: red;">
-          <md-icon class="md-warn no-margin-left no-padding-left" md-svg-icon="alert:ic_error_24px"></md-icon> Unbalanced
+          <md-icon class="md-warn no-margin-left no-padding-left" md-svg-icon="alert:ic_warning_24px"></md-icon> Unbalanced
         </span>
         <span ng-if="vm.expense.isBalanced()" class="label">Total</span>
       </div>

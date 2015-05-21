@@ -18,30 +18,40 @@ describe("Balance sheet", function () {
     expect(sheet.name).toBe("New sheet");
   });
 
-  
-  it("is balanced if all expenses are balanced", function() {
-    var expense1 = sheet.createExpense();
-    var expense2 = sheet.createExpense();
-    var person1 = sheet.createPerson();
-    var person2 = sheet.createPerson();
+  describe("balanced", function() {
     
-    var prt11 = sheet.createParticipation({person: person1, expense: expense1, paid: 20, share: 15});
-    var prt21 = sheet.createParticipation({person: person2, expense: expense1, paid: 0, share: 5});
-    var prt12 = sheet.createParticipation({person: person1, expense: expense2, paid: 35, share: 22.5});
-    var prt22 = sheet.createParticipation({person: person2, expense: expense2, paid: 10, share: 22.5});
-    expect(sheet.isBalanced()).toBe(true);
-    
-    prt21.share = 0;
-    expect(sheet.isBalanced()).toBe(false);
-    
-    // Total in balance, but individual expenses are not
-    prt11.share = 65;
-    prt12.share = 0;
-    prt21.share = 0;
-    prt22.share = 0;
-    expect(sheet.isBalanced()).toBe(false);
-  });
+    var prt11, prt21, prt12, prt22;
 
+    beforeEach(function() {
+      var expense1 = sheet.createExpense();
+      var expense2 = sheet.createExpense();
+      var person1 = sheet.createPerson();
+      var person2 = sheet.createPerson();
+      
+      prt11 = sheet.createParticipation({person: person1, expense: expense1, paid: 20, share: 15});
+      prt21 = sheet.createParticipation({person: person2, expense: expense1, paid: 0, share: 5});
+      prt12 = sheet.createParticipation({person: person1, expense: expense2, paid: 35, share: 22.5});
+      prt22 = sheet.createParticipation({person: person2, expense: expense2, paid: 10, share: 22.5});
+    });
+    
+    it("yes, if all expenses are balanced", function() {
+      expect(sheet.isBalanced()).toBe(true);
+    });
+    
+    it("no, if an individual expense is not balanced (even if total is)", function() {
+      prt11.share = 65;
+      prt12.share = 0;
+      prt21.share = 0;
+      prt22.share = 0;
+      expect(sheet.isBalanced()).toBe(false);
+    });
+    
+    it("no, if an expense payment is undefined", function() {
+      prt11.paid = undefined;
+      expect(sheet.isBalanced()).toBe(false);
+    });
+  });
+  
   describe("import/export", function() {
     
     beforeEach(function() {
