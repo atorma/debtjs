@@ -20,7 +20,7 @@ var paths = {
 	main: 'src/app/debt.js',
 	html: ['src/app/**/*.html', '!src/app/**/*.spec.html'],
 	resources: ['src/resources/**'],
-	lib: [],
+	lib: ['src/lib/**/*.*'],
 	libResources: ['node_modules/angular-material/angular-material.css', 'node_modules/ng-material-floating-button/mfb/dist/mfb.css*', 'src/lib/**/*.*', '!src/lib/**/*.js'],
 	tests: 'src/app/**/*.spec.js',
 	build: 'build',
@@ -50,6 +50,7 @@ function ifEnv(env, fun) {
 gulp.task('build-dev', function(cb) {
   context.environment = DEVELOPMENT;
   runSequence(
+      'clean',
       [
        'js-libs',
        'js-app',
@@ -207,7 +208,6 @@ gulp.task('webserver', function() {
 
 gulp.task('develop', function(cb) {
   runSequence(
-      'clean', 
       [
        'build-dev', 
        'watch:js-app',
