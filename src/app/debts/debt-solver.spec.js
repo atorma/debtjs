@@ -78,6 +78,7 @@ describe("Debt solver", function() {
     });
     
     it("of random balance sheets", function() {
+      
       for (var i = 0; i < 10; i++) {
         var balanceSheet = createRandomBalanceSheet({
           numPersons: Math.floor(Math.random()*10) + 1, 
@@ -87,10 +88,13 @@ describe("Debt solver", function() {
         
         var debts = solveDebts(balanceSheet.participations);
         
-        angular.forEach(debts, function(d) {
-          expect(d.amount).toBeGreaterThan(0);
-        });
+        angular.forEach(debts, expectPositiveAmount);
       }
+      
+      function expectPositiveAmount(debt) {
+        expect(debt.amount).toBeGreaterThan(0);
+      }
+      
     });
     
   });
