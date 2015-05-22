@@ -14,18 +14,16 @@ describe("BalanceSheetService", function() {
   
   beforeEach(function() {
     balanceSheetData = {
-        name: "Stored sheet",
         persons: [
                   {id: 1, name: "Anssi"}, {id: 2, name: "Malla"}
                   ],
         expenses: [
-                   {id: 3, name: "Food"}
+                   {id: 3, name: "Food", sharing: "equal", settled: false}
                    ],
         participations: [
                          {personId: 1, expenseId: 3, paid: 10, share: 5}, 
                          {personId: 2, expenseId: 3, paid: 0, share: 5}
-                         ],
-        idSequence: 4                 
+                         ]            
     };
     
     localStorageService = jasmine.createSpyObj("localStorageService", ["get", "set"]);
@@ -79,11 +77,8 @@ describe("BalanceSheetService", function() {
   describe("loads balanceSheet from JSON", function() {
     
     it("and saves the result if the JSON is valid", function() {
-      balanceSheetData.name = "From JSON";
-      
       balanceSheetService.loadFromJson(JSON.stringify(balanceSheetData));
       
-      expect(balanceSheetService.balanceSheet.name).toEqual("From JSON");
       expect(localStorageService.set).toHaveBeenCalledWith("balanceSheetData", balanceSheetData);
     });
     

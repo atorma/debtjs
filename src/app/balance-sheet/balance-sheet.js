@@ -15,7 +15,6 @@ var BalanceSheet = function(data) {
 	var participations = [];
 	var idSequence = 1;
 
-	this.name = "New sheet";
 	this.persons = persons;
 	this.expenses = expenses;
 	this.participations = participations;
@@ -63,15 +62,13 @@ var BalanceSheet = function(data) {
 	
 	
 	function createPerson(data, options) {
-		if (!data) {
-			data = {};
-		}
+	  data = _.extend({
+      name: "Person " + (persons.length + 1)
+    }, data);
+	  
 		if (data.id === undefined) {
 			data.id = idSequence;
 			idSequence = idSequence + 1;	
-		}
-		if (data.name === undefined) {
-			data.name = "Person " + (persons.length + 1);
 		}
 		
 		var person = new Person(data);
@@ -108,18 +105,15 @@ var BalanceSheet = function(data) {
 	}
 
 	function createExpense(data, options) {
-		if (!data) {
-			data = {};
-		}
+		data = _.extend({
+      name: "Expense " + (expenses.length + 1),
+      sharing: "equal",
+      settled: false
+    }, data);
+		
 		if (data.id === undefined) {
 			data.id = idSequence;
 			idSequence = idSequence + 1;
-		}
-		if (data.name === undefined) {
-			data.name = "Expense " + (expenses.length + 1);
-		}
-		if (!data.sharing) {
-			data.sharing = 'equal';
 		}
 		
 		var expense = new Expense(data);
@@ -187,17 +181,16 @@ var BalanceSheet = function(data) {
 	  
 	  // Data
 	  
-		this.id = data.id;
-		this.name = data.name;
+		_.extend(_this, data);
 		
 		// Methods
 		
-		this.equals = equals;
-		this.getCost = getCost;
-    this.getSumOfShares = getSumOfShares;
-    this.getBalance = getBalance;
-    this.isBalanced = isBalanced;
-    this.getParticipations = getParticipations;
+		_this.equals = equals;
+		_this.getCost = getCost;
+		_this.getSumOfShares = getSumOfShares;
+		_this.getBalance = getBalance;
+		_this.isBalanced = isBalanced;
+		_this.getParticipations = getParticipations;
 		
 		///////////////////////////////////////
 		
@@ -257,19 +250,17 @@ var BalanceSheet = function(data) {
 	  
 	  // Data
 	  
-	  this.id = data.id;
-	  this.name = data.name;
-	  this.sharing = data.sharing;
+	  _.extend(_this, data);
 	  
 	  // Methods
 		
-		this.getCost = getCost;
-		this.getSumOfShares = getSumOfShares;
-		this.getBalance = getBalance;
-		this.isBalanced = isBalanced;
-		this.getParticipations = getParticipations;
-		this.shareCost = shareCost;
-		this.equals = equals;
+	  _this.getCost = getCost;
+	  _this.getSumOfShares = getSumOfShares;
+	  _this.getBalance = getBalance;
+	  _this.isBalanced = isBalanced;
+	  _this.getParticipations = getParticipations;
+	  _this.shareCost = shareCost;
+	  _this.equals = equals;
 		
 		///////////////////////////////////////
 		
@@ -388,23 +379,24 @@ var BalanceSheet = function(data) {
 	function exportData() {
 	  var data = {};
 	  
-	  data.idSequence = idSequence;
-	  data.name = _this.name;
 	  data.persons = _.map(persons, function(p) {
-      return {id: p.id, name: p.name};
+      return _.pick(p, _.negate(_.isFunction));
     });
 	  data.expenses = _.map(expenses, function(e) {
-	    return {id: e.id, name: e.name, sharing: e.sharing};
+	    return _.pick(e, _.negate(_.isFunction));
 	  });
 	  data.participations = _.map(participations, function(pt) {
 	    return {personId: pt.person.id, expenseId: pt.expense.id, paid: pt.paid, share: pt.share};
 	  });
-	  return  data;
+	  return data;
 	}
 	
 	function importData(data) {
-	  idSequence = data.idSequence;
-	  _this.name = data.name;
+	  idSequence = _([])
+	  .concat(data.persons)
+	  .concat(data.expenses)
+	  .pluck("id")
+	  .max() + 1;
 	  
 	  _.each(data.persons, function(p) {
 	    createPerson(p);

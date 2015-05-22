@@ -12,11 +12,6 @@ describe("Balance sheet", function () {
   beforeEach(function() {
     sheet = new BalanceSheet();
   });
-  
-  
-  it("has as an initial name", function() {
-    expect(sheet.name).toBe("New sheet");
-  });
 
   describe("balanced", function() {
     
@@ -55,7 +50,6 @@ describe("Balance sheet", function () {
   describe("import/export", function() {
     
     beforeEach(function() {
-      sheet.name = "JSON test sheet";
       var p1 = sheet.createPerson({name: "Anssi"});
       var p2 = sheet.createPerson({name: "Malla"});
       var e1 = sheet.createExpense({name: "Food"});
@@ -72,10 +66,20 @@ describe("Balance sheet", function () {
       data = JSON.parse(json);
       var importedSheet = new BalanceSheet(data);
       
-      expect(importedSheet.name).toEqual(sheet.name);
       expect(angular.equals(sheet.persons, importedSheet.persons)).toBe(true);
       expect(angular.equals(sheet.expenses, importedSheet.expenses)).toBe(true);
       expect(angular.equals(sheet.participations, importedSheet.participations)).toBe(true);
+    });
+    
+    it("determines next id in sequence without imported data containing it", function() {
+      var maxId = 100;
+      sheet.persons[0].id = maxId;
+      var data = sheet.exportData();
+      expect(data.idSequence).not.toBeDefined();
+      
+      var importedSheet = new BalanceSheet(data);
+      var person = importedSheet.createPerson();
+      expect(person.id).toBe(maxId + 1); 
     });
       
     it("fails if input data is invalid", function() {
@@ -88,7 +92,7 @@ describe("Balance sheet", function () {
     
   });
     
-  describe("validates itself", function() {
+  describe("validates", function() {
   
     beforeEach(function() {
       var p1 = sheet.createPerson({name: "Anssi"});
@@ -297,6 +301,16 @@ describe("Balance sheet", function () {
       expect(sheet.expenses).toEqual([food, gas]);
     });
     
+    it("has sharing mode 'equal' by default", function() {
+      var expense = sheet.createExpense();
+      expect(expense.sharing).toBe('equal');
+    });
+    
+    it("is initially unsettled", function() {
+      var expense = sheet.createExpense();
+      expect(expense.settled).toBe(false);
+    });
+    
     it("can be found by id", function() {
       var food = sheet.createExpense({name: "Food"});
       var gas = sheet.createExpense({name: "Gas"});
@@ -340,11 +354,6 @@ describe("Balance sheet", function () {
      
       expect(_.find(expense.getParticipations(), {person: person1})).toBeDefined();
       expect(_.find(expense.getParticipations(), {person: person2})).toBeDefined();
-    });
-
-    it("has sharing mode 'equal' by default", function() {
-      var expense = sheet.createExpense();
-      expect(expense.sharing).toBe('equal');
     });
 
     it("can return its participations", function() {
