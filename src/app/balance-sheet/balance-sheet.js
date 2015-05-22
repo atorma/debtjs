@@ -155,6 +155,11 @@ var BalanceSheet = function(data) {
       throw "Duplicate participation";
     }
 		
+		data = _.extend({
+		  paid: 0,
+		  share: 0
+		}, data);
+		
 		var participation = new Participation(data); 
 		participations.push(participation);
 		
@@ -348,20 +353,7 @@ var BalanceSheet = function(data) {
 		
 		// Data
 		
-		this.person = data.person;
-		this.expense = data.expense;
-
-		if (_.isUndefined(data.paid)) {
-			this.paid = 0;
-		} else {
-			this.paid = data.paid;
-		}
-		
-		if (_.isUndefined(data.share)) {
-			this.share = 0;
-		} else {
-			this.share = data.share;
-		}
+		_.extend(this, data);
 		
 		// Methods
 		
