@@ -8,6 +8,9 @@ bower_components/
 .project
 .tern-project
 
+# IntelliJ project
+.idea
+
 # npm
 npm-debug.log
 
