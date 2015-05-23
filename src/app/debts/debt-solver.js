@@ -2,6 +2,7 @@
 
 var angular = require("angular");
 var Decimal = require("simple-decimal-money");
+var Random = require("random-js");
 
 angular
   .module("debtApp")
@@ -172,6 +173,11 @@ function debtSolverFactory(solveLinearSystem) {
       return solution.xVector;
     }
 
+    // Known seed so we always get the same result from
+    // the same system.
+    var randomEngine = Random.engines.mt19937();
+    randomEngine.seed(20150312);
+
     var toEliminate;
     do {
       
@@ -187,7 +193,7 @@ function debtSolverFactory(solveLinearSystem) {
       
       toEliminate = [];
       for (var i = 0; i < numFreeVars; i++) {
-        var candidateIdx = Math.floor(Math.random()*candidates.length);
+        var candidateIdx = Random.integer(0, candidates.length-1)(randomEngine);
         toEliminate.push(candidates[candidateIdx]);
         candidates.splice(candidateIdx, 1);
       }
