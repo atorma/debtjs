@@ -1,5 +1,6 @@
 "use strict";
 
+var _ = require("lodash");
 var angular = require("angular");
 
 angular.module("debtApp")
@@ -28,7 +29,8 @@ function BalanceSheetCtrl(balanceSheetService, debtService, $scope) {
   
   function computeDebts() {
     if (vm.balanceSheet.isBalanced()) {
-      var debts = debtService.computeDebts(vm.balanceSheet.participations);
+      var participations = vm.balanceSheet.getNonSettledParticipations();
+      var debts = debtService.computeDebts(participations);
       return debtService.organizeByDebtor(debts);
     } else {
       return undefined;

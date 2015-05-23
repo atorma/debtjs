@@ -43,9 +43,10 @@ describe("BalanceSheetCtrl", function() {
   
   describe("refresh", function() {
     
-    it("computes debts by debtor", function() {
-      
-      balanceSheet.participations = "Dummy participations";
+    it("computes debts by debtor using non-settled participatins", function() {
+      balanceSheet.participations = "all participations";
+      var nonSettledParticipations = "non-settled participations";
+      spyOn(balanceSheet, "getNonSettledParticipations").and.returnValue(nonSettledParticipations)
 
       var debts = "Dummy debts";
       debtService.computeDebts.and.returnValue(debts);
@@ -55,7 +56,7 @@ describe("BalanceSheetCtrl", function() {
       
       vm.refresh();
       
-      expect(debtService.computeDebts).toHaveBeenCalledWith(balanceSheet.participations);
+      expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations);
       expect(debtService.organizeByDebtor).toHaveBeenCalledWith(debts);
       expect(vm.debtsByDebtor).toBe(debtsByDebtor);
     });

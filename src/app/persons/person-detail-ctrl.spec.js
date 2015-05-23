@@ -123,9 +123,13 @@ describe("PersonDetailCtrl", function() {
     });
     
     describe("debts", function() {
-            
+
+      var nonSettledParticipations;
+
       beforeEach(function() {
-        balanceSheet.participations = [{person: "Dummy participation"}];
+        balanceSheet.participations = "wrong participations to use";
+        nonSettledParticipations = "dummy non-settled participations";
+        spyOn(balanceSheet, "getNonSettledParticipations").and.returnValue(nonSettledParticipations);
       });
       
       it("computed with role creditor when person's balance is negative", function() {
@@ -144,7 +148,7 @@ describe("PersonDetailCtrl", function() {
         
         vm.refresh();
         
-        expect(debtService.computeDebts).toHaveBeenCalledWith(balanceSheet.participations);
+        expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations);
         expect(vm.debtRole).toEqual("creditor");
         expect(vm.debts).toEqual([{person: debtor2, amount: 50}]);
       });
@@ -166,7 +170,7 @@ describe("PersonDetailCtrl", function() {
         vm.refresh();
         
         
-        expect(debtService.computeDebts).toHaveBeenCalledWith(balanceSheet.participations);
+        expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations);
         expect(vm.debtRole).toEqual("debtor");
         expect(vm.debts).toEqual([{person: creditor1, amount: 10}]);
       });

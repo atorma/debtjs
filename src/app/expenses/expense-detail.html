@@ -38,14 +38,21 @@
       </md-switch>
     </div>
 
+    <div layout="row" layout-align="start center">
+      <div flex>Settled</div>
+      <md-switch ng-model="vm.expense.settled" ng-change="vm.refresh()"
+                 class="md-primary" aria-label="Settled">
+      </md-switch>
+    </div>
+
   </div>
   
 </section>
 
 
 <section>
-  <!-- Inputs and the new md-list-item do not to mix well. Animation stops etc. Sticking to a custom solution. -->
 
+  <!-- Inputs and the new md-list-item do not to mix well. Animation stops etc. Sticking to a custom solution. -->
   <div layout="column">
     
     <div ng-repeat="person in vm.balanceSheet.persons"
@@ -53,8 +60,12 @@
       layout-gt-sm="row" layout-align-gt-sm="start center">
 
       <div layout-fill flex-gt-sm layout="row" layout-align="start center" >
-        <md-checkbox class="md-primary no-margin" ng-model="vm.isParticipant[person.id]" 
-          ng-change="vm.setParticipation(person, vm.isParticipant[person.id])">{{person.name}}</md-checkbox>
+        <md-checkbox class="md-primary no-margin"
+                     ng-model="vm.isParticipant[person.id]"
+                     ng-change="vm.setParticipation(person, vm.isParticipant[person.id])"
+                     ng-disabled="vm.expense.settled">
+          {{person.name}}
+        </md-checkbox>
         <span flex></span>
         <md-button hide-gt-sm ng-href="#/persons/{{person.id}}" class="md-icon-button" aria-label="View details"><md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon></md-button>
       </div>
@@ -65,14 +76,14 @@
           <input type="number" style="width: 8em" ng-required="vm.isParticipant[person.id]" pattern="(0|[1-9][0-9]*)([,|\.][0-9]{0,2})?"
             ng-model="vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).paid" 
             ng-change="vm.refresh()" 
-            ng-disabled="!vm.isParticipant[person.id]" />
+            ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]" />
         </md-input-container>
         <md-input-container>
           <label>Shared</label>
           <input type="number" style="width: 8em" ng-required="vm.isParticipant[person.id]" 
             ng-model="vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).share"
             ng-change="vm.refresh()"
-            ng-disabled="!vm.isParticipant[person.id]"
+            ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]"
             ng-readonly="vm.expense.sharing != 'custom'" />
         </md-input-container>
       </div>
@@ -114,10 +125,14 @@
 <section>
   <div layout="column">
     <div ng-if="vm.debtsByDebtor.length > 0">
-      <div>To settle just this expense</div>
+      <div ng-if="!vm.expense.settled">To settle just this expense</div>
+      <div ng-if="vm.expense.settled">This expense has been settled as follows</div>
       <div ng-repeat="d in vm.debtsByDebtor">
         <p layout="column">
-          <span>{{d.debtor.name}} pays</span>
+          <span>{{d.debtor.name}}
+            <span ng-if="!vm.expense.settled">pays</span>
+            <span ng-if="vm.expense.settled">paid</span>
+          </span>
           <span ng-repeat="c in d.debts" style="margin-left: 16px;">
             {{c.creditor.name}}: {{c.amount | currency:""}}
           </span>

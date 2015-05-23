@@ -18,18 +18,24 @@ describe("Balance sheet", function () {
     var prt11, prt21, prt12, prt22;
 
     beforeEach(function() {
-      var expense1 = sheet.createExpense();
-      var expense2 = sheet.createExpense();
       var person1 = sheet.createPerson();
       var person2 = sheet.createPerson();
-      
+
+      var expense1 = sheet.createExpense();
+      var expense2 = sheet.createExpense();
+
       prt11 = sheet.createParticipation({person: person1, expense: expense1, paid: 20, share: 15});
       prt21 = sheet.createParticipation({person: person2, expense: expense1, paid: 0, share: 5});
       prt12 = sheet.createParticipation({person: person1, expense: expense2, paid: 35, share: 22.5});
       prt22 = sheet.createParticipation({person: person2, expense: expense2, paid: 10, share: 22.5});
+
+      var settledExpense = sheet.createExpense();
+      settledExpense.settled = true;
+      settledExpense.sharing = "custom";
+      sheet.createParticipation({person: person2, expense: settledExpense, paid: 0, share: 100});
     });
     
-    it("yes, if all expenses are balanced", function() {
+    it("yes, if all non-settled expenses are balanced", function() {
       expect(sheet.isBalanced()).toBe(true);
     });
     
@@ -272,17 +278,25 @@ describe("Balance sheet", function () {
       expect(sheet.participations.length).toBe(2);
     });
     
-    it("balance is difference between sum shared and sum paid", function() {
-      var expense1 = sheet.createExpense();
-      var expense2 = sheet.createExpense();
-      expense1.sharing = "custom";
-      expense2.sharing = "custom";
+    it("balance is difference between sum shared and sum paid over non-settled expense", function() {
       var person = sheet.createPerson();
-      
+
+      var expense1 = sheet.createExpense();
+      expense1.sharing = "custom";
+
+      var expense2 = sheet.createExpense();
+      expense2.sharing = "custom";
+
+      var expense3 = sheet.createExpense();
+      expense3.sharing = "custom";
+      expense3.settled = true;
+
       sheet.createParticipation({person: person, expense: expense1, paid: 20, share: 10});
       sheet.createParticipation({person: person, expense: expense2, paid: 0, share: 15});
+      sheet.createParticipation({person: person, expense: expense3, paid: 0, share: 100}); // expense settled, not to be counted in
       
       expect(person.getBalance()).toBe(5); // share is more than paid => debtor
+
     });
 
   });
@@ -306,7 +320,7 @@ describe("Balance sheet", function () {
       expect(expense.sharing).toBe('equal');
     });
     
-    it("is initially unsettled", function() {
+    it("is initially not settled", function() {
       var expense = sheet.createExpense();
       expect(expense.settled).toBe(false);
     });
@@ -317,6 +331,7 @@ describe("Balance sheet", function () {
 
       expect(sheet.getExpense(food.id)).toBe(food);
       expect(sheet.getExpense(gas.id)).toBe(gas);
+
     });
     
     it("equals other expense by id", function() {
@@ -461,7 +476,14 @@ describe("Balance sheet", function () {
       sheet.removeParticipation(participation);
       expect(sheet.participations.length).toBe(0);
     });
-    
+
+    it("get all non-settled", function() {
+      var settledExpense = sheet.createExpense({name: "Settled", settled: true});
+      var settledPt = sheet.createParticipation({expense: settledExpense, person: anssi});
+      var nonSettledPt = sheet.createParticipation({expense: food, person: anssi});
+
+      expect(sheet.getNonSettledParticipations()).toEqual([nonSettledPt]);
+    });
   });
   
   describe("costs and shares", function() {
