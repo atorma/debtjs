@@ -32,9 +32,10 @@
     
     <div layout="row" layout-align="start center">
       <div flex>Share equally</div>
-      <md-switch ng-model="vm.expense.sharing" ng-change="vm.refresh()" 
-        ng-true-value="'equal'" ng-false-value="'custom'" 
-        class="md-primary" aria-label="Share equally">
+      <md-switch ng-model="vm.expense.sharing" ng-change="vm.refresh()"
+                 ng-disabled="vm.expense.settled"
+                 ng-true-value="'equal'" ng-false-value="'custom'"
+                 class="md-primary" aria-label="Share equally">
       </md-switch>
     </div>
 
@@ -125,14 +126,14 @@
 <section>
   <div layout="column">
     <div ng-if="vm.debtsByDebtor.length > 0">
-      <div ng-if="!vm.expense.settled">To settle just this expense</div>
-      <div ng-if="vm.expense.settled">This expense has been settled as follows</div>
+      <p ng-if="!vm.expense.settled">To settle this expense alone</p>
+      <div ng-if="vm.expense.settled">
+        <p>This expense is settled. It does not play a role in balance and debt calculations.</p>
+        <p>The debts were</p>
+      </div>
       <div ng-repeat="d in vm.debtsByDebtor">
         <p layout="column">
-          <span>{{d.debtor.name}}
-            <span ng-if="!vm.expense.settled">pays</span>
-            <span ng-if="vm.expense.settled">paid</span>
-          </span>
+          <span>{{d.debtor.name}} pays </span>
           <span ng-repeat="c in d.debts" style="margin-left: 16px;">
             {{c.creditor.name}}: {{c.amount | currency:""}}
           </span>

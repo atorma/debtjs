@@ -227,18 +227,22 @@ describe("Balance sheet", function () {
       expect(person3.name).toBe("Person 3");
     });
     
-    it("can be created with option to participate in all expenses so far, which requires sharing costs", function() {
+    it("can be created with option to participate in all non-settled expenses, which requires sharing costs", function() {
       var expense1 = sheet.createExpense();
       var expense2 = sheet.createExpense();
+      var settled = sheet.createExpense({settled: true});
       spyOn(expense1, "shareCost");
       spyOn(expense2, "shareCost");
+      spyOn(settled, "shareCost");
       
       var person = sheet.createPerson({}, {createParticipations: true});
       
       expect(_.find(person.getParticipations(), {expense: expense1})).toBeDefined();
       expect(_.find(person.getParticipations(), {expense: expense2})).toBeDefined();
+      expect(_.find(person.getParticipations(), {expense: settled})).not.toBeDefined();
       expect(expense1.shareCost).toHaveBeenCalled();
       expect(expense2.shareCost).toHaveBeenCalled();
+      expect(settled.shareCost).not.toHaveBeenCalled();
     });
     
     it("can return its participations", function() {
@@ -411,8 +415,8 @@ describe("Balance sheet", function () {
 
       sheet.createParticipation({person: person1, expense: expense1, paid: 10});
       sheet.createParticipation({person: person2, expense: expense1, paid: 11});
-      var p1To2 = sheet.createParticipation({person: person1, expense: expense2, paid: 20});
-      var p2To2 = sheet.createParticipation({person: person2, expense: expense2, paid: 21});
+      sheet.createParticipation({person: person1, expense: expense2, paid: 20});
+      sheet.createParticipation({person: person2, expense: expense2, paid: 21});
 
       sheet.removeExpense(expense1);
       expect(sheet.expenses.length).toBe(1);

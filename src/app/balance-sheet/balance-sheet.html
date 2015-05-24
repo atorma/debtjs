@@ -5,7 +5,7 @@
       <div class="md-list-item-text" layout="column">
         <a href="#/expenses/{{expense.id}}" layout="row" layout-align="start center">
           <md-icon ng-if="!expense.isBalanced()" class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
-          <span>{{expense.name}}</span>
+          <span ng-class="{settled: expense.settled}">{{expense.name}}</span>
           <span flex></span>
           <span>{{expense.getCost() | currency:""}}</span>
         </a>

@@ -71,3 +71,7 @@ icon-button-strut {
   margin-left: 6px; 
   margin-right: 6px
 }
+
+.settled {
+  text-decoration: line-through;
+}

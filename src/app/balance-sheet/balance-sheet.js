@@ -15,9 +15,9 @@ var BalanceSheet = function(data) {
   var participations = [];
   var idSequence = 1;
 
-  this.persons = persons;
-  this.expenses = expenses;
-  this.participations = participations;
+  _this.persons = persons;
+  _this.expenses = expenses;
+  _this.participations = participations;
 
   if (data) {
     importData(data);
@@ -25,26 +25,26 @@ var BalanceSheet = function(data) {
 
   // Methods
 
-  this.getNonSettledParticipations = getNonSettledParticipations;
+  _this.getNonSettledParticipations = getNonSettledParticipations;
 
-  this.isBalanced = isBalanced;
+  _this.isBalanced = isBalanced;
 
-  this.getPerson = getPerson;
-  this.createPerson = createPerson;
-  this.removePerson = removePerson;
+  _this.getPerson = getPerson;
+  _this.createPerson = createPerson;
+  _this.removePerson = removePerson;
 
-  this.getExpense = getExpense;
-  this.createExpense = createExpense;
-  this.removeExpense = removeExpense;
+  _this.getExpense = getExpense;
+  _this.createExpense = createExpense;
+  _this.removeExpense = removeExpense;
 
-  this.getParticipation = getParticipation;
-  this.createParticipation = createParticipation;
-  this.removeParticipation = removeParticipation;
+  _this.getParticipation = getParticipation;
+  _this.createParticipation = createParticipation;
+  _this.removeParticipation = removeParticipation;
 
-  this.exportData = exportData;
+  _this.exportData = exportData;
 
-  this.isValid = isValid;
-  this.throwErrorIfInvalid = throwErrorIfInvalid;
+  _this.isValid = isValid;
+  _this.throwErrorIfInvalid = throwErrorIfInvalid;
 
   /////////////////////////////////////
 
@@ -74,6 +74,8 @@ var BalanceSheet = function(data) {
       name: "Person " + (persons.length + 1)
     }, data);
 
+    options = _.extend({}, options);
+
     if (data.id === undefined) {
       data.id = idSequence;
       idSequence = idSequence + 1;
@@ -82,10 +84,12 @@ var BalanceSheet = function(data) {
     var person = new Person(data);
     persons.push(person);
 
-    if (options && options.createParticipations === true) {
+    if (options.createParticipations === true) {
       _.each(expenses, function(e) {
-        createParticipation({person: person, expense: e});
-        e.shareCost();
+        if (!e.settled) {
+          createParticipation({person: person, expense: e});
+          e.shareCost();
+        }
       });
     }
 
@@ -119,6 +123,8 @@ var BalanceSheet = function(data) {
       settled: false
     }, data);
 
+    options = _.extend({}, options);
+
     if (data.id === undefined) {
       data.id = idSequence;
       idSequence = idSequence + 1;
@@ -127,7 +133,7 @@ var BalanceSheet = function(data) {
     var expense = new Expense(data);
     expenses.push(expense);
 
-    if (options && options.createParticipations === true) {
+    if (options.createParticipations === true) {
       _.each(persons, function(p) {
         createParticipation({person: p, expense: expense});
       });
@@ -213,7 +219,7 @@ var BalanceSheet = function(data) {
     var _nonSettledParticipations = _myParticipations
       .filter(function(pt) {
         return !pt.expense.settled;
-      })
+      });
 
     var _cost = _nonSettledParticipations
       .filter(function(pt) {
@@ -376,7 +382,7 @@ var BalanceSheet = function(data) {
     ///////////////////////////////////////
 
     function equals(other) {
-      return (other instanceof Participation) && _this.person.equals(other.person) && _this.expense.equals(other.expense);
+      return (other instanceof Participation) && _this.expense.equals(other.expense) && _this.person.equals(other.person);
     }
   }
 
