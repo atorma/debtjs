@@ -1,6 +1,6 @@
 <md-toolbar ng-if="!vm.expense.isBalanced()" class="md-warn">
   <div class="md-toolbar-tools">
-    <md-icon md-svg-icon="alert:ic_warning_24px"></md-icon>
+    <md-icon md-svg-icon="alert:ic_warning_24px"></md-icon>&nbsp;
     <span>Costs and shares are not equal</span>
     <span flex></span>
   </div>
@@ -99,7 +99,7 @@
     
       <div layout-fill flex-gt-sm layout="row">
         <span ng-if="!vm.expense.isBalanced()" style="color: red;">
-          <md-icon class="md-warn no-margin-left no-padding-left" md-svg-icon="alert:ic_warning_24px"></md-icon> Unbalanced
+          <md-icon class="md-warn no-margin-left no-padding-left" md-svg-icon="alert:ic_warning_24px"></md-icon>&nbsp;Unbalanced
         </span>
         <span ng-if="vm.expense.isBalanced()" class="label">Total</span>
       </div>

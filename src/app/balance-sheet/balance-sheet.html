@@ -2,9 +2,10 @@
 <md-card>
   <md-list class="menu">
     <md-list-item class="md-2-line" ng-repeat="expense in vm.balanceSheet.expenses">
+      <md-icon ng-if="!expense.isBalanced()" class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
+      <md-icon ng-if="expense.isBalanced()" class="md-primary" md-svg-icon="action:ic_shopping_basket_24px"></md-icon>
       <div class="md-list-item-text" layout="column">
         <a href="#/expenses/{{expense.id}}" layout="row" layout-align="start center">
-          <md-icon ng-if="!expense.isBalanced()" class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
           <span ng-class="{settled: expense.settled}">{{expense.name}}</span>
           <span flex></span>
           <span>{{expense.getCost() | currency:""}}</span>
@@ -24,6 +25,7 @@
 <md-card>
   <md-list class="menu">
     <md-list-item class="md-2-line" ng-repeat="person in vm.balanceSheet.persons">
+      <md-icon class="md-primary" md-svg-icon="action:ic_face_24px"></md-icon>
       <div class="md-list-item-text" layout="column">
         <a href="#/persons/{{person.id}}" layout="row" layout-align="start center">
           <span>{{person.name}}</span>
@@ -54,7 +56,8 @@
       <md-divider ng-if="!$last"></md-divider>
     </md-list-item>
     <md-list-item ng-if="vm.balanceSheet.persons.length == 0 || vm.balanceSheet.expenses.length == 0">
-      <p>Add some people and expenses first. Debts that settle up all the expenses will appear here.</p>
+      <p>Add some people and expenses first.</p>
+      <p>Debts that settle up all the expenses will appear here.</p>
     </md-list-item>
     <md-list-item ng-if="vm.debtsByDebtor.length == 0 && vm.balanceSheet.persons.length > 0 && vm.balanceSheet.expenses.length > 0">
       <p>Everyone is settled up!</p>
