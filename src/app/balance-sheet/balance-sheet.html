@@ -1,15 +1,15 @@
 <md-subheader class="md-primary">Expenses</md-subheader>
 <md-card>
   <md-list class="menu">
-    <md-list-item class="md-2-line" ng-repeat="expense in vm.balanceSheet.expenses">
+    <md-list-item class="md-2-line"
+                  ng-repeat="expense in vm.balanceSheet.expenses"
+                  ng-click="$state.go('expense', {id: expense.id})">
       <md-icon ng-if="!expense.isBalanced()" class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
       <md-icon ng-if="expense.isBalanced()" class="md-primary" md-svg-icon="action:ic_shopping_basket_24px"></md-icon>
-      <div class="md-list-item-text" layout="column">
-        <a href="#/expenses/{{expense.id}}" layout="row" layout-align="start center">
-          <span ng-class="{settled: expense.settled}">{{expense.name}}</span>
-          <span flex></span>
-          <span>{{expense.getCost() | currency:""}}</span>
-        </a>
+      <div class="md-list-item-text" layout="row">
+        <span ng-class="{settled: expense.settled}">{{expense.name}}</span>
+        <span flex></span>
+        <span>{{expense.getCost() | currency:""}}</span>
       </div>
       <md-divider ng-if="!$last"></md-divider>
     </md-list-item>
@@ -24,14 +24,14 @@
 <md-subheader class="md-primary">People</md-subheader>
 <md-card>
   <md-list class="menu">
-    <md-list-item class="md-2-line" ng-repeat="person in vm.balanceSheet.persons">
+    <md-list-item class="md-2-line"
+                  ng-repeat="person in vm.balanceSheet.persons"
+                  ng-click="$state.go('person', {id: person.id})">
       <md-icon class="md-primary" md-svg-icon="action:ic_face_24px"></md-icon>
-      <div class="md-list-item-text" layout="column">
-        <a href="#/persons/{{person.id}}" layout="row" layout-align="start center">
-          <span>{{person.name}}</span>
-          <span flex></span>
-          <span>{{person.getBalance() | balance}}</span>
-        </a>
+      <div class="md-list-item-text" layout="row">
+        <span>{{person.name}}</span>
+        <span flex></span>
+        <span>{{person.getBalance() | balance}}</span>
       </div>
       <md-divider ng-if="!$last"></md-divider>
     </md-list-item>

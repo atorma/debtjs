@@ -5,7 +5,7 @@ var angular = require("angular");
 angular.module("debtApp")
   .controller("ToolbarCtrl", ToolbarCtrl);
 
-function ToolbarCtrl($scope, $mdSidenav) {
+function ToolbarCtrl($mdSidenav) {
   var vm = this;
   
   vm.mainMenu = {

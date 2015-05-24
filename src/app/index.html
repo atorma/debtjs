@@ -25,13 +25,10 @@
   
     <md-toolbar ng-controller="ToolbarCtrl as vm">
       <div class="md-toolbar-tools">
-        <md-button ng-href="#/" class="md-icon-button" aria-label="Home">
-          <md-icon md-svg-icon="action:ic_home_24px"></md-icon>
+        <md-button ng-click="vm.mainMenu.toggle()" class="md-icon-button" aria-label="Menu">
+          <md-icon md-svg-icon="navigation:ic_menu_24px"></md-icon>
         </md-button>
         <span flex></span>
-        <md-button class="md-icon-button" aria-label="More">
-          <md-icon md-svg-icon="navigation:ic_more_vert_24px"></md-icon>
-        </md-button>
       </div>
     </md-toolbar>
     
@@ -39,7 +36,17 @@
     
       <md-toolbar ng-if="vm.errorMessage" class="md-warn">
         <div class="md-toolbar-tools">{{vm.errorMessage}}</div>
-      </md-toolbar>   
+      </md-toolbar>
+
+      <md-sidenav md-component-id="main-menu" class="md-sidenav-left">
+          <md-list>
+            <md-list-item ng-click="$state.go('balanceSheet')">
+              <md-icon md-svg-icon="action:ic_home_24px" class="md-primary"></md-icon>
+              <p class="md-list-item-text">Home</p>
+            </md-list-item>
+            <md-divider></md-divider>
+          </md-list>
+      </md-sidenav>
          
       <md-content flex layout-padding>
         <div ui-view></div>
