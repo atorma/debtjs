@@ -45,6 +45,18 @@
               <p class="md-list-item-text">Home</p>
             </md-list-item>
             <md-divider></md-divider>
+            <md-list-item ng-click="vm.createNewSheet()">
+              <md-icon></md-icon>
+              <p class="md-list-item-text">New sheet</p>
+            </md-list-item>
+            <md-list-item ng-click="vm.loadSheet()">
+              <md-icon></md-icon>
+              <p class="md-list-item-text">Load sheet</p>
+            </md-list-item>
+            <md-list-item ng-click="vm.exportSheetAsJson()">
+              <md-icon></md-icon>
+              <p class="md-list-item-text">Export sheet as JSON</p>
+            </md-list-item>
           </md-list>
       </md-sidenav>
          
@@ -53,12 +65,17 @@
       </md-content>
       
       <div>
-        <mfb-menu
-          position="br" effect="zoomin" toggling-method="click"
-          template-url="ng-mfb-menu-md.tpl.html" 
-          resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px">
-          <mfb-button ng-click="vm.createExpense()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_shopping_basket_24px" label="Create expense"></mfb-button>
-          <mfb-button ng-click="vm.createPerson()" template-url="ng-mfb-button-md.tpl.html" icon="action:ic_face_24px" label="Create person"></mfb-button>
+        <mfb-menu position="br" effect="zoomin" toggling-method="click"
+                  template-url="ng-mfb-menu-md.tpl.html"
+                  resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px">
+          <mfb-button ng-click="vm.createExpense()"
+                      template-url="ng-mfb-button-md.tpl.html"
+                      icon="action:ic_shopping_basket_24px" label="Create expense">
+          </mfb-button>
+          <mfb-button ng-click="vm.createPerson()"
+                      template-url="ng-mfb-button-md.tpl.html"
+                      icon="action:ic_face_24px" label="Create person">
+          </mfb-button>
         </mfb-menu>
       </div>
     

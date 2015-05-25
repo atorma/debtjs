@@ -10,6 +10,7 @@ describe("PersonDetailCtrl", function() {
   var $scope;
   var $stateParams;
   var $state;
+  var events;
   var balanceSheet;
   var balanceSheetService;
   var debtService;
@@ -36,8 +37,9 @@ describe("PersonDetailCtrl", function() {
     $provide.value("$state", $state);
   }));
   
-  beforeEach(angular.mock.inject(function($rootScope, $controller, $q, $mdDialog) {
-    
+  beforeEach(angular.mock.inject(function(_events_, $rootScope, $controller, $q, $mdDialog) {
+    events = _events_;
+
     $scope = $rootScope.$new();
 
     // Dialog always results in "OK"
@@ -113,11 +115,11 @@ describe("PersonDetailCtrl", function() {
       expect(vm.balance).toBe(120);
     });
     
-    it("is done on balanceSheetUpdated event", function() {
+    it("is done on 'balance sheet updated' event", function() {
       vm.refresh = jasmine.createSpy("refresh");
       vm.init();
       
-      $scope.$root.$broadcast("balanceSheetUpdated");
+      $scope.$root.$broadcast(events.BALANCE_SHEET_UPDATED);
       
       expect(vm.refresh).toHaveBeenCalled();
     });

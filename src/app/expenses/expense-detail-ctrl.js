@@ -7,7 +7,7 @@ angular
   .module("debtApp")
     .controller("ExpenseDetailCtrl", ExpenseDetailCtrl);
 
-function ExpenseDetailCtrl(balanceSheetService, debtService, $mdDialog, $stateParams, $state, $scope) {
+function ExpenseDetailCtrl(balanceSheetService, debtService, events, $mdDialog, $stateParams, $state, $scope) {
   var vm = this;
   var confirmRemoveExpense;
   
@@ -31,7 +31,7 @@ function ExpenseDetailCtrl(balanceSheetService, debtService, $mdDialog, $statePa
     .content("Really delete this expense?")
     .ok("Ok").cancel("Cancel");
 		
-		$scope.$on("balanceSheetUpdated", vm.refresh);
+		$scope.$on(events.BALANCE_SHEET_UPDATED, vm.refresh);
 	}
 	
 	function refresh() {

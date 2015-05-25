@@ -14,6 +14,7 @@ function balanceSheetService(localStorageService) {
     save: save,
     loadFromJson: loadFromJson,
     exportToJson: exportToJson,
+    createNew: createNew,
     init: init
   };
   service.init();
@@ -40,6 +41,11 @@ function balanceSheetService(localStorageService) {
   function exportToJson() {
     var data = service.balanceSheet.exportData(); 
     return angular.toJson(data);
+  }
+
+  function createNew() {
+    service.balanceSheet = new BalanceSheet();
+    service.save();
   }
 
 }

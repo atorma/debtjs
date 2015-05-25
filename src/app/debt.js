@@ -13,10 +13,12 @@ var _ = require("lodash");
 
 angular
   .module("debtApp", ["ngMaterial", "ui.router", "LocalStorageModule", "ng-mfb"])
-    .config(configureLocalStorage)
-    .config(configureIcons)
-    .run(makeStateAvailableInScope)
-    ;
+  .constant("events", {
+    BALANCE_SHEET_UPDATED: "balance sheet updated"
+  })
+  .config(configureLocalStorage)
+  .config(configureIcons)
+  .run(makeStateAvailableInScope);
 
 require("./debt-app-ctrl");
 require("./route-config");

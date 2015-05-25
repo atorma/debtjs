@@ -8,6 +8,7 @@ var BalanceSheet = require("./balance-sheet");
 describe("BalanceSheetCtrl", function() {
 
   var vm;
+  var events;
   var $scope;
   var balanceSheetService;
   var balanceSheet;
@@ -26,7 +27,8 @@ describe("BalanceSheetCtrl", function() {
     
   });
 
-  beforeEach(angular.mock.inject(function($rootScope, $controller, $q) {
+  beforeEach(angular.mock.inject(function(_events_, $rootScope, $controller, $q) {
+    events = _events_;
     $scope = $rootScope.$new();
 
     vm = $controller("BalanceSheetCtrl", {
@@ -42,6 +44,13 @@ describe("BalanceSheetCtrl", function() {
   });
   
   describe("refresh", function() {
+
+    it("updates balance sheet reference", function() {
+      var newSheet = jasmine.createSpyObj("new sheet", ["isBalanced"]);
+      balanceSheetService.balanceSheet = newSheet;
+      vm.refresh();
+      expect(vm.balanceSheet).toEqual(newSheet);
+    });
     
     it("computes debts by debtor using non-settled participatins", function() {
       balanceSheet.participations = "all participations";
@@ -61,11 +70,11 @@ describe("BalanceSheetCtrl", function() {
       expect(vm.debtsByDebtor).toBe(debtsByDebtor);
     });
     
-    it("is done on balanceSheetUpdated event", function() {
+    it("is done on 'balance sheet updated' event", function() {
       vm.refresh = jasmine.createSpy("refresh");
       vm.init();
       
-      $scope.$root.$broadcast("balanceSheetUpdated");
+      $scope.$root.$broadcast(events.BALANCE_SHEET_UPDATED);
       
       expect(vm.refresh).toHaveBeenCalled();
     });

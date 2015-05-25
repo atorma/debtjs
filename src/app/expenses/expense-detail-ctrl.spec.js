@@ -8,6 +8,7 @@ var BalanceSheet = require("../balance-sheet/balance-sheet");
 describe("ExpenseDetailCtrl", function() {
 
   var vm;
+  var events;
   var $scope;
   var $stateParams;
   var $state;
@@ -43,7 +44,8 @@ describe("ExpenseDetailCtrl", function() {
     $provide.value("$state", $state);
   }));
   
-  beforeEach(angular.mock.inject(function($rootScope, $controller, $q, $mdDialog) {
+  beforeEach(angular.mock.inject(function(_events_, $rootScope, $controller, $q, $mdDialog) {
+    events = _events_;
     $scope = $rootScope.$new();
     
     // Dialog always results in "OK"
@@ -74,7 +76,7 @@ describe("ExpenseDetailCtrl", function() {
       spyOn(expense, "shareCost");
       vm.expense = expense;
     });
-    
+
     it("updates participation map", function() {
       var participant1 = balanceSheet.createPerson();
       var participant2 = balanceSheet.createPerson();
@@ -136,11 +138,11 @@ describe("ExpenseDetailCtrl", function() {
       expect(vm.sumOfShares).toBe(120);
     });
     
-    it("is done on balanceSheetUpdated event", function() {
+    it("is done on 'balance sheet updated' event", function() {
       vm.refresh = jasmine.createSpy("refresh");
       vm.init();
       
-      $scope.$root.$broadcast("balanceSheetUpdated");
+      $scope.$root.$broadcast(events.BALANCE_SHEET_UPDATED);
       
       expect(vm.refresh).toHaveBeenCalled();
     });

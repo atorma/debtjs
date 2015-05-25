@@ -8,6 +8,8 @@ require("./debt-app-ctrl");
 describe("DebtAppCtrl", function() {
   
   var vm;
+
+  var events;
   var $scope; 
   var $state;
   var $q;
@@ -23,31 +25,39 @@ describe("DebtAppCtrl", function() {
   beforeEach(function() {
     balanceSheet = jasmine.createSpyObj("balanceSheet", ["createPerson", "createExpense"]);
     
-    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["save"]);
+    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["save", "createNew"]);
     balanceSheetService.balanceSheet = balanceSheet;
 
     openCreatePersonDialog = jasmine.createSpy("openCreatePersonDialog");
     openCreateExpenseDialog = jasmine.createSpy("openCreateExpenseDialog");
+
+    $state = jasmine.createSpyObj("$state", ["go"]);
   });
   
   beforeEach(angular.mock.module("debtApp", function($provide) {
-    $provide.value("$state", {});
+    $provide.value("$state", $state);
   }));
 
   
-  beforeEach(angular.mock.inject(function($rootScope, $controller, _$q_) {
+  beforeEach(angular.mock.inject(function(_events_, $rootScope, $controller, _$q_, $mdDialog) {
+    events = _events_;
     $q = _$q_;
     
     openCreatePersonDialog.and.returnValue($q.when({}));
     openCreateExpenseDialog.and.returnValue($q.when({}));
     
     $scope = $rootScope.$new();
+
+    $mdDialog.show = function() {
+      return $q.when();
+    };
     
     vm = $controller("DebtAppCtrl", {
       balanceSheetService: balanceSheetService,
       balanceSheetSaveCtrlConfig: {wait: 0},
       openCreatePersonDialog: openCreatePersonDialog,
       openCreateExpenseDialog: openCreateExpenseDialog,
+      $mdDialog: $mdDialog,
       $scope: $scope
     });
     
@@ -127,10 +137,10 @@ describe("DebtAppCtrl", function() {
     
     beforeEach(function() {
       var $childScope = $scope.$new();
-      
+
       childKnows = false;
-      
-      $childScope.$on("balanceSheetUpdated", function() {
+
+      $childScope.$on(events.BALANCE_SHEET_UPDATED, function() {
         childKnows = true;
       });
       
@@ -151,6 +161,37 @@ describe("DebtAppCtrl", function() {
     });
     
   });
-  
+
+  describe("createNewSheet()", function() {
+
+    it("creates new sheet using service", function() {
+      vm.createNewSheet();
+      $scope.$digest();
+
+      expect(balanceSheetService.createNew).toHaveBeenCalled();
+    });
+
+    it("broadcasts 'balance sheet updated' event", function() {
+      var $childScope = $scope.$new();
+      var eventBroadCasted = false;
+      $childScope.$on(events.BALANCE_SHEET_UPDATED, function() {
+        eventBroadCasted = true;
+      });
+
+      vm.createNewSheet();
+      $scope.$digest();
+
+      expect(eventBroadCasted).toBe(true);
+    });
+
+    it("sets correct state", function() {
+      vm.createNewSheet();
+      $scope.$digest();
+
+      expect($state.go).toHaveBeenCalledWith("balanceSheet");
+    });
+
+  });
+
 });
 

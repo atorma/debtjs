@@ -2,7 +2,6 @@
 
 var _ = require("lodash");
 var angular = require("angular");
-var BalanceSheet = require("./balance-sheet");
 require("angular-mocks/ngMock");
 require("../debt");
   
@@ -11,19 +10,21 @@ describe("BalanceSheetService", function() {
   var balanceSheetService;
   var localStorageService;
   var balanceSheetData;
+
+  var SHEET_LOCAL_STORAGE_KEY = "balanceSheetData";
   
   beforeEach(function() {
     balanceSheetData = {
-        persons: [
-                  {id: 1, name: "Anssi"}, {id: 2, name: "Malla"}
-                  ],
-        expenses: [
-                   {id: 3, name: "Food", sharing: "equal", settled: false}
-                   ],
-        participations: [
-                         {personId: 1, expenseId: 3, paid: 10, share: 5}, 
-                         {personId: 2, expenseId: 3, paid: 0, share: 5}
-                         ]            
+      persons: [
+        {id: 1, name: "Anssi"}, {id: 2, name: "Malla"}
+      ],
+      expenses: [
+        {id: 3, name: "Food", sharing: "equal", settled: false}
+      ],
+      participations: [
+        {personId: 1, expenseId: 3, paid: 10, share: 5},
+        {personId: 2, expenseId: 3, paid: 0, share: 5}
+      ]
     };
     
     localStorageService = jasmine.createSpyObj("localStorageService", ["get", "set"]);
@@ -45,7 +46,7 @@ describe("BalanceSheetService", function() {
     it("with balance sheet data in localStorage when available", function() {
       var sheet = balanceSheetService.balanceSheet;
       
-      expect(localStorageService.get).toHaveBeenCalledWith("balanceSheetData");
+      expect(localStorageService.get).toHaveBeenCalledWith(SHEET_LOCAL_STORAGE_KEY);
       expect(sheet).toBeDefined();
       expect(sheet.persons.length).toBe(balanceSheetData.persons.length);
       expect(sheet.expenses.length).toBe(balanceSheetData.expenses.length);
@@ -58,7 +59,7 @@ describe("BalanceSheetService", function() {
       
       var sheet = balanceSheetService.balanceSheet;
       
-      expect(localStorageService.get).toHaveBeenCalledWith("balanceSheetData");
+      expect(localStorageService.get).toHaveBeenCalledWith(SHEET_LOCAL_STORAGE_KEY);
       expect(sheet).toBeDefined();
       expect(sheet.persons.length).toBe(0);
       expect(sheet.expenses.length).toBe(0);
@@ -79,7 +80,7 @@ describe("BalanceSheetService", function() {
     it("and saves the result if the JSON is valid", function() {
       balanceSheetService.loadFromJson(JSON.stringify(balanceSheetData));
       
-      expect(localStorageService.set).toHaveBeenCalledWith("balanceSheetData", balanceSheetData);
+      expect(localStorageService.set).toHaveBeenCalledWith(SHEET_LOCAL_STORAGE_KEY, balanceSheetData);
     });
     
     it("and throws error if the JSON is invalid", function() {
@@ -109,6 +110,17 @@ describe("BalanceSheetService", function() {
       expect(localStorageService.set).not.toHaveBeenCalled();
     });
     
+  });
+
+  it("createNew() sets the sheet reference to a new sheet and saves it", function() {
+    var oldSheet = balanceSheetService.balanceSheet;
+
+    balanceSheetService.createNew();
+    var newSheet = balanceSheetService.balanceSheet;
+
+    expect(newSheet).not.toBe(oldSheet);
+    expect(localStorageService.set).toHaveBeenCalledWith(SHEET_LOCAL_STORAGE_KEY, newSheet.exportData());
+
   });
 
 });

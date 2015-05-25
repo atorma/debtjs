@@ -6,7 +6,7 @@ var _ = require('lodash');
 angular.module("debtApp")
   .controller("PersonDetailCtrl", PersonDetailCtrl);
 
-function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams, $mdDialog, $scope, $log) {
+function PersonDetailCtrl(balanceSheetService, debtService, events, $state, $stateParams, $mdDialog, $scope, $log) {
 
   var vm = this;
   var confirmRemovePerson;
@@ -29,7 +29,7 @@ function PersonDetailCtrl(balanceSheetService, debtService, $state, $stateParams
       .content("Really delete this person?")
       .ok("Ok").cancel("Cancel");
 
-    $scope.$on("balanceSheetUpdated", vm.refresh);
+    $scope.$on(events.BALANCE_SHEET_UPDATED, vm.refresh);
   }
 
   function refresh() {
