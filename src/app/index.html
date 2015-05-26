@@ -60,11 +60,11 @@
           </md-list>
       </md-sidenav>
          
-      <md-content flex layout-padding>
+      <md-content flex layout-padding ng-if="vm.balanceSheet">
         <div ui-view></div>
       </md-content>
       
-      <div>
+      <div ng-if="vm.balanceSheet">
         <mfb-menu position="br" effect="zoomin" toggling-method="click"
                   template-url="ng-mfb-menu-md.tpl.html"
                   resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px">

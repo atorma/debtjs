@@ -10,7 +10,8 @@ angular.module("debtApp")
 function balanceSheetService(localStorageService) {
   
   var service = {
-    balanceSheet: null,
+    balanceSheet: undefined,
+    error: undefined,
     save: save,
     loadFromJson: loadFromJson,
     exportToJson: exportToJson,
@@ -24,12 +25,28 @@ function balanceSheetService(localStorageService) {
   
   function init() {
     var data = localStorageService.get("balanceSheetData");
-    service.balanceSheet = new BalanceSheet(data); 
+    try {
+      service.balanceSheet = new BalanceSheet(data);
+      service.error = undefined;
+    } catch (e) {
+      service.error = e;
+    }
   }
 
   function save() {
-    service.balanceSheet.throwErrorIfInvalid();
+    if (!service.balanceSheet) {
+      throw service.error;
+    }
+
+    try {
+      service.balanceSheet.throwErrorIfInvalid();
+    } catch (e) {
+      service.error = e;
+      throw e;
+    }
+
     localStorageService.set("balanceSheetData", service.balanceSheet.exportData());
+    service.error = undefined;
   }
   
   function loadFromJson(json) {

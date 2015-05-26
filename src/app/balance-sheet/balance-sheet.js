@@ -408,6 +408,9 @@ var BalanceSheet = function(data) {
         .concat(data.expenses)
         .pluck("id")
         .max() + 1;
+    if (idSequence == -Infinity) {
+      idSequence = 1;
+    }
 
     _.each(data.persons, function(p) {
       createPerson(p);

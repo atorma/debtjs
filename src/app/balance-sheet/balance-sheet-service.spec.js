@@ -66,11 +66,12 @@ describe("BalanceSheetService", function() {
       expect(sheet.participations.length).toBe(0);
     });
     
-    it("with error thrown if creating sheet from localStorage data fails", function() {
+    it("with undefined sheet and stored error from localStorage data fails", function() {
       balanceSheetService.balanceSheet = undefined;
       delete balanceSheetData.participations[0].personId;
-      expect(balanceSheetService.init).toThrow();
+      expect(balanceSheetService.init).not.toThrow();
       expect(balanceSheetService.balanceSheet).not.toBeDefined();
+      expect(balanceSheetService.error).toBeDefined();
     });
     
   });
@@ -108,6 +109,7 @@ describe("BalanceSheetService", function() {
       spyOn(balanceSheetService.balanceSheet, "throwErrorIfInvalid").and.throwError("some error");
       expect(balanceSheetService.save).toThrow();
       expect(localStorageService.set).not.toHaveBeenCalled();
+      expect(balanceSheetService.error).toBeDefined();
     });
     
   });

@@ -82,10 +82,16 @@ describe("Balance sheet", function () {
       sheet.persons[0].id = maxId;
       var data = sheet.exportData();
       expect(data.idSequence).not.toBeDefined();
-      
+
       var importedSheet = new BalanceSheet(data);
       var person = importedSheet.createPerson();
-      expect(person.id).toBe(maxId + 1); 
+      expect(person.id).toBe(maxId + 1);
+    });
+
+    it("next id in sequence is 1 if no ids in data", function() {
+      var importedSheet = new BalanceSheet({persons: [], expenses: [], participations: []});
+      var person = importedSheet.createPerson();
+      expect(person.id).toBe(1);
     });
       
     it("fails if input data is invalid", function() {
