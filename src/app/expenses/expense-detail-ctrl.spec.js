@@ -64,13 +64,27 @@ describe("ExpenseDetailCtrl", function() {
     
   }));
 
+
+  function expectEventEmitted(fun, eventName) {
+    var eventEmitted = false;
+    $scope.$parent.$on(eventName, function() {
+      eventEmitted = true;
+    });
+
+    fun();
+    $scope.$digest();
+
+    expect(eventEmitted).toBe(true);
+  }
+
+
   it("exposes balance sheet and expense", function() {
     expect(vm.balanceSheet).toBe(balanceSheet);
     expect(vm.expense).toBe(expense);
   });
   
 
-  describe("refresh", function() {
+  describe("updateExpense()", function() {
     
     beforeEach(function() {
       spyOn(expense, "shareCost");
@@ -85,7 +99,7 @@ describe("ExpenseDetailCtrl", function() {
       balanceSheet.createParticipation({person: participant1, expense: expense});
       balanceSheet.createParticipation({person: participant2, expense: expense});
       
-      vm.refresh();
+      vm.updateExpense();
       
       expect(vm.isParticipant[participant1.id]).toBe(true);
       expect(vm.isParticipant[participant2.id]).toBe(true);
@@ -93,7 +107,7 @@ describe("ExpenseDetailCtrl", function() {
     });
 
     it("shares cost of expense", function() {
-      vm.refresh();
+      vm.updateExpense();
       
       expect(expense.shareCost).toHaveBeenCalled();
     });
@@ -117,15 +131,23 @@ describe("ExpenseDetailCtrl", function() {
         return debtsByDebtor;
       };
       
-      vm.refresh();
+      vm.updateExpense();
       
       expect(vm.debtsByDebtor).toBe(debtsByDebtor);
+    });
+
+    it("does not compute debts if expense is unbalanced", function() {
+      spyOn(expense, "isBalanced").and.returnValue(false);
+
+      vm.updateExpense();
+
+      expect(vm.debtsByDebtor).not.toBeDefined();
     });
     
     it("puts expense cost into scope variable", function() {
       spyOn(expense, "getCost").and.returnValue(120);
       
-      vm.refresh();
+      vm.updateExpense();
       
       expect(vm.cost).toBe(120);
     });
@@ -133,23 +155,27 @@ describe("ExpenseDetailCtrl", function() {
     it("puts expense sum of shares cost into scope variable", function() {
       spyOn(expense, "getSumOfShares").and.returnValue(120);
       
-      vm.refresh();
+      vm.updateExpense();
       
       expect(vm.sumOfShares).toBe(120);
     });
     
     it("is done on 'balance sheet updated' event", function() {
-      vm.refresh = jasmine.createSpy("refresh");
+      vm.updateExpense = jasmine.createSpy("updateExpense");
       vm.init();
       
       $scope.$root.$broadcast(events.BALANCE_SHEET_UPDATED);
       
-      expect(vm.refresh).toHaveBeenCalled();
+      expect(vm.updateExpense).toHaveBeenCalled();
+    });
+
+    it("emits 'balance sheet updated' event", function() {
+      expectEventEmitted(vm.updateExpense, events.BALANCE_SHEET_UPDATED);
     });
     
   });
   
-  describe("setParticipation", function() {
+  describe("setParticipation()", function() {
     
     var person;
     
@@ -168,17 +194,34 @@ describe("ExpenseDetailCtrl", function() {
       expect(balanceSheet.createParticipation).toHaveBeenCalledWith({person: person, expense: vm.expense});
     });
 
+    it("emits 'balance sheet updated' event", function() {
+      expectEventEmitted(function() {
+        vm.setParticipation(person, true);
+      }, events.BALANCE_SHEET_UPDATED);
+    });
+
   });
-  
-  it("deletes expense", function() {
-    spyOn(balanceSheet, "removeExpense");
-    vm.expense = expense;
-    
-    vm.removeExpense();
-    $scope.$digest();
-    
-    expect(balanceSheet.removeExpense).toHaveBeenCalledWith(expense);
-    expect($state.go).toHaveBeenCalledWith("balanceSheet");
+
+  describe("removeExpense()", function() {
+
+    beforeEach(function() {
+      spyOn(balanceSheet, "removeExpense");
+    });
+
+    it("deletes expense", function() {
+      vm.expense = expense;
+
+      vm.removeExpense();
+      $scope.$digest();
+
+      expect(balanceSheet.removeExpense).toHaveBeenCalledWith(expense);
+      expect($state.go).toHaveBeenCalledWith("balanceSheet");
+    });
+
+    it("emits 'balance sheet updated' event", function() {
+      expectEventEmitted(vm.removeExpense, events.BALANCE_SHEET_UPDATED);
+    });
+
   });
 
 });

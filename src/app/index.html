@@ -38,7 +38,7 @@
         <div class="md-toolbar-tools">{{vm.errorMessage}}</div>
       </md-toolbar>
 
-      <md-sidenav md-component-id="main-menu" class="md-sidenav-left">
+      <md-sidenav md-component-id="main-menu" class="md-sidenav-left menu">
           <md-list>
             <md-list-item ng-click="$state.go('balanceSheet')">
               <md-icon md-svg-icon="action:ic_home_24px" class="md-primary"></md-icon>
@@ -53,9 +53,11 @@
               <md-icon></md-icon>
               <p class="md-list-item-text">Load sheet</p>
             </md-list-item>
-            <md-list-item ng-click="vm.exportSheetAsJson()">
-              <md-icon></md-icon>
-              <p class="md-list-item-text">Export sheet as JSON</p>
+            <md-list-item ng-if="vm.jsonExportUrl">
+                <md-icon></md-icon>
+                <p>
+                  <a ng-href="{{vm.jsonExportUrl}}" download class="md-list-item-text">Export sheet</a>
+                </p>
             </md-list-item>
           </md-list>
       </md-sidenav>

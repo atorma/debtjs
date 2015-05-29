@@ -16,6 +16,7 @@ function PersonDetailCtrl(balanceSheetService, debtService, events, $state, $sta
   vm.updateExpense = updateExpense;
   vm.setParticipation = setParticipation;
   vm.removePerson = removePerson;
+  vm.updatePerson = updatePerson;
 
   init();
 
@@ -60,6 +61,7 @@ function PersonDetailCtrl(balanceSheetService, debtService, events, $state, $sta
   function updateExpense(expense) {
     expense.shareCost();
     refresh();
+    $scope.$emit(events.BALANCE_SHEET_UPDATED);
   }
 
   function setParticipation(expense, isParticipant) {
@@ -111,9 +113,16 @@ function PersonDetailCtrl(balanceSheetService, debtService, events, $state, $sta
 
   function removePerson() {
     $mdDialog.show(confirmRemovePerson)
-      .then(function() {
-        vm.balanceSheet.removePerson(vm.person);
-        $state.go("balanceSheet");
-      });
+      .then(doRemovePerson);
+  }
+
+  function doRemovePerson() {
+    vm.balanceSheet.removePerson(vm.person);
+    $scope.$emit(events.BALANCE_SHEET_UPDATED);
+    $state.go("balanceSheet");
+  }
+
+  function updatePerson() {
+    $scope.$emit(events.BALANCE_SHEET_UPDATED);
   }
 }

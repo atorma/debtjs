@@ -16,39 +16,45 @@ function DebtAppCtrl(balanceSheetService,
                      $mdDialog,
                      $state,
                      $scope,
+                     $window,
                      $log) {
 
   var vm = this;
 
-  var confirmCreateNewSheet;
-
-  vm.refresh = refresh;
+  vm.init = init;
   vm.createPerson = createPerson;
   vm.createExpense = createExpense;
   vm.createNewSheet = createNewSheet;
-  vm.exportSheetAsJson = exportSheetAsJson;
+  vm.save = save;
+  vm.refresh = refresh;
 
-  vm.init = init;
+  var confirmCreateNewSheet = $mdDialog.confirm()
+    .title("Create new sheet")
+    .content("The current sheet will be discarded. Please consider exporting it first. Continue?")
+    .ok("Ok").cancel("Cancel");
+
+  var createObjectURL = ($window.URL || $window.webkitURL || {}).createObjectURL || angular.noop;
+  var revokeObjectURL = ($window.URL || $window.webkitURL || {}).revokeObjectURL || angular.noop;
+  var Blob = $window.Blob || angular.noop;
+
+
   init();
 
   /////////////////////////////////////////////////////////////
 
   function init() {
-
-    var debouncedSave = _.debounce(tryToSave, balanceSheetSaveCtrlConfig.wait);
-    $scope.$watch(debouncedSave);
-
-    $scope.$on(events.BALANCE_SHEET_UPDATED, vm.refresh);
-
-    confirmCreateNewSheet = $mdDialog.confirm()
-      .title("Create new sheet")
-      .content("The current sheet will be discarded. Please consider exporting it first. Continue?")
-      .ok("Ok").cancel("Cancel");
-
+    $scope.$on(events.BALANCE_SHEET_UPDATED, _.debounce(onBalanceSheetUpdated, balanceSheetSaveCtrlConfig.wait));
     vm.refresh();
   }
 
-  function tryToSave() {
+  function onBalanceSheetUpdated() {
+    vm.refresh();
+    if (!vm.errorMessage) {
+      vm.save();
+    }
+  }
+
+  function save() {
     try {
       balanceSheetService.save();
       vm.errorMessage = undefined;
@@ -66,12 +72,22 @@ function DebtAppCtrl(balanceSheetService,
     } else {
       vm.errorMessage = undefined;
     }
+    updateJsonExportUrl();
   }
+
+  function updateJsonExportUrl() {
+    var json = balanceSheetService.exportToJson();
+    var blob = new Blob([json], {type: "application/json"});
+    revokeObjectURL(vm.jsonExportUrl);
+    vm.jsonExportUrl = createObjectURL(blob);
+  }
+
 
   function createPerson() {
     openCreatePersonDialog()
       .then(function(dialogResult) {
         balanceSheetService.balanceSheet.createPerson(dialogResult.person, dialogResult.options);
+        onBalanceSheetUpdated();
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
       });
   }
@@ -80,6 +96,7 @@ function DebtAppCtrl(balanceSheetService,
     openCreateExpenseDialog()
       .then(function(dialogResult) {
         balanceSheetService.balanceSheet.createExpense(dialogResult.expense, dialogResult.options);
+        onBalanceSheetUpdated();
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
       });
   }
@@ -88,13 +105,9 @@ function DebtAppCtrl(balanceSheetService,
     $mdDialog.show(confirmCreateNewSheet)
       .then(function() {
         balanceSheetService.createNew();
-        vm.errorMessage = undefined;
+        onBalanceSheetUpdated();
         $state.go("balanceSheet");
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
       });
-  }
-
-  function exportSheetAsJson() {
-    return balanceSheetService.exportSheetAsJson();
   }
 }

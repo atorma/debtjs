@@ -18,6 +18,7 @@ angular
   })
   .config(configureLocalStorage)
   .config(configureIcons)
+  .config(hrefSanitization)
   .run(makeStateAvailableInScope);
 
 require("./debt-app-ctrl");
@@ -49,6 +50,10 @@ function configureIcons($mdIconProvider) {
     $mdIconProvider.iconSet(prop.spriteName, prop.filePath);
   });
 
+}
+
+function hrefSanitization($compileProvider) {
+  $compileProvider.aHrefSanitizationWhitelist(/^(blob||https?||mailto):/);
 }
 
 // Injection of $state may trigger a GET, which can show as an 

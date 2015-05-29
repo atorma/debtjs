@@ -4,7 +4,10 @@
   
     <h2 flex>
       <md-input-container class="no-margin, no-padding" md-no-float>
-        <input type="text" ng-model="vm.person.name" ng-required="true" placeholder="Person name"/>
+        <input type="text" placeholder="Person name"
+               ng-model="vm.person.name"
+               ng-change="vm.updatePerson()"
+               ng-required="true" />
       </md-input-container> 
     </h2>
     
@@ -45,7 +48,9 @@
           <span ng-class="{settled: expense.settled}">{{expense.name}}</span>
         </md-checkbox>
         <span flex></span>
-        <md-button hide-gt-sm ng-href="#/expenses/{{expense.id}}" class="md-icon-button" aria-label="View details"><md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon></md-button>
+        <md-button hide-gt-sm ng-href="#/expenses/{{expense.id}}" class="md-icon-button" aria-label="View details">
+          <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
+        </md-button>
       </div>
       
       <div layout="row">
@@ -68,7 +73,9 @@
         </md-input-container>
       </div>
   
-      <md-button hide-sm ng-href="#/expenses/{{expense.id}}" class="md-icon-button" aria-label="View details"><md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon></md-button>
+      <md-button hide-sm ng-href="#/expenses/{{expense.id}}" class="md-icon-button" aria-label="View details">
+        <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
+      </md-button>
 
     </div>
     

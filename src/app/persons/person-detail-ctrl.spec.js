@@ -58,23 +58,55 @@ describe("PersonDetailCtrl", function() {
     
   }));
 
+
+  function expectEventEmitted(fun, eventName) {
+    var eventEmitted = false;
+    $scope.$parent.$on(eventName, function() {
+      eventEmitted = true;
+    });
+
+    fun();
+    $scope.$digest();
+
+    expect(eventEmitted).toBe(true);
+  }
+
   it("exposes balance sheet and person", function() {
     expect(vm.balanceSheet).toBe(balanceSheet);
     expect(vm.person).toBe(person);
   });
   
 
-  it("delete method deletes person", function() {
-    spyOn(balanceSheet, "removePerson");
-    
-    vm.removePerson();
-    $scope.$digest();
-    
-    expect(balanceSheet.removePerson).toHaveBeenCalledWith(vm.person);
-    expect($state.go).toHaveBeenCalledWith("balanceSheet");
+  describe("removePerson()", function() {
+
+    beforeEach(function() {
+      spyOn(balanceSheet, "removePerson");
+    });
+
+    it("deletes person and opens balance sheet view", function() {
+      vm.removePerson();
+      $scope.$digest();
+
+      expect(balanceSheet.removePerson).toHaveBeenCalledWith(vm.person);
+      expect($state.go).toHaveBeenCalledWith("balanceSheet");
+    });
+
+    it("emits 'balance sheet updated' event", function() {
+      expectEventEmitted(vm.removePerson, events.BALANCE_SHEET_UPDATED);
+    });
+
   });
+
+  describe("updatePerson()", function() {
+
+    it("emits 'balance sheet updated' event", function() {
+      expectEventEmitted(vm.updatePerson, events.BALANCE_SHEET_UPDATED);
+    });
+
+  });
+
   
-  describe("refresh method", function() {
+  describe("refresh()", function() {
     
     it("updates participation map", function() {
       var expense1 = vm.balanceSheet.createExpense();
@@ -203,7 +235,7 @@ describe("PersonDetailCtrl", function() {
 
   });
   
-  describe("updateExpense", function() {
+  describe("updateExpense()", function() {
     
     var expense;
     
@@ -217,10 +249,16 @@ describe("PersonDetailCtrl", function() {
       
       expect(expense.shareCost).toHaveBeenCalled();
     });
-       
+
+    it("emits 'balance sheet updated' event", function() {
+      expectEventEmitted(function() {
+        vm.updateExpense(expense);
+      }, events.BALANCE_SHEET_UPDATED);
+    });
+
   });
   
-  describe("setParticipation", function() {
+  describe("setParticipation()", function() {
     
     var expense;
     
@@ -236,6 +274,12 @@ describe("PersonDetailCtrl", function() {
 
       vm.setParticipation(expense, false);
       expect(balanceSheet.removeParticipation).toHaveBeenCalledWith({person: vm.person, expense: expense});
+    });
+
+    it("emits 'balance sheet updated' event", function() {
+      expectEventEmitted(function() {
+        vm.setParticipation(expense, true);
+      }, events.BALANCE_SHEET_UPDATED);
     });
 
   });

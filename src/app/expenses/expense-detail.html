@@ -1,18 +1,13 @@
-<md-toolbar ng-if="!vm.expense.isBalanced()" class="md-warn">
-  <div class="md-toolbar-tools">
-    <md-icon md-svg-icon="alert:ic_warning_24px"></md-icon>&nbsp;
-    <span>Costs and shares are not equal</span>
-    <span flex></span>
-  </div>
-</md-toolbar>
-
 <section>
 
   <div layout="row">
   
     <h2 flex>
       <md-input-container class="no-margin, no-padding" md-no-float>
-        <input type="text" ng-model="vm.expense.name" ng-required="true" placeholder="Expense name"/>
+        <input type="text" placeholder="Expense name"
+               ng-model="vm.expense.name"
+               ng-change="vm.updateExpense()"
+               ng-required="true"/>
       </md-input-container> 
     </h2>
     
@@ -32,7 +27,8 @@
     
     <div layout="row" layout-align="start center">
       <div flex>Share equally</div>
-      <md-switch ng-model="vm.expense.sharing" ng-change="vm.refresh()"
+      <md-switch ng-model="vm.expense.sharing"
+                 ng-change="vm.updateExpense()"
                  ng-disabled="vm.expense.settled"
                  ng-true-value="'equal'" ng-false-value="'custom'"
                  class="md-primary" aria-label="Share equally">
@@ -41,7 +37,8 @@
 
     <div layout="row" layout-align="start center">
       <div flex>Settled</div>
-      <md-switch ng-model="vm.expense.settled" ng-change="vm.refresh()"
+      <md-switch ng-model="vm.expense.settled"
+                 ng-change="vm.updateExpense()"
                  class="md-primary" aria-label="Settled">
       </md-switch>
     </div>
@@ -68,7 +65,9 @@
           {{person.name}}
         </md-checkbox>
         <span flex></span>
-        <md-button hide-gt-sm ng-href="#/persons/{{person.id}}" class="md-icon-button" aria-label="View details"><md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon></md-button>
+        <md-button hide-gt-sm ng-href="#/persons/{{person.id}}" class="md-icon-button" aria-label="View details">
+          <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
+        </md-button>
       </div>
       
       <div layout="row">
@@ -76,20 +75,22 @@
           <label>Paid</label>
           <input type="number" style="width: 8em" ng-required="vm.isParticipant[person.id]" pattern="(0|[1-9][0-9]*)([,|\.][0-9]{0,2})?"
             ng-model="vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).paid" 
-            ng-change="vm.refresh()" 
+            ng-change="vm.updateExpense()"
             ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]" />
         </md-input-container>
         <md-input-container>
           <label>Shared</label>
           <input type="number" style="width: 8em" ng-required="vm.isParticipant[person.id]" 
             ng-model="vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).share"
-            ng-change="vm.refresh()"
+            ng-change="vm.updateExpense()"
             ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]"
             ng-readonly="vm.expense.sharing != 'custom'" />
         </md-input-container>
       </div>
   
-      <md-button hide-sm ng-href="#/persons/{{person.id}}" class="md-icon-button" aria-label="View details"><md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon></md-button>
+      <md-button hide-sm ng-href="#/persons/{{person.id}}" class="md-icon-button" aria-label="View details">
+        <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
+      </md-button>
 
     </div>
     
@@ -140,6 +141,11 @@
         </p>
       </div>
     </div>
-    <div ng-if="!vm.debtsByDebtor || vm.debtsByDebtor.length == 0">No debts!</div>
+    <div ng-if="vm.debtsByDebtor.length == 0">
+      <p>No debts!</p>
+    </div>
+    <div ng-if="!vm.expense.isBalanced()">
+      <p>Cannot compute debts. Expense is not balanced.</p>
+    </div>
   </div>
 </section>
