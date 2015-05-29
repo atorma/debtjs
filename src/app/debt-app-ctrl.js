@@ -14,12 +14,17 @@ function DebtAppCtrl(balanceSheetService,
                      openCreateExpenseDialog,
                      events,
                      $mdDialog,
+                     $mdSidenav,
                      $state,
                      $scope,
                      $window,
                      $log) {
 
   var vm = this;
+
+  vm.mainMenu = {
+    toggle: toggleMenu
+  };
 
   vm.init = init;
   vm.createPerson = createPerson;
@@ -41,6 +46,10 @@ function DebtAppCtrl(balanceSheetService,
   init();
 
   /////////////////////////////////////////////////////////////
+
+  function toggleMenu() {
+    $mdSidenav("main-menu").toggle();
+  }
 
   function init() {
     $scope.$on(events.BALANCE_SHEET_UPDATED, _.debounce(onBalanceSheetUpdated, balanceSheetSaveCtrlConfig.wait));

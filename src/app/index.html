@@ -23,12 +23,15 @@
 
   <body ng-app="debtApp" ng-strict-di layout="column" ng-controller="DebtAppCtrl as vm" ng-cloak>
   
-    <md-toolbar ng-controller="ToolbarCtrl as vm">
+    <md-toolbar>
       <div class="md-toolbar-tools">
+        <md-button ng-click="$state.go('balanceSheet')" class="md-icon-button" aria-label="Home">
+          <md-icon md-svg-icon="action:ic_home_24px"></md-icon>
+        </md-button>
+        <span flex></span>
         <md-button ng-click="vm.mainMenu.toggle()" class="md-icon-button" aria-label="Menu">
           <md-icon md-svg-icon="navigation:ic_menu_24px"></md-icon>
         </md-button>
-        <span flex></span>
       </div>
     </md-toolbar>
     
@@ -38,23 +41,15 @@
         <div class="md-toolbar-tools">{{vm.errorMessage}}</div>
       </md-toolbar>
 
-      <md-sidenav md-component-id="main-menu" class="md-sidenav-left menu">
+      <md-sidenav md-component-id="main-menu" class="md-sidenav-right menu">
           <md-list>
-            <md-list-item ng-click="$state.go('balanceSheet')">
-              <md-icon md-svg-icon="action:ic_home_24px" class="md-primary"></md-icon>
-              <p class="md-list-item-text">Home</p>
-            </md-list-item>
-            <md-divider></md-divider>
             <md-list-item ng-click="vm.createNewSheet()">
-              <md-icon></md-icon>
               <p class="md-list-item-text">New sheet</p>
             </md-list-item>
             <md-list-item ng-click="vm.loadSheet()">
-              <md-icon></md-icon>
               <p class="md-list-item-text">Load sheet</p>
             </md-list-item>
             <md-list-item ng-if="vm.jsonExportUrl">
-                <md-icon></md-icon>
                 <p>
                   <a ng-href="{{vm.jsonExportUrl}}" download class="md-list-item-text">Export sheet</a>
                 </p>
