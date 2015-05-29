@@ -117,6 +117,9 @@ function DebtAppCtrl(balanceSheetService,
         onBalanceSheetUpdated();
         $state.go("balanceSheet");
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
+        vm.mainMenu.toggle();
+      }, function() {
+        vm.mainMenu.toggle();
       });
   }
 }

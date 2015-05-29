@@ -50,8 +50,8 @@
               <p class="md-list-item-text">Load sheet</p>
             </md-list-item>
             <md-list-item ng-if="vm.jsonExportUrl">
-                <p>
-                  <a ng-href="{{vm.jsonExportUrl}}" download class="md-list-item-text">Export sheet</a>
+                <p class="md-list-item-text">
+                  <a ng-href="{{vm.jsonExportUrl}}" ng-click="vm.mainMenu.toggle()" download>Export sheet</a>
                 </p>
             </md-list-item>
           </md-list>
