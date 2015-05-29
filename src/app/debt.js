@@ -27,7 +27,6 @@ require("./debts");
 require("./balance-sheet");
 require("./persons");
 require("./expenses");
-require("./layout");
 
 
 function configureLocalStorage(localStorageServiceProvider) {
