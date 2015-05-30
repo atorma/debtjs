@@ -21,7 +21,7 @@
     "angular-ui-router": "0.2.13",
     "lodash": "3.9.1",
     "material-design-icons": "1.0.1",
-    "ng-material-floating-button": "0.5.1",
+    "ng-material-floating-button": "0.6.0",
     "random-js": "1.0.4",
     "simple-decimal-money": "0.2.3"
   },

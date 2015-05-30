@@ -90,6 +90,7 @@ gulp.task('js-libs', function() {
     .on('error', gutil.log.bind(gutil, 'Browserify Error'))
     .pipe(source('libs.js'))
     .pipe(buffer())
+    .pipe(ngAnnotate())// because of mfb-directive :(
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(ifEnv(PRODUCTION, uglify))
     .pipe(sourcemaps.write('./'))
