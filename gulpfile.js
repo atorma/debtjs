@@ -90,7 +90,6 @@ gulp.task('js-libs', function() {
     .on('error', gutil.log.bind(gutil, 'Browserify Error'))
     .pipe(source('libs.js'))
     .pipe(buffer())
-    .pipe(ngAnnotate())// because of mfb-directive :(
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(ifEnv(PRODUCTION, uglify))
     .pipe(sourcemaps.write('./'))
@@ -212,5 +211,5 @@ gulp.task('webserver', function() {
 });
 
 gulp.task('develop', function(cb) {
-  runSequence(['build-dev', 'watch'], ['tdd', 'webserver'], cb);
+  runSequence(['build-dev', 'watch'], ['webserver', 'tdd'], cb);
 });

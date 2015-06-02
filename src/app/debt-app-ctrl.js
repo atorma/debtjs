@@ -30,6 +30,7 @@ function DebtAppCtrl(balanceSheetService,
   vm.createPerson = createPerson;
   vm.createExpense = createExpense;
   vm.createNewSheet = createNewSheet;
+  vm.loadSheet = loadSheet;
   vm.save = save;
   vm.refresh = refresh;
 
@@ -38,10 +39,7 @@ function DebtAppCtrl(balanceSheetService,
     .content("The current sheet will be discarded. Please consider exporting it first. Continue?")
     .ok("Ok").cancel("Cancel");
 
-  var createObjectURL = ($window.URL || $window.webkitURL || {}).createObjectURL || angular.noop;
-  var revokeObjectURL = ($window.URL || $window.webkitURL || {}).revokeObjectURL || angular.noop;
-  var Blob = $window.Blob || angular.noop;
-
+  var createObjectURL, revokeObjectURL, Blob, FileReader;
 
   init();
 
@@ -52,6 +50,11 @@ function DebtAppCtrl(balanceSheetService,
   }
 
   function init() {
+    createObjectURL = ($window.URL || $window.webkitURL || {}).createObjectURL || angular.noop;
+    revokeObjectURL = ($window.URL || $window.webkitURL || {}).revokeObjectURL || angular.noop;
+    Blob = $window.Blob || angular.noop;
+    FileReader = $window.FileReader || angular.noop;
+
     $scope.$on(events.BALANCE_SHEET_UPDATED, _.debounce(onBalanceSheetUpdated, balanceSheetSaveCtrlConfig.wait));
     vm.refresh();
   }
@@ -121,5 +124,23 @@ function DebtAppCtrl(balanceSheetService,
       }, function() {
         vm.mainMenu.toggle();
       });
+  }
+
+  function loadSheet(files) {
+    if (!files || !files.length) return;
+
+    var reader = new FileReader();
+    reader.onload = function() {
+      loadSheetFromJson(reader.result);
+    };
+    reader.readAsText(files[0]);
+    vm.mainMenu.toggle();
+  }
+
+  function loadSheetFromJson(json) {
+    balanceSheetService.loadFromJson(json);
+    onBalanceSheetUpdated();
+    $state.go("balanceSheet");
+    $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
   }
 }

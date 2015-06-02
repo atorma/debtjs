@@ -15,7 +15,7 @@ describe("DebtAppCtrl", function() {
   var balanceSheet;
   var openCreatePersonDialog;
   var openCreateExpenseDialog;
-  
+
 
   beforeEach(angular.mock.module("debtApp"));
   
@@ -23,18 +23,13 @@ describe("DebtAppCtrl", function() {
   beforeEach(function() {
     balanceSheet = jasmine.createSpyObj("balanceSheet", ["createPerson", "createExpense"]);
     
-    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["save", "createNew", "exportToJson"]);
+    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["save", "createNew", "exportToJson", "loadFromJson"]);
     balanceSheetService.balanceSheet = balanceSheet;
 
     openCreatePersonDialog = jasmine.createSpy("openCreatePersonDialog");
     openCreateExpenseDialog = jasmine.createSpy("openCreateExpenseDialog");
 
     $state = jasmine.createSpyObj("$state", ["go"]);
-
-    $window = {
-      URL: jasmine.createSpyObj("URL", ["createObjectURL", "revokeObjectURL"]),
-      Blob: jasmine.createSpy("Blob")
-    };
   });
   
   beforeEach(angular.mock.module("debtApp", function($provide) {
@@ -42,10 +37,13 @@ describe("DebtAppCtrl", function() {
   }));
 
   
-  beforeEach(angular.mock.inject(function(_events_, $rootScope, $controller, _$q_, $mdDialog) {
+  beforeEach(angular.mock.inject(function(_events_, $rootScope, $controller, _$q_, $mdDialog, _$window_) {
     events = _events_;
     $q = _$q_;
-    
+
+    $window = _$window_;
+    $window.FileReader = FileReaderStub;
+
     openCreatePersonDialog.and.returnValue($q.when({}));
     openCreateExpenseDialog.and.returnValue($q.when({}));
     
@@ -65,7 +63,7 @@ describe("DebtAppCtrl", function() {
       $scope: $scope,
       $window: $window
     });
-    
+
   }));
 
   function afterTimeout(fun) {
@@ -84,6 +82,15 @@ describe("DebtAppCtrl", function() {
     expect(eventBroadcasted).toBe(true);
   }
 
+  function FileReaderStub() {
+    this.readAsText = function(file) {
+      if (this.onload) {
+        this.onload();
+      }
+      return file;
+    }
+  }
+
 
   describe("init()", function() {
 
@@ -98,6 +105,14 @@ describe("DebtAppCtrl", function() {
   });
 
   describe("refresh()", function() {
+
+    beforeEach(function() {
+      spyOn($window.URL, "createObjectURL");
+      spyOn($window.URL, "revokeObjectURL");
+      spyOn($window, "Blob");
+
+      vm.init();
+    });
 
     it("updates exposed balance sheet reference", function() {
       balanceSheetService.balanceSheet = "updated sheet";
@@ -165,7 +180,7 @@ describe("DebtAppCtrl", function() {
 
   });
 
-  describe("create, save, refresh", function() {
+  describe("creates", function() {
 
     beforeEach(function() {
       spyOn(vm, "save");
@@ -213,6 +228,22 @@ describe("DebtAppCtrl", function() {
       expect($state.go).toHaveBeenCalledWith("balanceSheet");
     });
 
+    it("sheet from JSON file, and updates view state", function() {
+      var jsonString = "{}";
+      var jsonBlob =  new $window.Blob([jsonString], {type: "application/json"});
+      var jsonFile = new $window.File([jsonBlob], "sheet.json");
+
+      vm.loadSheet([jsonFile]);
+
+      // Difficult to get in between a new FileReader and the onload callback
+      //expect(balanceSheetService.loadFromJson).toHaveBeenCalledWith(jsonString);
+
+      expect(vm.save).toHaveBeenCalled();
+      expect(vm.refresh).toHaveBeenCalled();
+
+      expect($state.go).toHaveBeenCalledWith("balanceSheet");
+    });
+
   });
 
   
@@ -229,6 +260,17 @@ describe("DebtAppCtrl", function() {
     it("when sheet created", function() {
       expectEventBroadcasted(vm.createNewSheet, events.BALANCE_SHEET_UPDATED);
     });
+
+    it("when sheet loaded", function() {
+      var jsonString = "{}";
+      var jsonBlob =  new $window.Blob([jsonString], {type: "application/json"});
+      var jsonFile = new $window.File([jsonBlob], "sheet.json");
+
+      expectEventBroadcasted(function() {
+        vm.loadSheet([jsonFile]);
+      }, events.BALANCE_SHEET_UPDATED);
+    });
+
   });
 
 
