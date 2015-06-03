@@ -39,6 +39,20 @@ describe("BalanceSheetCtrl", function() {
     
   }));
 
+
+  function expectEventEmitted(fun, eventName) {
+    var eventEmitted = false;
+    $scope.$parent.$on(eventName, function() {
+      eventEmitted = true;
+    });
+
+    fun();
+    $scope.$digest();
+
+    expect(eventEmitted).toBe(true);
+  }
+
+
   it("exposes balance sheet", function() {
     expect(vm.balanceSheet).toBe(balanceSheet);
   });
@@ -80,5 +94,15 @@ describe("BalanceSheetCtrl", function() {
     });
     
   });
+
+  describe("updateSheet()", function() {
+
+    it("emits 'balance sheet updated' event", function() {
+      expectEventEmitted(vm.updateSheet, events.BALANCE_SHEET_UPDATED);
+    });
+
+
+  });
+
 });
 

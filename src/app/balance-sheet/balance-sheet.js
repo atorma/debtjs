@@ -15,6 +15,7 @@ var BalanceSheet = function(data) {
   var participations = [];
   var idSequence = 1;
 
+  _this.name = "New sheet";
   _this.persons = persons;
   _this.expenses = expenses;
   _this.participations = participations;
@@ -388,13 +389,13 @@ var BalanceSheet = function(data) {
 
 
   function exportData() {
-    var data = {};
-
+    var isNotFunction = _.negate(_.isFunction);
+    var data = _.pick(_this, isNotFunction);
     data.persons = _.map(persons, function(p) {
-      return _.pick(p, _.negate(_.isFunction));
+      return _.pick(p, isNotFunction);
     });
     data.expenses = _.map(expenses, function(e) {
-      return _.pick(e, _.negate(_.isFunction));
+      return _.pick(e, isNotFunction);
     });
     data.participations = _.map(participations, function(pt) {
       return {personId: pt.person.id, expenseId: pt.expense.id, paid: pt.paid, share: pt.share};
@@ -411,6 +412,11 @@ var BalanceSheet = function(data) {
     if (idSequence == -Infinity) {
       idSequence = 1;
     }
+
+    var separately = {persons: true, expenses: true, participations: true};
+    _.extend(_this, _.pick(data, function(value, key) {
+      return !separately[key];
+    }));
 
     _.each(data.persons, function(p) {
       createPerson(p);

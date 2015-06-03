@@ -50,13 +50,15 @@
           <md-list-item class="md-clickable">
             <p class="md-list-item-text"
                ngf-select ngf-change="vm.loadSheet($files)">
-              Load sheet
+              Load sheet from file
             </p>
           </md-list-item>
           <md-list-item ng-if="vm.jsonExportUrl" class="md-clickable">
               <p class="md-list-item-text">
-                <a ng-href="{{vm.jsonExportUrl}}" ng-click="vm.mainMenu.toggle()" download>
-                  Export sheet
+                <a ng-href="{{vm.jsonExportUrl}}"
+                   download="{{vm.balanceSheet.name}}.json"
+                   ng-click="vm.mainMenu.toggle()">
+                  Export sheet to file
                 </a>
               </p>
           </md-list-item>

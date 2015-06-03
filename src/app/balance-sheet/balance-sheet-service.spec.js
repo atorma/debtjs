@@ -15,6 +15,7 @@ describe("BalanceSheetService", function() {
   
   beforeEach(function() {
     balanceSheetData = {
+      name: "Exported data",
       persons: [
         {id: 1, name: "Anssi"}, {id: 2, name: "Malla"}
       ],

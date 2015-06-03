@@ -13,6 +13,11 @@ describe("Balance sheet", function () {
     sheet = new BalanceSheet();
   });
 
+
+  it("has an initial name", function() {
+    expect(sheet.name).toEqual("New sheet");
+  });
+
   describe("balanced", function() {
     
     var prt11, prt21, prt12, prt22;
@@ -56,6 +61,7 @@ describe("Balance sheet", function () {
   describe("import/export", function() {
     
     beforeEach(function() {
+      sheet.name = "Import/export test";
       var p1 = sheet.createPerson({name: "Anssi"});
       var p2 = sheet.createPerson({name: "Malla"});
       var e1 = sheet.createExpense({name: "Food"});
@@ -71,7 +77,8 @@ describe("Balance sheet", function () {
       var json = JSON.stringify(data);
       data = JSON.parse(json);
       var importedSheet = new BalanceSheet(data);
-      
+
+      expect(importedSheet.name).toEqual(sheet.name);
       expect(angular.equals(sheet.persons, importedSheet.persons)).toBe(true);
       expect(angular.equals(sheet.expenses, importedSheet.expenses)).toBe(true);
       expect(angular.equals(sheet.participations, importedSheet.participations)).toBe(true);

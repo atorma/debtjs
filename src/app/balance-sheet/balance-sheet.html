@@ -1,3 +1,12 @@
+<h2 class="md-headline">
+  <md-input-container class="no-margin no-padding" md-no-float>
+    <input type="text" placeholder="Sheet name"
+           ng-model="vm.balanceSheet.name"
+           ng-change="vm.updateSheet()"
+           ng-required="true"/>
+  </md-input-container>
+</h2>
+
 <md-subheader class="md-primary">Expenses</md-subheader>
 <md-card>
   <md-list class="menu">

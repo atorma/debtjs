@@ -11,6 +11,7 @@ function BalanceSheetCtrl(balanceSheetService, debtService, events, $scope) {
   
   vm.init = init;
   vm.refresh = refresh;
+  vm.updateSheet = updateSheet;
   
   init();
   
@@ -34,5 +35,9 @@ function BalanceSheetCtrl(balanceSheetService, debtService, events, $scope) {
     } else {
       return undefined;
     }
+  }
+
+  function updateSheet() {
+    $scope.$emit(events.BALANCE_SHEET_UPDATED);
   }
 }
