@@ -2,14 +2,14 @@
 
   <div layout="row">
   
-    <h2 flex>
+    <h1 flex>
       <md-input-container class="no-margin, no-padding" md-no-float>
         <input type="text" placeholder="Expense name"
                ng-model="vm.expense.name"
                ng-change="vm.updateExpense()"
                ng-required="true"/>
       </md-input-container> 
-    </h2>
+    </h1>
     
     <md-button class="md-icon-button" ng-click="vm.removeExpense()" aria-label="delete">
       <md-tooltip>Delete</md-tooltip>
@@ -18,7 +18,7 @@
     
   </div>
   
-  <div layout="column" >
+  <div layout="column" layout-margin layout-padding>
   
     <div layout="row" layout-align="start center">
       <div flex>Cost</div>
@@ -49,10 +49,10 @@
 
 
 <section>
+  <md-subheader class="md-primary light-padding">People</md-subheader>
 
-  <!-- Inputs and the new md-list-item do not to mix well. Animation stops etc. Sticking to a custom solution. -->
-  <div layout="column">
-    
+  <div layout="column" layout-margin layout-padding>
+
     <div ng-repeat="person in vm.balanceSheet.persons"
       layout-sm="column" layout-align-sm="center start"
       layout-gt-sm="row" layout-align-gt-sm="start center">
@@ -69,42 +69,42 @@
           <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
         </md-button>
       </div>
-      
+
       <div layout="row">
         <md-input-container>
           <label>Paid</label>
           <input type="number" style="width: 8em" ng-required="vm.isParticipant[person.id]" pattern="(0|[1-9][0-9]*)([,|\.][0-9]{0,2})?"
-            ng-model="vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).paid" 
+            ng-model="vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).paid"
             ng-change="vm.updateExpense()"
             ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]" />
         </md-input-container>
         <md-input-container>
           <label>Shared</label>
-          <input type="number" style="width: 8em" ng-required="vm.isParticipant[person.id]" 
+          <input type="number" style="width: 8em" ng-required="vm.isParticipant[person.id]"
             ng-model="vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).share"
             ng-change="vm.updateExpense()"
             ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]"
             ng-readonly="vm.expense.sharing != 'custom'" />
         </md-input-container>
       </div>
-  
+
       <md-button hide-sm ng-href="#/persons/{{person.id}}" class="md-icon-button" aria-label="View details">
         <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
       </md-button>
 
     </div>
-    
+
     <div
       layout-sm="column" layout-align-sm="center start"
       layout-gt-sm="row" layout-align-gt-sm="start center">
-    
+
       <div layout-fill flex-gt-sm layout="row">
         <span ng-if="!vm.expense.isBalanced()" style="color: red;">
           <md-icon class="md-warn no-margin-left no-padding-left" md-svg-icon="alert:ic_warning_24px"></md-icon>&nbsp;Unbalanced
         </span>
         <span ng-if="vm.expense.isBalanced()" class="label">Total</span>
       </div>
-      
+
       <div layout="row" >
         <md-input-container>
           <label>Paid</label>
@@ -115,17 +115,19 @@
           <input type="number" style="width: 8em" ng-model="vm.sumOfShares" ng-readonly="true"/>
         </md-input-container>
       </div>
-      
+
       <icon-button-strut hide-sm></icon-button-strut>
-      
+
     </div>
-    
+
   </div>
 </section>
 
 
 <section>
-  <div layout="column">
+  <md-subheader class="md-primary light-padding">Debts</md-subheader>
+
+  <div layout="column" layout-margin layout-padding>
     <div ng-if="vm.debtsByDebtor.length > 0">
       <p ng-if="!vm.expense.settled">To settle this expense alone</p>
       <div ng-if="vm.expense.settled">

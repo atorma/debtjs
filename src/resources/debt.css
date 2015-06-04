@@ -51,11 +51,6 @@
   background-color: #f6f6f6;
 }
 
-
-md-content > section {
-  margin-bottom: 16px;
-}
-
 .label {
   color: rgba(0,0,0,0.54);
 }
@@ -69,4 +64,8 @@ icon-button-strut {
 
 .settled {
   text-decoration: line-through;
+}
+
+.md-subheader.light-padding .md-subheader-inner {
+  padding: 8px 0 8px 8px;
 }
