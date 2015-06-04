@@ -1,84 +1,90 @@
-<h2 class="md-headline">
+<h1 class="md-headline">
   <md-input-container class="no-margin no-padding" md-no-float>
     <input type="text" placeholder="Sheet name"
            ng-model="vm.balanceSheet.name"
            ng-change="vm.updateSheet()"
            ng-required="true"/>
   </md-input-container>
-</h2>
+</h1>
 
-<md-subheader class="md-primary">Expenses</md-subheader>
-<md-card>
-  <md-list class="menu">
-    <md-list-item class="md-2-line"
-                  ng-repeat="expense in vm.balanceSheet.expenses"
-                  ng-click="$state.go('expense', {id: expense.id})">
-      <md-icon ng-if="!expense.isBalanced()" class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
-      <md-icon ng-if="expense.isBalanced()" class="md-primary" md-svg-icon="action:ic_shopping_basket_24px"></md-icon>
-      <div class="md-list-item-text" layout="row">
-        <span ng-class="{settled: expense.settled}">{{expense.name}}</span>
-        <span flex></span>
-        <span>{{expense.getCost() | currency:""}}</span>
-      </div>
-      <md-divider ng-if="!$last"></md-divider>
-    </md-list-item>
-    <md-list-item class="md-2-line" ng-if="vm.balanceSheet.expenses.length == 0">
-      <div class="md-list-item-text">
-          No expenses.
-      </div>
-    </md-list-item>
-  </md-list>
-</md-card>
+<section>
+  <md-subheader class="md-primary">Expenses</md-subheader>
+  <md-card>
+    <md-list class="menu">
+      <md-list-item class="md-2-line"
+                    ng-repeat="expense in vm.balanceSheet.expenses"
+                    ng-click="$state.go('expense', {id: expense.id})">
+        <md-icon ng-if="!expense.isBalanced()" class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
+        <md-icon ng-if="expense.isBalanced()" class="md-primary" md-svg-icon="action:ic_shopping_basket_24px"></md-icon>
+        <div class="md-list-item-text" layout="row">
+          <span ng-class="{settled: expense.settled}">{{expense.name}}</span>
+          <span flex></span>
+          <span>{{expense.getCost() | currency:""}}</span>
+        </div>
+        <md-divider ng-if="!$last"></md-divider>
+      </md-list-item>
+      <md-list-item class="md-2-line" ng-if="vm.balanceSheet.expenses.length == 0">
+        <div class="md-list-item-text">
+            No expenses.
+        </div>
+      </md-list-item>
+    </md-list>
+  </md-card>
+</section>
 
-<md-subheader class="md-primary">People</md-subheader>
-<md-card>
-  <md-list class="menu">
-    <md-list-item class="md-2-line"
-                  ng-repeat="person in vm.balanceSheet.persons"
-                  ng-click="$state.go('person', {id: person.id})">
-      <md-icon class="md-primary" md-svg-icon="action:ic_face_24px"></md-icon>
-      <div class="md-list-item-text" layout="row">
-        <span>{{person.name}}</span>
-        <span flex></span>
-        <span>{{person.getBalance() | balance}}</span>
-      </div>
-      <md-divider ng-if="!$last"></md-divider>
-    </md-list-item>
-    <md-list-item class="md-2-line" ng-if="vm.balanceSheet.persons.length == 0">
-      <div class="md-list-item-text">
-          No people.
-      </div>
-    </md-list-item>
-  </md-list>
-</md-card>
+<section>
+  <md-subheader class="md-primary">People</md-subheader>
+  <md-card>
+    <md-list class="menu">
+      <md-list-item class="md-2-line"
+                    ng-repeat="person in vm.balanceSheet.persons"
+                    ng-click="$state.go('person', {id: person.id})">
+        <md-icon class="md-primary" md-svg-icon="action:ic_face_24px"></md-icon>
+        <div class="md-list-item-text" layout="row">
+          <span>{{person.name}}</span>
+          <span flex></span>
+          <span>{{person.getBalance() | balance}}</span>
+        </div>
+        <md-divider ng-if="!$last"></md-divider>
+      </md-list-item>
+      <md-list-item class="md-2-line" ng-if="vm.balanceSheet.persons.length == 0">
+        <div class="md-list-item-text">
+            No people.
+        </div>
+      </md-list-item>
+    </md-list>
+  </md-card>
+</section>
 
-<md-subheader class="md-primary">Debts</md-subheader>
-<md-card>
-  <md-list>
-    <md-list-item class="md-2-line" ng-repeat="d in vm.debtsByDebtor">
-      <div class="md-list-item-text" layout="column">
-        <span>{{d.debtor.name}} owes</span>
-        <span ng-repeat="c in d.debts" style="margin-left: 16px;">
-          {{c.creditor.name}}: {{c.amount | currency:""}}
-        </span>
-      </div>
-      <md-divider ng-if="!$last"></md-divider>
-    </md-list-item>
-    <md-list-item ng-if="vm.balanceSheet.persons.length == 0 || vm.balanceSheet.expenses.length == 0">
-      <div class="md-list-item-text">
-        <p>Debts that settle up all the expenses will appear here.</p>
-      </div>
-    </md-list-item>
-    <md-list-item ng-if="vm.debtsByDebtor.length == 0 && vm.balanceSheet.persons.length > 0 && vm.balanceSheet.expenses.length > 0">
-      <div class="md-list-item-text">
-        <p>Everyone is settled up!</p>
-      </div>
-    </md-list-item>
-    <md-list-item ng-if="!vm.balanceSheet.isBalanced()">
-      <md-icon class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
-      <div class="md-list-item-text">
-       <p>Cannot compute debts. There are unbalanced expenses.</p>
-      </div>
-    </md-list-item>
-  </md-list>
-</md-card>
+<section>
+  <md-subheader class="md-primary">Debts</md-subheader>
+  <md-card>
+    <md-list>
+      <md-list-item class="md-2-line" ng-repeat="d in vm.debtsByDebtor">
+        <div class="md-list-item-text" layout="column">
+          <span>{{d.debtor.name}} owes</span>
+          <span ng-repeat="c in d.debts" style="margin-left: 16px;">
+            {{c.creditor.name}}: {{c.amount | currency:""}}
+          </span>
+        </div>
+        <md-divider ng-if="!$last"></md-divider>
+      </md-list-item>
+      <md-list-item ng-if="vm.balanceSheet.persons.length == 0 || vm.balanceSheet.expenses.length == 0">
+        <div class="md-list-item-text">
+          <p>Debts that settle up all the expenses will appear here.</p>
+        </div>
+      </md-list-item>
+      <md-list-item ng-if="vm.debtsByDebtor.length == 0 && vm.balanceSheet.persons.length > 0 && vm.balanceSheet.expenses.length > 0">
+        <div class="md-list-item-text">
+          <p>Everyone is settled up!</p>
+        </div>
+      </md-list-item>
+      <md-list-item ng-if="!vm.balanceSheet.isBalanced()">
+        <md-icon class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
+        <div class="md-list-item-text">
+         <p>Cannot compute debts. There are unbalanced expenses.</p>
+        </div>
+      </md-list-item>
+    </md-list>
+  </md-card>
+</section>
