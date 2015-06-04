@@ -56,11 +56,6 @@ md-content > section {
   margin-bottom: 16px;
 }
 
-.chevron {
-  width: 48px;
-  text-align: right;
-}
-
 .label {
   color: rgba(0,0,0,0.54);
 }

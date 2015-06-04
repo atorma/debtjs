@@ -27,7 +27,7 @@ describe("BalanceSheetCtrl", function() {
     
   });
 
-  beforeEach(angular.mock.inject(function(_events_, $rootScope, $controller, $q) {
+  beforeEach(angular.mock.inject(function(_events_, $rootScope, $controller) {
     events = _events_;
     $scope = $rootScope.$new();
 
@@ -69,7 +69,7 @@ describe("BalanceSheetCtrl", function() {
     it("computes debts by debtor using non-settled participatins", function() {
       balanceSheet.participations = "all participations";
       var nonSettledParticipations = "non-settled participations";
-      spyOn(balanceSheet, "getNonSettledParticipations").and.returnValue(nonSettledParticipations)
+      spyOn(balanceSheet, "getNonSettledParticipations").and.returnValue(nonSettledParticipations);
 
       var debts = "Dummy debts";
       debtService.computeDebts.and.returnValue(debts);

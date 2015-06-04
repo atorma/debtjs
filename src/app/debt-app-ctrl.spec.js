@@ -88,7 +88,7 @@ describe("DebtAppCtrl", function() {
         this.onload();
       }
       return file;
-    }
+    };
   }
 
 
