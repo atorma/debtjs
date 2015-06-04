@@ -2,14 +2,14 @@
 
   <div layout="row">
   
-    <h2 flex>
+    <h1 flex>
       <md-input-container class="no-margin, no-padding" md-no-float>
         <input type="text" placeholder="Person name"
                ng-model="vm.person.name"
                ng-change="vm.updatePerson()"
                ng-required="true" />
       </md-input-container> 
-    </h2>
+    </h1>
     
     <md-button class="md-icon-button" ng-click="vm.removePerson()" aria-label="delete">
       <md-tooltip>Delete</md-tooltip>
@@ -18,7 +18,7 @@
     
   </div>
   
-  <div layout="column" >
+  <div layout="column" layout-margin layout-padding>
   
     <div layout="row" layout-align="start center">
       <div flex>Balance</div>
@@ -31,9 +31,9 @@
 
 
 <section>
-  <!-- Inputs and the new md-list-item do not to mix well. Animation stops etc. Sticking to a custom solution. -->
+  <md-subheader class="md-primary light-padding">Expenses</md-subheader>
 
-  <div layout="column">
+  <div layout="column" layout-margin layout-padding>
     
     <div ng-repeat="expense in vm.balanceSheet.expenses"
       layout-sm="column" layout-align-sm="center start"
@@ -106,7 +106,9 @@
 </section>
 
 <section>
-  <div layout="column">
+  <md-subheader class="md-primary light-padding">Debts</md-subheader>
+
+  <div layout="column" layout-margin layout-padding>
   
     <div ng-switch="vm.debtRole">
       <span ng-switch-when="debtor">{{vm.person.name}} owes</span>
