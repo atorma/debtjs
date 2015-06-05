@@ -71,18 +71,18 @@
       </md-list-item>
       <md-list-item ng-if="vm.balanceSheet.persons.length == 0 || vm.balanceSheet.expenses.length == 0">
         <div class="md-list-item-text">
-          <p>Debts that settle up all the expenses will appear here.</p>
+          Debts that settle up all the expenses will appear here.
         </div>
       </md-list-item>
       <md-list-item ng-if="vm.debtsByDebtor.length == 0 && vm.balanceSheet.persons.length > 0 && vm.balanceSheet.expenses.length > 0">
         <div class="md-list-item-text">
-          <p>Everyone is settled up!</p>
+          Everyone is settled up!
         </div>
       </md-list-item>
-      <md-list-item ng-if="!vm.balanceSheet.isBalanced()">
+      <md-list-item ng-if="!vm.balanceSheet.isBalanced()" class="md-2-line">
         <md-icon class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
         <div class="md-list-item-text">
-         <p>Cannot compute debts. There are unbalanced expenses.</p>
+          Cannot compute debts. There are unbalanced expenses.
         </div>
       </md-list-item>
     </md-list>

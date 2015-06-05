@@ -21,6 +21,28 @@
 }
 
 
+.padding-bottom {
+  padding-bottom: 8px;
+}
+
+.padding-top {
+  padding-top: 8px;
+}
+
+.padding-left {
+  padding-left: 8px;
+}
+
+.padding-right {
+  padding-right: 8px;
+}
+
+.padding {
+  padding: 8px 8px 8px 8px;
+}
+
+
+
 .no-margin-bottom, .no-margin-bottom * {
   margin-bottom: 0;
 }
@@ -39,6 +61,32 @@
 
 .no-margin, .no-margin * {
   margin: 0;
+}
+
+
+.margin-bottom {
+   margin-bottom: 8px;
+ }
+
+.margin-top {
+  margin-top: 8px;
+}
+
+.margin-left {
+  margin-left: 8px;
+}
+
+.margin-right {
+  margin-right: 8px;
+}
+
+.margin {
+  margin: 8px 8px 8px 8px;
+}
+
+
+section {
+  margin-bottom: 16px;
 }
 
 
@@ -66,6 +114,7 @@ icon-button-strut {
   text-decoration: line-through;
 }
 
-.md-subheader.light-padding .md-subheader-inner {
-  padding: 8px 0 8px 8px;
+.md-subheader.padding-vertical .md-subheader-inner {
+  padding-left: 0;
+  padding-right: 0;
 }

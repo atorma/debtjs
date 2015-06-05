@@ -3,7 +3,7 @@
   <div layout="row">
   
     <h1 flex>
-      <md-input-container class="no-margin, no-padding" md-no-float>
+      <md-input-container class="no-margin no-padding" md-no-float>
         <input type="text" placeholder="Expense name"
                ng-model="vm.expense.name"
                ng-change="vm.updateExpense()"
@@ -18,7 +18,7 @@
     
   </div>
   
-  <div layout="column" layout-margin layout-padding>
+  <div layout="column" class="padding-left">
   
     <div layout="row" layout-align="start center">
       <div flex>Cost</div>
@@ -49,15 +49,15 @@
 
 
 <section>
-  <md-subheader class="md-primary light-padding">People</md-subheader>
+  <md-subheader class="md-primary md-no-sticky padding-vertical">People</md-subheader>
 
-  <div layout="column" layout-margin layout-padding>
+  <div layout="column" class="padding-left">
 
     <div ng-repeat="person in vm.balanceSheet.persons"
       layout-sm="column" layout-align-sm="center start"
       layout-gt-sm="row" layout-align-gt-sm="start center">
 
-      <div layout-fill flex-gt-sm layout="row" layout-align="start center" >
+      <div layout-fill flex-gt-sm layout="row" layout-align="start center">
         <md-checkbox class="md-primary no-margin"
                      ng-model="vm.isParticipant[person.id]"
                      ng-change="vm.setParticipation(person, vm.isParticipant[person.id])"
@@ -98,11 +98,12 @@
       layout-sm="column" layout-align-sm="center start"
       layout-gt-sm="row" layout-align-gt-sm="start center">
 
-      <div layout-fill flex-gt-sm layout="row">
+      <div layout-fill flex-gt-sm layout="row" layout-align="start center">
         <span ng-if="!vm.expense.isBalanced()" style="color: red;">
           <md-icon class="md-warn no-margin-left no-padding-left" md-svg-icon="alert:ic_warning_24px"></md-icon>&nbsp;Unbalanced
         </span>
         <span ng-if="vm.expense.isBalanced()" class="label">Total</span>
+        <icon-button-strut hide-gt-sm></icon-button-strut>
       </div>
 
       <div layout="row" >
@@ -125,29 +126,33 @@
 
 
 <section>
-  <md-subheader class="md-primary light-padding">Debts</md-subheader>
+  <md-subheader class="md-primary md-no-sticky padding-vertical">Debts</md-subheader>
 
-  <div layout="column" layout-margin layout-padding>
+  <div layout="column" class="padding-left">
+
     <div ng-if="vm.debtsByDebtor.length > 0">
-      <p ng-if="!vm.expense.settled">To settle this expense alone</p>
+      <span ng-if="!vm.expense.settled">To settle this expense alone:</span>
       <div ng-if="vm.expense.settled">
-        <p>This expense is settled. It does not play a role in balance and debt calculations.</p>
-        <p>The debts were</p>
+        <span>This expense is settled. The debts were:</span>
       </div>
       <div ng-repeat="d in vm.debtsByDebtor">
         <p layout="column">
-          <span>{{d.debtor.name}} pays </span>
+          <span>{{d.debtor.name}} owes </span>
           <span ng-repeat="c in d.debts" style="margin-left: 16px;">
             {{c.creditor.name}}: {{c.amount | currency:""}}
           </span>
         </p>
       </div>
     </div>
+
     <div ng-if="vm.debtsByDebtor.length == 0">
-      <p>No debts!</p>
+      <span>No debts!</span>
     </div>
+
     <div ng-if="!vm.expense.isBalanced()">
-      <p>Cannot compute debts. Expense is not balanced.</p>
+      <span>Cannot compute debts. Expense is not balanced.</span>
     </div>
+
   </div>
+
 </section>
