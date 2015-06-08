@@ -2,8 +2,6 @@
 
 var angular = require("angular");
 require("angular-material");
-require("angular-animate");
-require("angular-aria");
 require("angular-route");
 require("angular-ui-router");
 require("angular-local-storage");
@@ -53,7 +51,7 @@ function configureIcons($mdIconProvider) {
 }
 
 function hrefSanitization($compileProvider) {
-  $compileProvider.aHrefSanitizationWhitelist(/^(blob||https?||mailto):/);
+  $compileProvider.aHrefSanitizationWhitelist(/^(blob||https?):/);
 }
 
 // Injection of $state may trigger a GET, which can show as an 
