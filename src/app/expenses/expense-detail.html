@@ -21,25 +21,25 @@
   <div layout="column" class="padding-left">
   
     <div layout="row" layout-align="start center">
-      <div flex>Cost</div>
-      <div style="margin: 15px; padding-right: 8px">{{vm.cost | currency:""}}</div>
+      <label for="cost" flex>Cost</label>
+      <div id="cost" style="margin: 15px; padding-right: 8px">{{vm.cost | currency:""}}</div>
     </div>
     
     <div layout="row" layout-align="start center">
-      <div flex>Share equally</div>
+      <label for="sharing" flex>Share equally</label>
       <md-switch ng-model="vm.expense.sharing"
                  ng-change="vm.updateExpense()"
                  ng-disabled="vm.expense.settled"
                  ng-true-value="'equal'" ng-false-value="'custom'"
-                 class="md-primary" aria-label="Share equally">
+                 id="sharing" class="md-primary" aria-label="Share equally">
       </md-switch>
     </div>
 
     <div layout="row" layout-align="start center">
-      <div flex>Settled</div>
+      <label for="settled" flex>Settled</label>
       <md-switch ng-model="vm.expense.settled"
                  ng-change="vm.updateExpense()"
-                 class="md-primary" aria-label="Settled">
+                 id="settled" class="md-primary" aria-label="Settled">
       </md-switch>
     </div>
 
@@ -79,7 +79,7 @@
             ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]" />
         </md-input-container>
         <md-input-container>
-          <label>Shared</label>
+          <label>Share</label>
           <input type="number" style="width: 8em" ng-required="vm.isParticipant[person.id]"
             ng-model="vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).share"
             ng-change="vm.updateExpense()"
@@ -112,7 +112,7 @@
           <input type="number" style="width: 8em" ng-model="vm.cost" ng-readonly="true" />
         </md-input-container>
         <md-input-container>
-          <label>Shared</label>
+          <label>Share</label>
           <input type="number" style="width: 8em" ng-model="vm.sumOfShares" ng-readonly="true"/>
         </md-input-container>
       </div>
@@ -131,14 +131,15 @@
   <div layout="column" class="padding-left">
 
     <div ng-if="vm.debtsByDebtor.length > 0">
-      <span ng-if="!vm.expense.settled">To settle this expense alone:</span>
+      <span ng-if="!vm.expense.settled">To settle this expense individually:</span>
       <div ng-if="vm.expense.settled">
-        <span>This expense is settled. The debts were:</span>
+        <span>This expense is settled. It does not affect total balances and debts.</span>
+        <p>The debts from this expense were:</p>
       </div>
       <div ng-repeat="d in vm.debtsByDebtor">
         <p layout="column">
-          <span>{{d.debtor.name}} owes </span>
-          <span ng-repeat="c in d.debts" style="margin-left: 16px;">
+          <span class="margin-bottom">{{d.debtor.name}} owes </span>
+          <span ng-repeat="c in d.debts" class="margin-bottom" style="margin-left: 16px;">
             {{c.creditor.name}}: {{c.amount | currency:""}}
           </span>
         </p>

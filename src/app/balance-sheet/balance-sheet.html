@@ -62,8 +62,8 @@
     <md-list>
       <md-list-item class="md-2-line" ng-repeat="d in vm.debtsByDebtor">
         <div class="md-list-item-text" layout="column">
-          <span>{{d.debtor.name}} owes</span>
-          <span ng-repeat="c in d.debts" style="margin-left: 16px;">
+          <span class="margin-bottom">{{d.debtor.name}} owes</span>
+          <span ng-repeat="c in d.debts" class="margin-bottom" style="margin-left: 16px;">
             {{c.creditor.name}}: {{c.amount | currency:""}}
           </span>
         </div>
@@ -71,7 +71,8 @@
       </md-list-item>
       <md-list-item ng-if="vm.balanceSheet.persons.length == 0 || vm.balanceSheet.expenses.length == 0">
         <div class="md-list-item-text">
-          Debts that settle up all the expenses will appear here.
+          <p>This card will show debts that settle all expenses with minimum number of transactions.</p>
+          <p>You can also settle expenses individually.</p>
         </div>
       </md-list-item>
       <md-list-item ng-if="vm.debtsByDebtor.length == 0 && vm.balanceSheet.persons.length > 0 && vm.balanceSheet.expenses.length > 0">
