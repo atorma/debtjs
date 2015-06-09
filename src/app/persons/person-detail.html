@@ -54,7 +54,7 @@
       </div>
       
       <div layout="row">
-        <md-input-container>
+        <md-input-container class="no-padding-left">
           <label>Paid</label>
           <input type="number" style="width: 8em"
                  ng-required="vm.isParticipant[expense.id]" pattern="(0|[1-9][0-9]*)([,|\.][0-9]{0,2})?"
@@ -62,7 +62,7 @@
                  ng-change="vm.updateExpense(expense)"
                  ng-disabled="expense.settled || !vm.isParticipant[expense.id]" />
         </md-input-container>
-        <md-input-container>
+        <md-input-container class="no-padding-left">
           <label>Share</label>
           <input type="number" style="width: 8em"
                  ng-required="vm.isParticipant[expense.id]"
@@ -89,11 +89,11 @@
       </div>
       
       <div layout="row" >
-        <md-input-container>
+        <md-input-container class="no-padding-left">
           <label>Paid</label>
           <input type="number" style="width: 8em" ng-model="vm.cost" ng-readonly="true" />
         </md-input-container>
-        <md-input-container>
+        <md-input-container class="no-padding-left">
           <label>Share</label>
           <input type="number" style="width: 8em" ng-model="vm.sumOfShares" ng-readonly="true"/>
         </md-input-container>
