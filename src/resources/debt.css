@@ -41,6 +41,25 @@
   padding: 8px 8px 8px 8px;
 }
 
+.double-padding-bottom {
+  padding-bottom: 16px;
+}
+
+.double-padding-top {
+  padding-top: 16px;
+}
+
+.double-padding-left {
+  padding-left: 16px;
+}
+
+.double-padding-right {
+  padding-right: 16px;
+}
+
+.double-padding {
+  padding: 16px 16px 16px 16px;
+}
 
 
 .no-margin-bottom, .no-margin-bottom * {
@@ -84,6 +103,26 @@
   margin: 8px 8px 8px 8px;
 }
 
+.double-margin-bottom {
+  margin-bottom: 16px;
+}
+
+.double-margin-top {
+  margin-top: 16px;
+}
+
+.double-margin-left {
+  margin-left: 16px;
+}
+
+.double-margin-right {
+  margin-right: 16px;
+}
+
+.double-margin {
+  margin: 16px 16px 16px 16px;
+}
+
 
 section {
   margin-bottom: 16px;
@@ -117,4 +156,8 @@ icon-button-strut {
 .md-subheader.padding-vertical .md-subheader-inner {
   padding-left: 0;
   padding-right: 0;
+}
+
+.invisible-linebreak {
+  line-height: 0;
 }

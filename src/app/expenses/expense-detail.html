@@ -131,9 +131,9 @@
   <div layout="column" class="padding-left">
 
     <div ng-if="vm.debtsByDebtor.length > 0">
-      <span ng-if="!vm.expense.settled">To settle this expense individually:</span>
+      <p ng-if="!vm.expense.settled">To settle this expense individually:</p>
       <div ng-if="vm.expense.settled">
-        <span>This expense is settled. It does not affect total balances and debts.</span>
+        <p>This expense is settled. It does not affect total balances and debts.</p>
         <p>The debts from this expense were:</p>
       </div>
       <div ng-repeat="d in vm.debtsByDebtor">
@@ -142,16 +142,17 @@
           <span ng-repeat="c in d.debts" class="margin-bottom" style="margin-left: 16px;">
             {{c.creditor.name}}: {{c.amount | currency:""}}
           </span>
+          <span class="invisible-linebreak"><br/></span>
         </p>
       </div>
     </div>
 
     <div ng-if="vm.debtsByDebtor.length == 0">
-      <span>No debts!</span>
+      <p>No debts!</p>
     </div>
 
     <div ng-if="!vm.expense.isBalanced()">
-      <span>Cannot compute debts. Expense is not balanced.</span>
+      <p>Cannot compute debts. Expense is not balanced.</p>
     </div>
 
   </div>

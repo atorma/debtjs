@@ -66,6 +66,7 @@
           <span ng-repeat="c in d.debts" class="margin-bottom" style="margin-left: 16px;">
             {{c.creditor.name}}: {{c.amount | currency:""}}
           </span>
+          <div class="invisible-linebreak"><br/></div>
         </div>
         <md-divider ng-if="!$last"></md-divider>
       </md-list-item>
