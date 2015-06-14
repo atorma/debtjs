@@ -19,7 +19,7 @@
         <div class="md-list-item-text" layout="row">
           <span ng-class="{settled: expense.settled}">{{expense.name}}</span>
           <span flex></span>
-          <span>{{expense.getCost() | currency:""}}</span>
+          <span>{{expense.getCost() | balance}}</span>
         </div>
         <md-divider ng-if="!$last"></md-divider>
       </md-list-item>
