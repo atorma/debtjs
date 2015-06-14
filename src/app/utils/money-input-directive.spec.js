@@ -66,4 +66,21 @@ describe("Money input directive", function() {
     expect(inputElement.val()).toEqual("");
   });
 
+  it("validates negative value as invalid and retains invalid view value", function() {
+    form.value.$setViewValue("42");
+    inputElement.triggerHandler("blur");
+    expect($scope.value).toEqual(42);
+    expect(inputElement.hasClass("ng-invalid")).toEqual(false);
+
+    form.value.$setViewValue(undefined);
+    inputElement.triggerHandler("blur");
+    expect($scope.value).toEqual(undefined);
+    expect(inputElement.hasClass("ng-invalid")).toEqual(false);
+
+    form.value.$setViewValue("-5");
+    inputElement.triggerHandler("blur");
+    expect($scope.value).toEqual(undefined);
+    expect(inputElement.hasClass("ng-invalid")).toEqual(true);
+    expect(inputElement.val()).toEqual("-5");
+  });
 });

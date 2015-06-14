@@ -16,14 +16,32 @@ function moneyInput($filter) {
   };
 
   function link($scope, iElem, iAttrs, ngModel) {
+    ngModel.$validators.money = validateMoney;
     ngModel.$parsers.push(parseMoney);
     ngModel.$formatters.unshift(formatMoney);
-    iElem.on("blur", function() {
+
+    iElem.on("blur", handleBlur);
+    ngModel.$render = render;
+
+    function render() {
+      if (ngModel.$valid) {
+        iElem.val(formatMoney(ngModel.$modelValue));
+      } else {
+        iElem.val(ngModel.$viewValue);
+      }
+    }
+
+    function handleBlur() {
       ngModel.$render();
-    });
-    ngModel.$render = function() {
-      iElem.val(formatMoney(ngModel.$modelValue));
-    };
+    }
+  }
+
+  function validateMoney(value) {
+    if (value < 0) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   function formatMoney(value) {
