@@ -16,7 +16,7 @@ function moneyInput($filter) {
   };
 
   function link($scope, iElem, iAttrs, ngModel) {
-    ngModel.$validators.money = validateTwoDecimals;
+    ngModel.$parsers.push(parseMoney);
     ngModel.$formatters.unshift(formatMoney);
     iElem.on("blur", function() {
       ngModel.$render();
@@ -34,13 +34,8 @@ function moneyInput($filter) {
     }
   }
 
-  function validateTwoDecimals(value) {
-    if (!value) {
-      return true;
-    } else {
-      var roundedValue = new Decimal(value).toNumber();
-      return roundedValue === value;
-    }
+  function parseMoney(value) {
+    return new Decimal(value).toNumber();
   }
 
 }

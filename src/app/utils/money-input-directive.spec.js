@@ -33,7 +33,7 @@ describe("Money input directive", function() {
     expect(inputElement.val()).toEqual("-3.65");
   });
 
-  it("formats input value on blur", function() {
+  it("parses and formats input value on blur", function() {
     form.value.$setViewValue("3.10");
     inputElement.triggerHandler("blur");
     expect($scope.value).toEqual(3.10);
@@ -54,10 +54,16 @@ describe("Money input directive", function() {
     expect(inputElement.val()).toEqual("");
   });
 
-  it("validates value with more than two decimals as invalid", function() {
-    inputElement.val("-3.562");
-    inputElement.triggerHandler("change");
-    $scope.$digest();
-    expect(inputElement.hasClass("ng-invalid") ).toBe(true);
+  it("parses input with two decimals", function() {
+    form.value.$setViewValue("3.1051");
+    inputElement.triggerHandler("blur");
+    expect($scope.value).toEqual(3.11);
+    expect(inputElement.val()).toEqual("3.11");
+
+    form.value.$setViewValue("");
+    inputElement.triggerHandler("blur");
+    expect($scope.value).toEqual(null);
+    expect(inputElement.val()).toEqual("");
   });
+
 });
