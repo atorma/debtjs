@@ -26,7 +26,7 @@ require("./debts");
 require("./balance-sheet");
 require("./persons");
 require("./expenses");
-
+require("./utils");
 
 function configureLocalStorage(localStorageServiceProvider) {
   localStorageServiceProvider.setPrefix("debtApp");
