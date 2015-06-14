@@ -119,7 +119,7 @@
     </div>
 
     <div ng-repeat="d in vm.debts" class="margin-bottom" style="margin-left: 16px;">
-        <span>{{d.person.name}}: {{d.amount | currency:""}}</span>
+        <span>{{d.person.name}}: {{d.amount | balance}}</span>
     </div>
     
   </div>

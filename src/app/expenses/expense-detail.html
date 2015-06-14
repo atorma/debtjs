@@ -140,7 +140,7 @@
         <p layout="column">
           <span class="margin-bottom">{{d.debtor.name}} owes </span>
           <span ng-repeat="c in d.debts" class="margin-bottom" style="margin-left: 16px;">
-            {{c.creditor.name}}: {{c.amount | currency:""}}
+            {{c.creditor.name}}: {{c.amount | balance}}
           </span>
           <span class="invisible-linebreak"><br/></span>
         </p>
