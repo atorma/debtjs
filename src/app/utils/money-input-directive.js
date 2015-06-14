@@ -27,7 +27,11 @@ function moneyInput($filter) {
   }
 
   function formatMoney(value) {
-    return $filter("number")(value, 2);
+    if (value === undefined || value === null) {
+      return "";
+    } else {
+      return $filter("number")(value, 2);
+    }
   }
 
   function validateTwoDecimals(value) {

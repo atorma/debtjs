@@ -6,7 +6,8 @@ require("../debt");
 
 describe("Money input directive", function() {
 
-  var inputElement;
+  var inputElement, formElement;
+  var form;
   var $scope;
 
   beforeEach(angular.mock.module("debtApp", function($provide) {
@@ -17,7 +18,9 @@ describe("Money input directive", function() {
     $scope = $rootScope;
     $scope.value = undefined;
 
-    inputElement = $compile('<input money-input type="number" ng-model="value"/>')($scope);
+    formElement = $compile('<form name="form"><input money-input type="number" name="value" ng-model="value"/></form>')($scope);
+    inputElement = formElement.find("input");
+    form = $scope.form;
   }));
     
   it("formats model value with two decimals", function() {
@@ -28,6 +31,27 @@ describe("Money input directive", function() {
     $scope.value = -3.65;
     $scope.$digest();
     expect(inputElement.val()).toEqual("-3.65");
+  });
+
+  it("formats input value on blur", function() {
+    form.value.$setViewValue("3.10");
+    inputElement.triggerHandler("blur");
+    expect($scope.value).toEqual(3.10);
+    expect(inputElement.val()).toEqual("3.10");
+  });
+
+  it("formats undefined model value as empty", function() {
+    $scope.value = undefined;
+    $scope.$digest();
+    expect(inputElement.val()).toEqual("");
+  });
+
+  it("formats undefined view value as empty", function() {
+    $scope.value = 2.1;
+    $scope.$digest();
+    delete $scope.value;
+    $scope.$digest();
+    expect(inputElement.val()).toEqual("");
   });
 
   it("validates value with more than two decimals as invalid", function() {
