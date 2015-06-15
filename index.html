@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html manifest="debt.manifest">
+  <head>
+    <title>Debt</title>
+    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+  
+    <link rel="shortcut icon" href="resources/ic_account_balance_wallet_black_48dp.png" />
+    <link rel="stylesheet" href="resources/fonts/fonts.css"/>
+    <link rel="stylesheet" href="resources/angular-material.css" />
+    <link rel="stylesheet" href="resources/mfb.css" />
+    <link rel="stylesheet" href="resources/debt.css" />
+    
+    <script src="libs.js"></script>
+    <script src="debt.js"></script>
+  </head>
+
+  <body ng-app="debtApp" ng-strict-di layout="column" ng-controller="DebtAppCtrl as vm" ng-cloak>
+  
+    <md-toolbar md-scroll-shrink="true">
+      <div class="md-toolbar-tools">
+        <md-button ng-click="$state.go('balanceSheet')" class="md-icon-button" aria-label="Home">
+          <md-icon md-svg-icon="action:ic_home_24px"></md-icon>
+        </md-button>
+        <span flex></span>
+        <md-button ng-click="vm.mainMenu.toggle()" class="md-icon-button" aria-label="Menu">
+          <md-icon md-svg-icon="navigation:ic_menu_24px"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    
+    <md-toolbar ng-if="vm.errorMessage" class="md-warn" md-scroll-shrink="true">
+      <div class="md-toolbar-tools">{{vm.errorMessage}}</div>
+    </md-toolbar>
+
+    <md-sidenav md-component-id="main-menu" class="md-sidenav-right md-whiteframe-z2 menu">
+        <md-list>
+          <md-list-item ng-click="vm.createNewSheet()">
+            <p class="md-list-item-text">
+              New sheet
+            </p>
+          </md-list-item>
+          <md-list-item class="md-clickable">
+            <p class="md-list-item-text"
+               ngf-select ngf-change="vm.loadSheet($files)">
+              Load sheet from file
+            </p>
+          </md-list-item>
+          <md-list-item ng-if="vm.jsonExportUrl" class="md-clickable">
+              <p class="md-list-item-text">
+                <a ng-href="{{vm.jsonExportUrl}}"
+                   download="{{vm.balanceSheet.name}}.json"
+                   ng-click="vm.mainMenu.toggle()">
+                  Export sheet to file
+                </a>
+              </p>
+          </md-list-item>
+        </md-list>
+    </md-sidenav>
+
+    <md-content flex layout-padding ng-if="vm.balanceSheet">
+      <div ui-view></div>
+    </md-content>
+
+    <div ng-if="vm.balanceSheet">
+      <mfb-menu position="br" effect="zoomin" toggling-method="click"
+                template-url="ng-mfb-menu-md.tpl.html"
+                resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px">
+        <mfb-button ng-click="vm.createExpense()"
+                    template-url="ng-mfb-button-md.tpl.html"
+                    icon="action:ic_shopping_basket_24px" label="Create expense"
+                    mfb-button-close>
+        </mfb-button>
+        <mfb-button ng-click="vm.createPerson()"
+                    template-url="ng-mfb-button-md.tpl.html"
+                    icon="action:ic_face_24px" label="Create person"
+                    mfb-button-close>
+        </mfb-button>
+      </mfb-menu>
+    </div>
+
+  </body>
+
+</html> 
