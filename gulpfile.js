@@ -174,9 +174,9 @@ gulp.task('manifest', function() {
       timestamp: true,
       preferOnline: true,
       network: ['http://*', 'https://*', '*'],
-      filename: 'debt.manifest',
-      exclude: 'debt.manifest',
-      fallback: ['/ /offline.html']
+      filename: 'debt.appcache',
+      exclude: 'debt.appcache',
+      fallback: ['/ offline.html']
     }))
     .pipe(gulp.dest(paths.build));
 });
