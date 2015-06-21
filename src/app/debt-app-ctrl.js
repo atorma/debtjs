@@ -2,7 +2,6 @@
 
 var angular = require("angular");
 var _ = require("lodash");
-var BalanceSheet = require('./balance-sheet/balance-sheet');
 
 angular.module("debtApp")
   .value("balanceSheetSaveCtrlConfig", {wait: 500})
@@ -12,6 +11,7 @@ function DebtAppCtrl(balanceSheetService,
                      balanceSheetSaveCtrlConfig,
                      openCreatePersonDialog,
                      openCreateExpenseDialog,
+                     fileSaver,
                      events,
                      $mdDialog,
                      $mdSidenav,
@@ -31,6 +31,7 @@ function DebtAppCtrl(balanceSheetService,
   vm.createExpense = createExpense;
   vm.createNewSheet = createNewSheet;
   vm.loadSheet = loadSheet;
+  vm.exportSheet = exportSheet;
   vm.save = save;
   vm.refresh = refresh;
 
@@ -39,7 +40,7 @@ function DebtAppCtrl(balanceSheetService,
     .content("The current sheet will be discarded. Please consider exporting it first. Continue?")
     .ok("Ok").cancel("Cancel");
 
-  var createObjectURL, revokeObjectURL, Blob, FileReader;
+  var Blob, FileReader;
 
   init();
 
@@ -50,8 +51,7 @@ function DebtAppCtrl(balanceSheetService,
   }
 
   function init() {
-    createObjectURL = ($window.URL || $window.webkitURL || {}).createObjectURL || angular.noop;
-    revokeObjectURL = ($window.URL || $window.webkitURL || {}).revokeObjectURL || angular.noop;
+    // TODO make these injectable values or factories to make testing easier and to hide browser differences
     Blob = $window.Blob || angular.noop;
     FileReader = $window.FileReader || angular.noop;
 
@@ -84,14 +84,6 @@ function DebtAppCtrl(balanceSheetService,
     } else {
       vm.errorMessage = undefined;
     }
-    updateJsonExportUrl();
-  }
-
-  function updateJsonExportUrl() {
-    var json = balanceSheetService.exportToJson();
-    var blob = new Blob([json], {type: "application/json"});
-    revokeObjectURL(vm.jsonExportUrl);
-    vm.jsonExportUrl = createObjectURL(blob);
   }
 
 
@@ -142,5 +134,12 @@ function DebtAppCtrl(balanceSheetService,
     onBalanceSheetUpdated();
     $state.go("balanceSheet");
     $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
+  }
+
+  function exportSheet() {
+    var json = balanceSheetService.exportToJson();
+    var blob = new Blob([json], {type: "application/json"});
+    fileSaver.saveAs(blob, balanceSheetService.balanceSheet.name + ".txt");
+    vm.mainMenu.toggle();
   }
 }

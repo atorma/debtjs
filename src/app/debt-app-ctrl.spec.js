@@ -13,21 +13,27 @@ describe("DebtAppCtrl", function() {
   var $scope, $childScope, $state, $q, $window;
   var balanceSheetService;
   var balanceSheet;
+  var balanceSheetJson;
   var openCreatePersonDialog;
   var openCreateExpenseDialog;
-
+  var fileSaver;
 
   beforeEach(angular.mock.module("debtApp"));
   
   
   beforeEach(function() {
     balanceSheet = jasmine.createSpyObj("balanceSheet", ["createPerson", "createExpense"]);
+
+    balanceSheetJson = '{"name": "test"}';
     
     balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["save", "createNew", "exportToJson", "loadFromJson"]);
     balanceSheetService.balanceSheet = balanceSheet;
+    balanceSheetService.exportToJson.and.returnValue(balanceSheetJson);
 
     openCreatePersonDialog = jasmine.createSpy("openCreatePersonDialog");
     openCreateExpenseDialog = jasmine.createSpy("openCreateExpenseDialog");
+
+    fileSaver = jasmine.createSpyObj("fileSaver", ["saveAs"]);
 
     $state = jasmine.createSpyObj("$state", ["go"]);
   });
@@ -59,6 +65,7 @@ describe("DebtAppCtrl", function() {
       balanceSheetSaveCtrlConfig: {wait: 0},
       openCreatePersonDialog: openCreatePersonDialog,
       openCreateExpenseDialog: openCreateExpenseDialog,
+      fileSaver: fileSaver,
       $mdDialog: $mdDialog,
       $scope: $scope,
       $window: $window
@@ -104,15 +111,8 @@ describe("DebtAppCtrl", function() {
 
   });
 
+
   describe("refresh()", function() {
-
-    beforeEach(function() {
-      spyOn($window.URL, "createObjectURL");
-      spyOn($window.URL, "revokeObjectURL");
-      spyOn($window, "Blob");
-
-      vm.init();
-    });
 
     it("updates exposed balance sheet reference", function() {
       balanceSheetService.balanceSheet = "updated sheet";
@@ -122,26 +122,9 @@ describe("DebtAppCtrl", function() {
       expect(vm.balanceSheet).toEqual("updated sheet");
     });
 
-    it("updates URL to json export of the sheet", function() {
-      var oldObjectUrl = "an old url";
-      vm.jsonExportUrl = oldObjectUrl;
-
-      var json = "balance sheet json";
-      balanceSheetService.exportToJson.and.returnValue(json);
-
-      var newObjectUrl = "a new url";
-      $window.URL.createObjectURL.and.returnValue(newObjectUrl);
-
-      vm.refresh();
-
-      expect($window.Blob).toHaveBeenCalledWith([json], {type: "application/json"});
-      expect($window.URL.createObjectURL).toHaveBeenCalled();
-      expect(vm.jsonExportUrl).toBe(newObjectUrl);
-      expect($window.URL.revokeObjectURL).toHaveBeenCalledWith(oldObjectUrl);
-    });
-
   });
-  
+
+
   describe("save()", function() {
 
     it("saves sheet using service", function() {
@@ -179,6 +162,7 @@ describe("DebtAppCtrl", function() {
     });
 
   });
+
 
   describe("creates", function() {
 
@@ -231,9 +215,8 @@ describe("DebtAppCtrl", function() {
     it("sheet from JSON file, and updates view state", function() {
       var jsonString = "{}";
       var jsonBlob =  new $window.Blob([jsonString], {type: "application/json"});
-      var jsonFile = new $window.File([jsonBlob], "sheet.json");
 
-      vm.loadSheet([jsonFile]);
+      vm.loadSheet([jsonBlob]);
 
       // Difficult to get in between a new FileReader and the onload callback
       //expect(balanceSheetService.loadFromJson).toHaveBeenCalledWith(jsonString);
@@ -246,7 +229,25 @@ describe("DebtAppCtrl", function() {
 
   });
 
-  
+
+  describe("exportSheet()", function() {
+
+    beforeEach(function() {
+      spyOn($window, "Blob");
+
+      vm.init();
+    });
+
+    it("exports sheet by saving it as file", function() {
+      vm.exportSheet();
+
+      expect($window.Blob).toHaveBeenCalledWith([balanceSheetJson], {type: "application/json"});
+      expect(fileSaver.saveAs).toHaveBeenCalled();
+    });
+
+  });
+
+
   describe("broadcasts event", function() {
     
     it("when person created", function() {
@@ -264,10 +265,9 @@ describe("DebtAppCtrl", function() {
     it("when sheet loaded", function() {
       var jsonString = "{}";
       var jsonBlob =  new $window.Blob([jsonString], {type: "application/json"});
-      var jsonFile = new $window.File([jsonBlob], "sheet.json");
 
       expectEventBroadcasted(function() {
-        vm.loadSheet([jsonFile]);
+        vm.loadSheet([jsonBlob]);
       }, events.BALANCE_SHEET_UPDATED);
     });
 

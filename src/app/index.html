@@ -43,23 +43,13 @@
     <md-sidenav md-component-id="main-menu" class="md-sidenav-right md-whiteframe-z2 menu">
         <md-list>
           <md-list-item ng-click="vm.createNewSheet()">
-            <p class="md-list-item-text">
-              New sheet
-            </p>
+            <p class="md-list-item-text">New sheet</p>
           </md-list-item>
           <md-list-item class="md-clickable">
-            <p class="md-list-item-text"
-               ngf-select ngf-change="vm.loadSheet($files)">
-              Load sheet from file
-            </p>
+            <p class="md-list-item-text" ngf-select ngf-change="vm.loadSheet($files)">Load sheet from file</p>
           </md-list-item>
           <md-list-item ng-if="vm.jsonExportUrl" class="md-clickable">
-              <p class="md-list-item-text">
-                <a ng-href="{{vm.jsonExportUrl}}"
-                   download="{{vm.balanceSheet.name}}.json"
-                   ng-click="vm.mainMenu.toggle()">
-                  Export sheet to file
-                </a>
+              <p class="md-list-item-text" ng-click="vm.exportSheet()">Export sheet to file</a>
               </p>
           </md-list-item>
         </md-list>

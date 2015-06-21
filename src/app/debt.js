@@ -8,6 +8,7 @@ require("angular-local-storage");
 require("ng-mfb");
 require("ng-file-upload");
 
+var fileSaver = require('node-safe-filesaver');
 var _ = require("lodash");
 
 angular
@@ -15,6 +16,7 @@ angular
   .constant("events", {
     BALANCE_SHEET_UPDATED: "balance sheet updated"
   })
+  .value("fileSaver", fileSaver)
   .config(configureLocalStorage)
   .config(configureIcons)
   .config(hrefSanitization)
