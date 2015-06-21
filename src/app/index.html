@@ -48,9 +48,8 @@
           <md-list-item class="md-clickable">
             <p class="md-list-item-text" ngf-select ngf-change="vm.loadSheet($files)">Load sheet from file</p>
           </md-list-item>
-          <md-list-item ng-if="vm.jsonExportUrl" class="md-clickable">
-              <p class="md-list-item-text" ng-click="vm.exportSheet()">Export sheet to file</a>
-              </p>
+          <md-list-item ng-click="vm.exportSheet()">
+            <p class="md-list-item-text">Export sheet to file</p>
           </md-list-item>
         </md-list>
     </md-sidenav>
