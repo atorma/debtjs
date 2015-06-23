@@ -22,7 +22,7 @@
   
     <div layout="row" layout-align="start center">
       <label for="cost" flex>Cost</label>
-      <div id="cost" style="margin: 15px; padding-right: 8px">{{vm.cost | balance}}</div>
+      <div id="cost" style="margin: 15px; padding-right: 8px">{{vm.cost | money}}</div>
     </div>
     
     <div layout="row" layout-align="start center">
@@ -140,7 +140,7 @@
         <p layout="column">
           <span class="margin-bottom">{{d.debtor.name}} owes </span>
           <span ng-repeat="c in d.debts" class="margin-bottom" style="margin-left: 16px;">
-            {{c.creditor.name}}: {{c.amount | balance}}
+            {{c.creditor.name}}: {{c.amount | money}}
           </span>
           <span class="invisible-linebreak"><br/></span>
         </p>
