@@ -16,7 +16,7 @@ describe("DebtAppCtrl", function() {
   var balanceSheetJson;
   var openCreatePersonDialog;
   var openCreateExpenseDialog;
-  var fileSaver;
+  var fileService;
 
   beforeEach(angular.mock.module("debtApp"));
   
@@ -33,7 +33,7 @@ describe("DebtAppCtrl", function() {
     openCreatePersonDialog = jasmine.createSpy("openCreatePersonDialog");
     openCreateExpenseDialog = jasmine.createSpy("openCreateExpenseDialog");
 
-    fileSaver = jasmine.createSpyObj("fileSaver", ["saveAs"]);
+    fileService = jasmine.createSpyObj("fileService", ["saveAsFile", "readAsText"]);
 
     $state = jasmine.createSpyObj("$state", ["go"]);
   });
@@ -48,7 +48,6 @@ describe("DebtAppCtrl", function() {
     $q = _$q_;
 
     $window = _$window_;
-    $window.FileReader = FileReaderStub;
 
     openCreatePersonDialog.and.returnValue($q.when({}));
     openCreateExpenseDialog.and.returnValue($q.when({}));
@@ -65,10 +64,9 @@ describe("DebtAppCtrl", function() {
       balanceSheetSaveCtrlConfig: {wait: 0},
       openCreatePersonDialog: openCreatePersonDialog,
       openCreateExpenseDialog: openCreateExpenseDialog,
-      fileSaver: fileSaver,
+      fileService: fileService,
       $mdDialog: $mdDialog,
-      $scope: $scope,
-      $window: $window
+      $scope: $scope
     });
 
   }));
@@ -88,16 +86,6 @@ describe("DebtAppCtrl", function() {
 
     expect(eventBroadcasted).toBe(true);
   }
-
-  function FileReaderStub() {
-    this.readAsText = function(file) {
-      if (this.onload) {
-        this.onload();
-      }
-      return file;
-    };
-  }
-
 
   describe("init()", function() {
 
@@ -213,14 +201,14 @@ describe("DebtAppCtrl", function() {
     });
 
     it("sheet from JSON file, and updates view state", function() {
-      var jsonString = "{}";
-      var jsonBlob =  new $window.Blob([jsonString], {type: "application/json"});
+      var jsonBlob =  new $window.Blob([balanceSheetJson], {type: "application/json"});
+      fileService.readAsText.and.returnValue($q.when(balanceSheetJson));
 
       vm.loadSheet([jsonBlob]);
+      $scope.$digest();
 
-      // Difficult to get in between a new FileReader and the onload callback
-      //expect(balanceSheetService.loadFromJson).toHaveBeenCalledWith(jsonString);
-
+      expect(fileService.readAsText).toHaveBeenCalledWith(jsonBlob);
+      expect(balanceSheetService.loadFromJson).toHaveBeenCalledWith(balanceSheetJson);
       expect(vm.save).toHaveBeenCalled();
       expect(vm.refresh).toHaveBeenCalled();
 
@@ -232,17 +220,12 @@ describe("DebtAppCtrl", function() {
 
   describe("exportSheet()", function() {
 
-    beforeEach(function() {
-      spyOn($window, "Blob");
-
-      vm.init();
-    });
-
     it("exports sheet by saving it as file", function() {
+      balanceSheet.name = "my sheet";
+
       vm.exportSheet();
 
-      expect($window.Blob).toHaveBeenCalledWith([balanceSheetJson], {type: "application/json"});
-      expect(fileSaver.saveAs).toHaveBeenCalled();
+      expect(fileService.saveAsFile).toHaveBeenCalledWith([balanceSheetJson], "my sheet.txt");
     });
 
   });
@@ -263,10 +246,11 @@ describe("DebtAppCtrl", function() {
     });
 
     it("when sheet loaded", function() {
-      var jsonString = "{}";
-      var jsonBlob =  new $window.Blob([jsonString], {type: "application/json"});
+      var jsonBlob =  new $window.Blob([balanceSheetJson], {type: "application/json"});
 
       expectEventBroadcasted(function() {
+        fileService.readAsText.and.returnValue($q.when(balanceSheetJson));
+
         vm.loadSheet([jsonBlob]);
       }, events.BALANCE_SHEET_UPDATED);
     });

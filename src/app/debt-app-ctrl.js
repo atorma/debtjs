@@ -11,13 +11,12 @@ function DebtAppCtrl(balanceSheetService,
                      balanceSheetSaveCtrlConfig,
                      openCreatePersonDialog,
                      openCreateExpenseDialog,
-                     fileSaver,
+                     fileService,
                      events,
                      $mdDialog,
                      $mdSidenav,
                      $state,
                      $scope,
-                     $window,
                      $log) {
 
   var vm = this;
@@ -40,8 +39,6 @@ function DebtAppCtrl(balanceSheetService,
     .content("The current sheet will be discarded. Please consider exporting it first. Continue?")
     .ok("Ok").cancel("Cancel");
 
-  var Blob, FileReader;
-
   init();
 
   /////////////////////////////////////////////////////////////
@@ -51,10 +48,6 @@ function DebtAppCtrl(balanceSheetService,
   }
 
   function init() {
-    // TODO make these injectable values or factories to make testing easier and to hide browser differences
-    Blob = $window.Blob || angular.noop;
-    FileReader = $window.FileReader || angular.noop;
-
     $scope.$on(events.BALANCE_SHEET_UPDATED, _.debounce(onBalanceSheetUpdated, balanceSheetSaveCtrlConfig.wait));
     vm.refresh();
   }
@@ -121,12 +114,11 @@ function DebtAppCtrl(balanceSheetService,
   function loadSheet(files) {
     if (!files || !files.length) return;
 
-    var reader = new FileReader();
-    reader.onload = function() {
-      loadSheetFromJson(reader.result);
-    };
-    reader.readAsText(files[0]);
-    vm.mainMenu.toggle();
+    fileService.readAsText(files[0])
+      .then(function(result) {
+        loadSheetFromJson(result);
+        vm.mainMenu.toggle();
+      });
   }
 
   function loadSheetFromJson(json) {
@@ -138,8 +130,7 @@ function DebtAppCtrl(balanceSheetService,
 
   function exportSheet() {
     var json = balanceSheetService.exportToJson();
-    var blob = new Blob([json], {type: "application/json"});
-    fileSaver.saveAs(blob, balanceSheetService.balanceSheet.name + ".txt");
+    fileService.saveAsFile([json], balanceSheetService.balanceSheet.name + ".txt");
     vm.mainMenu.toggle();
   }
 }
