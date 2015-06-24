@@ -1,7 +1,8 @@
 "use strict";
 
 var angular = require("angular");
-var fileSaver = require('node-safe-filesaver');
+var fileSaver = require("node-safe-filesaver");
+require("blob-polyfill");
 
 angular.module("debtApp")
   .factory("fileService", fileService);
@@ -11,7 +12,8 @@ function fileService($q, $window) {
 
   return {
     readAsText: readAsText,
-    saveAsFile: saveAsFile
+    saveAsFile: saveAsFile,
+    isSupported: isSupported
   };
 
   function readAsText(blob) {
@@ -32,5 +34,9 @@ function fileService($q, $window) {
   function saveAsFile(dataArray, fileName) {
     var blob = new $window.Blob(dataArray, {});
     fileSaver.saveAs(blob, fileName);
+  }
+
+  function isSupported() {
+    return $window.FileReader && $window.Blob;
   }
 }

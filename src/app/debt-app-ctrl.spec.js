@@ -33,7 +33,8 @@ describe("DebtAppCtrl", function() {
     openCreatePersonDialog = jasmine.createSpy("openCreatePersonDialog");
     openCreateExpenseDialog = jasmine.createSpy("openCreateExpenseDialog");
 
-    fileService = jasmine.createSpyObj("fileService", ["saveAsFile", "readAsText"]);
+    fileService = jasmine.createSpyObj("fileService", ["saveAsFile", "readAsText", "isSupported"]);
+    fileService.isSupported.and.returnValue(true);
 
     $state = jasmine.createSpyObj("$state", ["go"]);
   });
@@ -215,6 +216,23 @@ describe("DebtAppCtrl", function() {
       expect($state.go).toHaveBeenCalledWith("balanceSheet");
     });
 
+    it("error message when loading sheet from file but file operations not supported", function() {
+      fileService.isSupported.and.returnValue(false);
+
+      var jsonBlob =  new $window.Blob([balanceSheetJson], {type: "application/json"});
+      fileService.readAsText.and.returnValue($q.when(balanceSheetJson));
+
+      vm.loadSheet([jsonBlob]);
+      $scope.$digest();
+
+      expect(vm.errorMessage).toBeDefined();
+
+      expect(fileService.readAsText).not.toHaveBeenCalled();
+      expect(balanceSheetService.loadFromJson).not.toHaveBeenCalled();
+      expect(vm.save).not.toHaveBeenCalled();
+      expect(vm.refresh).not.toHaveBeenCalled();
+    });
+
   });
 
 
@@ -226,6 +244,15 @@ describe("DebtAppCtrl", function() {
       vm.exportSheet();
 
       expect(fileService.saveAsFile).toHaveBeenCalledWith([balanceSheetJson], "my sheet.txt");
+    });
+
+    it("sets error message if file operations not supported", function() {
+      fileService.isSupported.and.returnValue(false);
+
+      vm.exportSheet();
+
+      expect(vm.errorMessage).toBeDefined();
+      expect(fileService.saveAsFile).not.toHaveBeenCalled();
     });
 
   });

@@ -114,9 +114,20 @@ function DebtAppCtrl(balanceSheetService,
   function loadSheet(files) {
     if (!files || !files.length) return;
 
-    fileService.readAsText(files[0])
+    if (!fileService.isSupported()) {
+      vm.errorMessage = "File operations not supported in this browser. Please consider a more modern browser.";
+      return;
+    }
+
+    var file = files[0];
+    fileService.readAsText(file)
       .then(function(result) {
         loadSheetFromJson(result);
+      })
+      .catch(function() {
+        vm.errorMessage = "Unable to read file";
+      })
+      .finally(function() {
         vm.mainMenu.toggle();
       });
   }
@@ -129,8 +140,17 @@ function DebtAppCtrl(balanceSheetService,
   }
 
   function exportSheet() {
+    if (!fileService.isSupported()) {
+      vm.errorMessage = "File operations not supported in this browser. Please consider a more modern browser.";
+      return;
+    }
+
     var json = balanceSheetService.exportToJson();
-    fileService.saveAsFile([json], balanceSheetService.balanceSheet.name + ".txt");
+    try {
+      fileService.saveAsFile([json], balanceSheetService.balanceSheet.name + ".txt");
+    } catch (e) {
+      vm.errorMessage = "Error when saving file";
+    }
     vm.mainMenu.toggle();
   }
 }
