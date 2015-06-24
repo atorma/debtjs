@@ -1,7 +1,6 @@
 "use strict";
 
 var angular = require("angular");
-var _ = require("lodash");
 var Decimal = require("simple-decimal-money");
 
 angular.module("debtApp")

@@ -1,7 +1,6 @@
 "use strict";
 
 var angular = require("angular");
-var _ = require('lodash');
 
 angular.module("debtApp")
   .filter("money", money);
