@@ -43,6 +43,7 @@ describe("ExpenseDetailCtrl", function() {
   beforeEach(angular.mock.module("debtApp", function($provide) {
     $provide.value("$state", $state);
   }));
+
   
   beforeEach(angular.mock.inject(function(_events_, $rootScope, $controller, $q, $mdDialog) {
     events = _events_;
@@ -55,6 +56,7 @@ describe("ExpenseDetailCtrl", function() {
     
     vm = $controller("ExpenseDetailCtrl", {
       balanceSheetService: balanceSheetService,
+      debtCalculationInterval: 0,
       debtService: debtService,
       $stateParams: $stateParams,
       $state: $state,
@@ -75,6 +77,10 @@ describe("ExpenseDetailCtrl", function() {
     $scope.$digest();
 
     expect(eventEmitted).toBe(true);
+  }
+
+  function afterTimeout(fun) {
+    setTimeout(fun, 0);
   }
 
 
@@ -112,7 +118,7 @@ describe("ExpenseDetailCtrl", function() {
       expect(expense.shareCost).toHaveBeenCalled();
     });
 
-    it("computes debts by debtor", function() {
+    it("computes debts by debtor", function(done) {
       var participations = [{person: "Dummy"}];
       spyOn(expense, "getParticipations").and.returnValue(participations);
       
@@ -132,16 +138,24 @@ describe("ExpenseDetailCtrl", function() {
       };
       
       vm.updateExpense();
-      
-      expect(vm.debtsByDebtor).toBe(debtsByDebtor);
+
+      afterTimeout(function() {
+        expect(vm.debtsByDebtor).toBe(debtsByDebtor);
+        done();
+      })
+
     });
 
-    it("does not compute debts if expense is unbalanced", function() {
+    it("does not compute debts if expense is unbalanced", function(done) {
       spyOn(expense, "isBalanced").and.returnValue(false);
 
       vm.updateExpense();
 
-      expect(vm.debtsByDebtor).not.toBeDefined();
+      afterTimeout(function() {
+        expect(vm.debtsByDebtor).not.toBeDefined();
+        done();
+      })
+
     });
     
     it("puts expense cost into scope variable", function() {

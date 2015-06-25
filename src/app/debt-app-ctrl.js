@@ -4,11 +4,11 @@ var angular = require("angular");
 var _ = require("lodash");
 
 angular.module("debtApp")
-  .value("balanceSheetSaveCtrlConfig", {wait: 500})
+  .constant("balanceSheetSaveInterval", 500)
   .controller("DebtAppCtrl", DebtAppCtrl);
 
 function DebtAppCtrl(balanceSheetService,
-                     balanceSheetSaveCtrlConfig,
+                     balanceSheetSaveInterval,
                      openCreatePersonDialog,
                      openCreateExpenseDialog,
                      fileService,
@@ -49,7 +49,7 @@ function DebtAppCtrl(balanceSheetService,
   }
 
   function init() {
-    $scope.$on(events.BALANCE_SHEET_UPDATED, _.debounce(onBalanceSheetUpdated, balanceSheetSaveCtrlConfig.wait));
+    $scope.$on(events.BALANCE_SHEET_UPDATED, _.debounce(onBalanceSheetUpdated, balanceSheetSaveInterval));
     vm.refresh();
   }
 
@@ -64,10 +64,10 @@ function DebtAppCtrl(balanceSheetService,
     try {
       balanceSheetService.save();
       vm.errorMessage = undefined;
-      $log.debug("Balance sheet saved");
+      //$log.debug("Balance sheet saved");
     } catch (e) {
       vm.errorMessage = "Cannot save: " + e.message;
-      $log.error("Error when saving balance sheet: " + e.message);
+      //$log.error("Error when saving balance sheet: " + e.message);
     }
   }
 

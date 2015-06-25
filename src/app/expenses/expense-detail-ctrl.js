@@ -7,12 +7,25 @@ angular
   .module("debtApp")
   .controller("ExpenseDetailCtrl", ExpenseDetailCtrl);
 
-function ExpenseDetailCtrl(balanceSheetService, debtService, events, $mdDialog, $stateParams, $state, $scope) {
+function ExpenseDetailCtrl(balanceSheetService,
+                           debtService,
+                           events,
+                           debtCalculationInterval,
+                           $mdDialog,
+                           $stateParams,
+                           $state,
+                           $scope)
+{
   var vm = this;
 
   var confirmRemoveExpense = $mdDialog.confirm()
     .content("Really delete this expense?")
     .ok("Ok").cancel("Cancel");
+
+  var computeDebtsDebounced = _.debounce(function() {
+    vm.debtsByDebtor = computeDebts();
+    $scope.$digest();
+  }, debtCalculationInterval);
 
   vm.init = init;
   vm.setParticipation = setParticipation;
@@ -40,10 +53,10 @@ function ExpenseDetailCtrl(balanceSheetService, debtService, events, $mdDialog, 
   function updateExpense() {
     vm.expense.shareCost();
     vm.isParticipant = getParticipationMap();
-    vm.debtsByDebtor = computeDebts();
     vm.cost = vm.expense.getCost();
     vm.sumOfShares = vm.expense.getSumOfShares();
     $scope.$emit(events.BALANCE_SHEET_UPDATED);
+    computeDebtsDebounced();
   }
 
   function getParticipationMap() {

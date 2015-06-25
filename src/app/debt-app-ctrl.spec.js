@@ -62,7 +62,7 @@ describe("DebtAppCtrl", function() {
     
     vm = $controller("DebtAppCtrl", {
       balanceSheetService: balanceSheetService,
-      balanceSheetSaveCtrlConfig: {wait: 0},
+      balanceSheetSaveInterval: 0,
       openCreatePersonDialog: openCreatePersonDialog,
       openCreateExpenseDialog: openCreateExpenseDialog,
       fileService: fileService,

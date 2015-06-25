@@ -15,6 +15,7 @@ angular
   .constant("events", {
     BALANCE_SHEET_UPDATED: "balance sheet updated"
   })
+  .constant("debtCalculationInterval", 500)
   .config(configureLocalStorage)
   .config(configureIcons)
   .config(hrefSanitization)

@@ -6,10 +6,25 @@ var _ = require('lodash');
 angular.module("debtApp")
   .controller("PersonDetailCtrl", PersonDetailCtrl);
 
-function PersonDetailCtrl(balanceSheetService, debtService, events, $state, $stateParams, $mdDialog, $scope, $log) {
+function PersonDetailCtrl(balanceSheetService,
+                          debtService,
+                          events,
+                          debtCalculationInterval,
+                          $state,
+                          $stateParams,
+                          $mdDialog,
+                          $scope)
+{
 
   var vm = this;
   var confirmRemovePerson;
+
+  var computeDebtsDebounced = _.debounce(function() {
+    var debtResult = computeDebts();
+    vm.debtRole = debtResult.role;
+    vm.debts = debtResult.debts;
+    $scope.$digest();
+  }, debtCalculationInterval);
 
   vm.init = init;
   vm.refresh = refresh;
@@ -38,9 +53,7 @@ function PersonDetailCtrl(balanceSheetService, debtService, events, $state, $sta
     vm.cost = vm.person.getCost();
     vm.sumOfShares = vm.person.getSumOfShares();
     vm.balance = vm.person.getBalance();
-    var debtResult = computeDebts();
-    vm.debtRole = debtResult.role;
-    vm.debts = debtResult.debts;
+    computeDebtsDebounced();
   }
 
   function getParticipationMap() {
