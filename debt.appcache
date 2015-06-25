@@ -1,9 +1,10 @@
 CACHE MANIFEST
-# Time: Tue Jun 16 2015 07:53:25 GMT+0300 (Suomen kesäaika)
+# Time: Thu Jun 25 2015 08:28:11 GMT+0300 (Suomen kesäaika)
 
 
 CACHE:
 debt.js
+help.html
 index.html
 libs.js
 offline.html
