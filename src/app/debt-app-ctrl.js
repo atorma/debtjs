@@ -33,6 +33,7 @@ function DebtAppCtrl(balanceSheetService,
   vm.exportSheet = exportSheet;
   vm.save = save;
   vm.refresh = refresh;
+  vm.showHelp = showHelp;
 
   var confirmCreateNewSheet = $mdDialog.confirm()
     .title("Create new sheet")
@@ -151,6 +152,18 @@ function DebtAppCtrl(balanceSheetService,
     } catch (e) {
       vm.errorMessage = "Error when saving file";
     }
+    vm.mainMenu.toggle();
+  }
+
+  function showHelp() {
+    $mdDialog.show({
+      templateUrl: "help.html",
+      controller: function($scope, $mdDialog) {
+        $scope.close = function() {
+          $mdDialog.hide();
+        }
+      }
+    });
     vm.mainMenu.toggle();
   }
 }

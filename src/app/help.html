@@ -1,0 +1,46 @@
+<md-dialog aria-label="Help">
+  <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Debt App</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="close()">
+          <md-icon md-svg-icon="navigation:ic_close_24px" aria-label="Close"></md-icon>
+        </md-button>
+      </div>
+  </md-toolbar>
+  <md-dialog-content>
+    <h2 class="md-title">Sharing expenses</h2>
+    <p>
+      The purpose of this is app is to share expenses and "simplify" the resulting debts. The latter means calculating
+      debts in such a way that everyone gets settled up while keeping the number of money transfers to a minimum.
+    </p>
+    <p>
+      Because the debts bundled over all the expenses, you should only ask people to actually settle debts
+      after all the expenses are in.
+    </p>
+    <p>
+      You can also mark an individual expense as 'Settled'. An expense settled individually is taken out of the
+      bundled expense and debt calculation.
+    </p>
+    <h2 class="md-title">Offline use</h2>
+    <p>
+      This app is designed for offline use. (It's an HTML5 offline app.) Once opened with a network connection,
+      you can use the app even when you're offline by just opening the same page in your browser.
+      It helps if you bookmark the page.
+    </p>
+    <p>
+      The current expense sheet is automatically saved in your browser's memory. You can close the application and
+      when you open it again in the same browser, the data is reloaded.
+      Please note that clearing temporary internet files and such things can wipe away the expense sheet, too.
+    </p>
+    <p>
+      For permanent data storage, you can save an expense sheet to a file -- and sync it to Dropbox for example
+      -- and load a sheet from a file. This way you can share data between devices, too.
+    </p>
+    <h2 class="md-title">Source code</h2>
+    <p>
+      The source code of this app is freely available at
+      <a href="https://github.com/atorma/debtjs">My GitHub page</a>.
+    </p>
+  </md-dialog-content>
+</md-dialog>

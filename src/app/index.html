@@ -49,7 +49,11 @@
             <p class="md-list-item-text" ngf-select ngf-change="vm.loadSheet($files)">Load sheet from file</p>
           </md-list-item>
           <md-list-item ng-click="vm.exportSheet()">
-            <p class="md-list-item-text">Export sheet to file</p>
+            <p class="md-list-item-text">Save sheet to file</p>
+          </md-list-item>
+          <md-divider></md-divider>
+          <md-list-item ng-click="vm.showHelp()">
+            <p class="md-list-item-text">Help</p>
           </md-list-item>
         </md-list>
     </md-sidenav>
