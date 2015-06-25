@@ -6,7 +6,8 @@ require("../debt");
 var BalanceSheet = require("../balance-sheet/balance-sheet");
   
 describe("PersonDetailCtrl", function() {
-  
+
+  var $timeout;
   var $scope;
   var $stateParams;
   var $state;
@@ -35,6 +36,12 @@ describe("PersonDetailCtrl", function() {
 
   beforeEach(angular.mock.module("debtApp", function($provide) {
     $provide.value("$state", $state);
+    $provide.value("$timeout", function(fun) {
+      fun();
+    });
+    $provide.value("debounce", function(fun) {
+      return fun;
+    });
   }));
   
   beforeEach(angular.mock.inject(function(_events_, $rootScope, $controller, $q, $mdDialog) {
@@ -46,10 +53,14 @@ describe("PersonDetailCtrl", function() {
     $mdDialog.show = function() {
       return $q.when();
     };
+
+    // Debounce function that actually doesn't debounce (faster, simpler tests)
+    var debounce = function(fun) {
+      return fun;
+    };
     
     vm = $controller("PersonDetailCtrl", {
       balanceSheetService: balanceSheetService,
-      debtCalculationInterval: 0,
       debtService: debtService,
       $stateParams: $stateParams,
       $state: $state,
@@ -58,7 +69,6 @@ describe("PersonDetailCtrl", function() {
     });
     
   }));
-
 
   function expectEventEmitted(fun, eventName) {
     var eventEmitted = false;
@@ -70,10 +80,6 @@ describe("PersonDetailCtrl", function() {
     $scope.$digest();
 
     expect(eventEmitted).toBe(true);
-  }
-
-  function afterTimeout(fun) {
-    setTimeout(fun, 0);
   }
 
 
@@ -172,7 +178,7 @@ describe("PersonDetailCtrl", function() {
         spyOn(balanceSheet, "getNonSettledParticipations").and.returnValue(nonSettledParticipations);
       });
       
-      it("computed with role creditor when person's balance is negative", function(done) {
+      it("computed with role creditor when person's balance is negative", function() {
         spyOn(balanceSheet, "isBalanced").and.returnValue(true);
         spyOn(person, "getBalance").and.returnValue(-100);
 
@@ -188,16 +194,12 @@ describe("PersonDetailCtrl", function() {
         
         vm.refresh();
 
-        afterTimeout(function() {
-          expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations);
-          expect(vm.debtRole).toEqual("creditor");
-          expect(vm.debts).toEqual([{person: debtor2, amount: 50}]);
-          done();
-        });
-
+        expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations);
+        expect(vm.debtRole).toEqual("creditor");
+        expect(vm.debts).toEqual([{person: debtor2, amount: 50}]);
       });
       
-      it("computed with role debtor when person's balance is positive", function(done) {
+      it("computed with role debtor when person's balance is positive", function() {
         spyOn(balanceSheet, "isBalanced").and.returnValue(true);
         spyOn(person, "getBalance").and.returnValue(100);
         
@@ -213,43 +215,31 @@ describe("PersonDetailCtrl", function() {
         
         vm.refresh();
 
-        afterTimeout(function() {
-          expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations);
-          expect(vm.debtRole).toEqual("debtor");
-          expect(vm.debts).toEqual([{person: creditor1, amount: 10}]);
-          done();
-        });
-
+        expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations);
+        expect(vm.debtRole).toEqual("debtor");
+        expect(vm.debts).toEqual([{person: creditor1, amount: 10}]);
       });
       
-      it("not computed and role is settled when person's balance is zero", function(done) {
+      it("not computed and role is settled when person's balance is zero", function() {
         spyOn(balanceSheet, "isBalanced").and.returnValue(true);
         spyOn(person, "getBalance").and.returnValue(0); 
         
         vm.refresh();
 
-        afterTimeout(function() {
-          expect(debtService.computeDebts).not.toHaveBeenCalled();
-          expect(vm.debtRole).toEqual("settled");
-          expect(vm.debts).not.toBeDefined();
-          done();
-        });
-
+        expect(debtService.computeDebts).not.toHaveBeenCalled();
+        expect(vm.debtRole).toEqual("settled");
+        expect(vm.debts).not.toBeDefined();
       });
       
-      it("not computed and role is unbalanced", function(done) {
+      it("not computed and role is unbalanced", function() {
         spyOn(balanceSheet, "isBalanced").and.returnValue(false);
         spyOn(person, "getBalance").and.returnValue(10); 
         
         vm.refresh();
 
-        afterTimeout(function() {
-          expect(debtService.computeDebts).not.toHaveBeenCalled();
-          expect(vm.debtRole).toEqual("unbalanced");
-          expect(vm.debts).not.toBeDefined();
-          done();
-        });
-
+        expect(debtService.computeDebts).not.toHaveBeenCalled();
+        expect(vm.debtRole).toEqual("unbalanced");
+        expect(vm.debts).not.toBeDefined();
       });
       
     });

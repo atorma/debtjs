@@ -8,6 +8,7 @@ angular.module("debtApp")
   .controller("DebtAppCtrl", DebtAppCtrl);
 
 function DebtAppCtrl(balanceSheetService,
+                     debounce,
                      balanceSheetSaveInterval,
                      openCreatePersonDialog,
                      openCreateExpenseDialog,
@@ -49,7 +50,7 @@ function DebtAppCtrl(balanceSheetService,
   }
 
   function init() {
-    $scope.$on(events.BALANCE_SHEET_UPDATED, _.debounce(onBalanceSheetUpdated, balanceSheetSaveInterval));
+    $scope.$on(events.BALANCE_SHEET_UPDATED, debounce(onBalanceSheetUpdated, balanceSheetSaveInterval));
     vm.refresh();
   }
 

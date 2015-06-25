@@ -9,21 +9,24 @@ angular.module("debtApp")
 function PersonDetailCtrl(balanceSheetService,
                           debtService,
                           events,
+                          debounce,
                           debtCalculationInterval,
                           $state,
                           $stateParams,
                           $mdDialog,
-                          $scope)
+                          $scope,
+                          $timeout)
 {
 
   var vm = this;
   var confirmRemovePerson;
 
-  var computeDebtsDebounced = _.debounce(function() {
-    var debtResult = computeDebts();
-    vm.debtRole = debtResult.role;
-    vm.debts = debtResult.debts;
-    $scope.$digest();
+  var computeDebtsDebounced = debounce(function() {
+    $timeout(function() {
+      var debtResult = computeDebts();
+      vm.debtRole = debtResult.role;
+      vm.debts = debtResult.debts;
+    });
   }, debtCalculationInterval);
 
   vm.init = init;

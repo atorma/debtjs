@@ -37,11 +37,16 @@ describe("ExpenseDetailCtrl", function() {
         id: expense.id
     };
     $state = jasmine.createSpyObj("$state", ["go"]);
-
   });
 
   beforeEach(angular.mock.module("debtApp", function($provide) {
     $provide.value("$state", $state);
+    $provide.value("$timeout", function(fun) {
+      fun();
+    });
+    $provide.value("debounce", function(fun) {
+      return fun;
+    });
   }));
 
   
@@ -53,10 +58,9 @@ describe("ExpenseDetailCtrl", function() {
     $mdDialog.show = function() {
       return $q.when();
     };
-    
+
     vm = $controller("ExpenseDetailCtrl", {
       balanceSheetService: balanceSheetService,
-      debtCalculationInterval: 0,
       debtService: debtService,
       $stateParams: $stateParams,
       $state: $state,
@@ -78,11 +82,6 @@ describe("ExpenseDetailCtrl", function() {
 
     expect(eventEmitted).toBe(true);
   }
-
-  function afterTimeout(fun) {
-    setTimeout(fun, 0);
-  }
-
 
   it("exposes balance sheet and expense", function() {
     expect(vm.balanceSheet).toBe(balanceSheet);
@@ -118,7 +117,7 @@ describe("ExpenseDetailCtrl", function() {
       expect(expense.shareCost).toHaveBeenCalled();
     });
 
-    it("computes debts by debtor", function(done) {
+    it("computes debts by debtor", function() {
       var participations = [{person: "Dummy"}];
       spyOn(expense, "getParticipations").and.returnValue(participations);
       
@@ -139,23 +138,15 @@ describe("ExpenseDetailCtrl", function() {
       
       vm.updateExpense();
 
-      afterTimeout(function() {
-        expect(vm.debtsByDebtor).toBe(debtsByDebtor);
-        done();
-      })
-
+      expect(vm.debtsByDebtor).toBe(debtsByDebtor);
     });
 
-    it("does not compute debts if expense is unbalanced", function(done) {
+    it("does not compute debts if expense is unbalanced", function() {
       spyOn(expense, "isBalanced").and.returnValue(false);
 
       vm.updateExpense();
 
-      afterTimeout(function() {
-        expect(vm.debtsByDebtor).not.toBeDefined();
-        done();
-      })
-
+      expect(vm.debtsByDebtor).not.toBeDefined();
     });
     
     it("puts expense cost into scope variable", function() {

@@ -10,11 +10,13 @@ angular
 function ExpenseDetailCtrl(balanceSheetService,
                            debtService,
                            events,
+                           debounce,
                            debtCalculationInterval,
                            $mdDialog,
                            $stateParams,
                            $state,
-                           $scope)
+                           $scope,
+                           $timeout)
 {
   var vm = this;
 
@@ -22,9 +24,10 @@ function ExpenseDetailCtrl(balanceSheetService,
     .content("Really delete this expense?")
     .ok("Ok").cancel("Cancel");
 
-  var computeDebtsDebounced = _.debounce(function() {
-    vm.debtsByDebtor = computeDebts();
-    $scope.$digest();
+  var computeDebtsDebounced = debounce(function() {
+    $timeout(function() {
+      vm.debtsByDebtor = computeDebts();
+    });
   }, debtCalculationInterval);
 
   vm.init = init;

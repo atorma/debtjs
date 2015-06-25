@@ -41,6 +41,9 @@ describe("DebtAppCtrl", function() {
   
   beforeEach(angular.mock.module("debtApp", function($provide) {
     $provide.value("$state", $state);
+    $provide.value("debounce", function(fun) {
+      return fun;
+    });
   }));
 
   
@@ -59,10 +62,9 @@ describe("DebtAppCtrl", function() {
     $mdDialog.show = function() {
       return $q.when();
     };
-    
+
     vm = $controller("DebtAppCtrl", {
       balanceSheetService: balanceSheetService,
-      balanceSheetSaveInterval: 0,
       openCreatePersonDialog: openCreatePersonDialog,
       openCreateExpenseDialog: openCreateExpenseDialog,
       fileService: fileService,
@@ -71,10 +73,6 @@ describe("DebtAppCtrl", function() {
     });
 
   }));
-
-  function afterTimeout(fun) {
-    setTimeout(fun, 0);
-  }
 
   function expectEventBroadcasted(fun, eventName) {
     var eventBroadcasted = false;
@@ -138,16 +136,12 @@ describe("DebtAppCtrl", function() {
       expect(vm.errorMessage).toBe(undefined);
     });
 
-    it("is triggered by 'balance sheet updated' event", function(done) {
+    it("is triggered by 'balance sheet updated' event", function() {
       spyOn(vm, "save");
 
       $scope.$emit(events.BALANCE_SHEET_UPDATED);
 
-      afterTimeout(function() {
-        expect(vm.save).toHaveBeenCalled();
-        done();
-      });
-
+      expect(vm.save).toHaveBeenCalled();
     });
 
   });
@@ -159,6 +153,7 @@ describe("DebtAppCtrl", function() {
       spyOn(vm, "save");
       spyOn(vm, "refresh");
     });
+
 
     it("person using data and options from dialog", function() {
       var dialogResult = {

@@ -16,6 +16,7 @@ angular
     BALANCE_SHEET_UPDATED: "balance sheet updated"
   })
   .constant("debtCalculationInterval", 500)
+  .value("debounce", _.debounce) // allows stubbing this for faster tests
   .config(configureLocalStorage)
   .config(configureIcons)
   .config(hrefSanitization)
