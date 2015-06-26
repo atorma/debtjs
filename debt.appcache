@@ -1,0 +1,47 @@
+CACHE MANIFEST
+# Time: Fri Jun 26 2015 08:15:28 GMT+0300 (Suomen kesäaika)
+
+
+CACHE:
+debt.js
+help.html
+index.html
+libs.js
+offline.html
+balance-sheet/balance-sheet.html
+expenses/create-expense-dialog.html
+expenses/expense-detail.html
+persons/create-person-dialog.html
+persons/person-detail.html
+resources/angular-material.css
+resources/debt.css
+resources/ic_account_balance_wallet_black_48dp.png
+resources/mfb.css
+resources/fonts/Roboto_400_italic.ttf
+resources/fonts/Roboto_400_italic.woff
+resources/fonts/Roboto_400_normal.svg
+resources/fonts/Roboto_400_normal.ttf
+resources/fonts/Roboto_400_normal.woff
+resources/fonts/Roboto_500_normal.ttf
+resources/fonts/Roboto_500_normal.woff
+resources/fonts/Roboto_700_normal.ttf
+resources/fonts/Roboto_700_normal.woff
+resources/fonts/fonts.css
+resources/icons/svg-sprite-action.svg
+resources/icons/svg-sprite-alert.svg
+resources/icons/svg-sprite-content.svg
+resources/icons/svg-sprite-navigation.svg
+
+
+NETWORK:
+http://*
+https://*
+*
+
+
+FALLBACK:
+/ offline.html
+
+
+SETTINGS:
+prefer-online
