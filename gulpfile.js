@@ -30,13 +30,15 @@ var paths = {
 };
 
 var bundles = require('./browserify-bundles');
+var packageJson = require('./package.json');
 
 var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
 
 var DEVELOPMENT = "development";
 var PRODUCTION = "production";
 var context = {
-  environment: DEVELOPMENT
+  environment: DEVELOPMENT,
+  version: packageJson.version
 };
 
 function ifEnv(env, fun) {

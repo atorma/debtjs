@@ -1,7 +1,7 @@
 <md-dialog aria-label="Help">
   <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>Debt App</h2>
+        <h2>DebtJS v<!-- @echo version --></h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="close()">
           <md-icon md-svg-icon="navigation:ic_close_24px" aria-label="Close"></md-icon>
@@ -11,16 +11,14 @@
   <md-dialog-content>
     <h2 class="md-title">Sharing expenses</h2>
     <p>
-      The purpose of this is app is to share expenses and "simplify" the resulting debts. The latter means calculating
-      debts in such a way that everyone gets settled up while keeping the number of money transfers to a minimum.
+      The purpose of this is app is to share expenses and to "simplify" the resulting debts.
+      This means calculating debts so that <i>all</i> expenses are settled as a bundle
+      while keeping the number of money transfers to a minimum.
     </p>
     <p>
-      Because the debts bundled over all the expenses, you should only ask people to actually settle debts
-      after all the expenses are in.
-    </p>
-    <p>
-      You can also mark an individual expense as 'Settled'. An expense settled individually is taken out of the
-      bundled expense and debt calculation.
+      Because debts bundled over all the expenses, it's best to ask people to actually pay their debts
+      only after all the expenses are recorded. You can, however, set an individual expense as 'Settled'.
+      An expense settled individually is taken out of the bundled expense and debt calculation.
     </p>
     <h2 class="md-title">Offline use</h2>
     <p>
@@ -39,8 +37,11 @@
     </p>
     <h2 class="md-title">Source code</h2>
     <p>
-      The source code of this app is freely available at
-      <a href="https://github.com/atorma/debtjs">My GitHub page</a>.
+      The source code of this app is freely available at my <a href="https://github.com/atorma/debtjs">GitHub page</a>.
     </p>
+    <h2 class="md-title">Other expense sharing apps</h2>
+    <p>
+      If you need more features, such as your friends being able to enter expenses or tracking expenses among multiple
+      groups, you might want to look into Settle Up or Splitwise.
   </md-dialog-content>
 </md-dialog>
