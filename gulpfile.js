@@ -17,6 +17,7 @@ var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
 var ngAnnotate = require('gulp-ng-annotate');
 var preprocess = require('gulp-preprocess');
+var gulpIf = require('gulp-if');
 
 var paths = {
   main: 'src/app/debt.js',
@@ -34,24 +35,16 @@ var packageJson = require('./package.json');
 
 var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
 
-var DEVELOPMENT = "development";
-var PRODUCTION = "production";
+var DEV = "development";
+var PROD = "production";
 var context = {
-  environment: DEVELOPMENT,
+  env: DEV,
   version: packageJson.version
 };
 
-function ifEnv(env, fun) {
-  if (context.environment == env) {
-    return fun();
-  } else {
-    return gutil.noop();
-  }
-}
-
 
 gulp.task('build-dev', function(cb) {
-  context.environment = DEVELOPMENT;
+  context.env = DEV;
   runSequence(
     'clean',
     [
@@ -66,7 +59,7 @@ gulp.task('build-dev', function(cb) {
 });
 
 gulp.task('build-prod', function(cb) {
-  context.environment = PRODUCTION;
+  context.env = PROD;
   runSequence(
     'clean',
     [
@@ -81,52 +74,77 @@ gulp.task('build-prod', function(cb) {
     cb);
 });
 
-
-gulp.task('clean', function(cb) {
-  del(paths.build + '/**/*.*', cb);
+gulp.task('watch', function(cb) {
+  runSequence(['watch:js-app', 'watch:html', 'watch:resources'], cb);
 });
 
-gulp.task('js-libs', function() {
-  return bundles.libBundle
-    .bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-    .pipe(source('libs.js'))
+
+gulp.task('test', function() {
+  return karma.start({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: true
+  });
+});
+
+gulp.task('tdd', function(done) {
+  karma.start({
+    configFile: __dirname + '/karma.conf.js'
+  }, done);
+});
+
+gulp.task('develop', function(cb) {
+  runSequence(['build-dev', 'watch'], ['webserver', 'tdd'], cb);
+});
+
+
+gulp.task('clean', function() {
+  return del(paths.build + '/**');
+});
+
+
+function browserifyBuild(params) {
+  return params.browserified.bundle()
+    .on('error', gutil.log.bind(gutil.log, "Browserify error:"))
+    .pipe(source(params.outputFileName))
     .pipe(buffer())
+    .pipe(gulpIf(params.ngAnnotate, ngAnnotate()))
     .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(ifEnv(PRODUCTION, uglify))
-    .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest(paths.build));
-});
-
-
-gulp.task('jshint', function() {
-  gulp.src('src/app/**/*.js')
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'));
-});
-
-
-function bundleApp(bundler) {
-  return bundler.bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-    .pipe(source('debt.js'))
-    .pipe(buffer())
-    .pipe(ngAnnotate())
-    .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(ifEnv(PRODUCTION, uglify))
+    .pipe(gulpIf(context.env == PROD, uglify()))
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(paths.build));
 }
 
+gulp.task('js-libs', function() {
+  return browserifyBuild({
+    browserified: bundles.libBundle,
+    ngAnnotate: false,
+    outputFileName: 'libs.js'
+  });
+});
+
 gulp.task('js-app', function() {
-  return bundleApp(bundles.appBundle);
+  return browserifyBuild({
+    browserified: bundles.appBundle,
+    ngAnnotate: true,
+    outputFileName: 'debt.js'
+  });
 });
 
 gulp.task('watch:js-app', function() {
   var bundler = watchify(bundles.appBundle)
-    .on('update', function() {
-      return bundleApp(bundler);
+    .on('log', gutil.log.bind(gutil.log, "Watchify build:"))
+    .on('update', build);
+
+  return build();
+
+  function build() {
+    return browserifyBuild({
+      browserified: bundler,
+      ngAnnotate: true,
+      outputFileName: 'debt.js'
     });
+  }
+
 });
 
 gulp.task('html', function() {
@@ -187,22 +205,12 @@ gulp.task('watch:manifest', function() {
   gulp.watch(paths.manifestFiles, ['manifest']);
 });
 
-gulp.task('watch', function(cb) {
-  runSequence(['watch:js-app', 'watch:html', 'watch:resources'], cb);
+gulp.task('jshint', function() {
+  gulp.src('src/app/**/*.js')
+    .pipe(jshint())
+    .pipe(jshint.reporter('default'));
 });
 
-gulp.task('test', function() {
-  return karma.start({
-    configFile: __dirname + '/karma.conf.js',
-    singleRun: true
-  });
-});
-
-gulp.task('tdd', function(done) {
-  karma.start({
-    configFile: __dirname + '/karma.conf.js'
-  }, done);
-});
 
 gulp.task('webserver', function() {
   gulp.src(paths.build)
@@ -212,6 +220,3 @@ gulp.task('webserver', function() {
     }));
 });
 
-gulp.task('develop', function(cb) {
-  runSequence(['build-dev', 'watch'], ['webserver', 'tdd'], cb);
-});
