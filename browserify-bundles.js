@@ -4,18 +4,12 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var _ = require('lodash');
 
-/*
- * Dependencies
- * material-design-icons: 
- *  Breaks browserify. This is an icon package and does not have package.json main or index.js
- * ng-material-floating-button: 
- *  Breaks browserify. It has an array in package.json main (problem as such) and one of them refers to a css file. 
- *  Handled separately as "ng-mfb".
- */
+
 var packageJson = require('./package.json');
 var dependencies = _(packageJson && packageJson.dependencies || {})
   .keys()
-  .without('material-design-icons', 'ng-material-floating-button')
+  .without('material-design-icons') //  Breaks browserify. This is an icon package and does not have package.json main or index.js
+  .without('ng-material-floating-button') // Breaks browserify. It has an array in package.json main (problem as such) and one of them refers to a css file. Handled separately as "ng-mfb".
   .value();
 
 
