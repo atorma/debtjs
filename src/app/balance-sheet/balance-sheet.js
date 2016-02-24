@@ -196,6 +196,14 @@ var BalanceSheet = function(data) {
   }
 
 
+  /**
+   * A person.
+   *
+   * @param data
+   *  id: The person's id.
+   *  name: The person's name
+   * @constructor
+   */
   function Person(data) {
     var _this = this;
 
@@ -271,6 +279,15 @@ var BalanceSheet = function(data) {
   }
 
 
+  /**
+   * An expense.
+   *
+   * @param data
+   *  id: The expense's id.
+   *  name: The expense's name
+   *  sharing: The expense's cost sharing mode. Value "equal" = share costs equally. All other values mean custom sharing.
+   * @constructor
+   */
   function Expense(data) {
     var _this = this;
 
@@ -363,7 +380,15 @@ var BalanceSheet = function(data) {
 
   }
 
-
+  /**
+   * A participation of a person to an expense.
+   *
+   * Data:
+   *  person: the Person object
+   *  expense: the Expense object
+   *  paid: how much the person has paid for the expense (float with max two decimals)
+   *  share: the person's share of the expense cost
+   */
   function Participation(data) {
     var _this = this;
 
