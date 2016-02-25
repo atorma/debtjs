@@ -13,7 +13,12 @@ angular
 
 /**
  * A function that computes debts from given expense participations.
- *  
+ *
+ * The input is an array of Participation objects in a BalanceSheet.
+ *
+ * Returns an array of debts:
+ * [{debtor: <a Person object>, creditor: <a Person object>, amount: <float; how much the debtor owes the creditor>}, ...]
+ *
  * We form a linear system Ax = b. A is a binary matrix with size (d+c)*(d*c),
  * where d is the number of debtors and c is the number of creditors. Columns of A 
  * are ordered so that x[c*i + j] is the value of the debt owed by debtor i to creditor j.
