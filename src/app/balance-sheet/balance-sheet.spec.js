@@ -1,7 +1,6 @@
 "use strict";
 
 var BalanceSheet = require('./balance-sheet');
-var Decimal = require("simple-decimal-money");
 var _ = require("lodash");
 var angular = require("angular");
 
@@ -164,7 +163,7 @@ describe("Balance sheet", function () {
       expect(sheet.isValid()).toBe(false);        
     });
     
-    it("as valid even when a participation has a non-negative payment", function() {
+    it("as valid even when a participation does not have a non-negative payment", function() {
       sheet.participations[0].paid = null;
       expect(sheet.isValid()).toBe(true);
       
@@ -649,7 +648,61 @@ describe("Balance sheet", function () {
     });
     
   });
-  
+
+  describe("currencies", function() {
+
+    it("can convert a value from one currency to another in two decimal accuracy", function() {
+      sheet.addExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
+      sheet.addExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
+
+      expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"})).toBe(1.97);
+      expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "USD"})).toBe(2.76);
+    });
+
+    it("can convert a value from one currency to another using an inverse rate unless an exact rate is available", function() {
+      sheet.addExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
+      sheet.addExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
+      sheet.addExchangeRate({fixed: "USD", variable: "EUR", rate: 0.1}); // Totally weird, but this is the exact rate
+
+      expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"})).toBe(1.97); // Computed using exact rate
+      expect(sheet.convertCurrency({value: 2.5, from: "GBP", to: "EUR"})).toBe(3.17); // Computed using inverse rate
+
+      expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "USD"})).toBe(2.76); // Computed using exact rate
+      expect(sheet.convertCurrency({value: 2.5, from: "USD", to: "EUR"})).toBe(0.25); // Computed using exact rate
+    });
+
+    it("throws error if it cannot find an exchange rate", function() {
+      expect(function() {
+        sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"});
+      }).toThrow();
+    });
+
+    it("can remove an exchange rate", function() {
+      sheet.addExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
+      sheet.removeExchangeRate({fixed: "EUR", variable: "GBP"});
+
+      expect(function() {
+        sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"});
+      }).toThrow();
+    });
+
+    it("throws an error if a quotation is invalid", function() {
+      expect(function() {
+        sheet.addExchangeRate({fixed: "EUR", variable: "GBP", rate: -1});
+      }).toThrow();
+      expect(function() {
+        sheet.addExchangeRate({fixed: undefined, variable: "GBP", rate: 0.7898});
+      }).toThrow();
+      expect(function() {
+        sheet.addExchangeRate({fixed: {name: "aargh"}, variable: "GBP", rate: 0.7898});
+      }).toThrow();
+      expect(function() {
+        sheet.addExchangeRate({fixed: "EUR", variable: -1, rate: 0.7898});
+      }).toThrow();
+    });
+
+  });
+
 });
 
 

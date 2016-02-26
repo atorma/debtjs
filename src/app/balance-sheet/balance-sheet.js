@@ -8,17 +8,22 @@ var BalanceSheet = function(data) {
 
   var _this = this;
 
+  var EXCHANGE_RATE_DECIMALS = 4;
+
   // Data
 
   var persons = [];
   var expenses = [];
   var participations = [];
+  var exchangeRates = [];
   var idSequence = 1;
 
   _this.name = "New sheet";
   _this.persons = persons;
   _this.expenses = expenses;
   _this.participations = participations;
+  _this.homeCurrency = undefined; // Symbol
+  _this.exchangeRates = exchangeRates;
 
   if (data) {
     importData(data);
@@ -46,6 +51,11 @@ var BalanceSheet = function(data) {
 
   _this.isValid = isValid;
   _this.throwErrorIfInvalid = throwErrorIfInvalid;
+
+  _this.setHomeCurrency = setHomeCurrency;
+  _this.addExchangeRate = addExchangeRate;
+  _this.removeExchangeRate = removeExchangeRate;
+  _this.convertCurrency = convertCurrency;
 
   /////////////////////////////////////
 
@@ -195,6 +205,80 @@ var BalanceSheet = function(data) {
     toRemove.expense.shareCost();
   }
 
+
+  function setHomeCurrency(currencySymbol) {
+    if (currencySymbol && !_.isString(currencySymbol)) {
+      throw "Home currency name must be a string";
+    }
+    _this.homeCurrency = currencySymbol;
+  }
+
+  /**
+   * Adds an exchange rate.
+   *
+   * @param {Object} quotation - The exchange rate object
+   * @param {string} quotation.fixed - The fixed currency symbol
+   * @param {string} quotation.variable - The variable currency symbol
+   * @param {number} quotation.rate - The rate: 1 unit of the fixed currency buys this amount of the variable currency. Must be a positive number with at most 4 decimals.
+   */
+  function addExchangeRate(quotation) {
+    validateQuotation(quotation);
+    _this.exchangeRates.push(quotation);
+  }
+
+  function validateQuotation(quotation) {
+    if (!_.isString(quotation.fixed)) {
+      throw "Fixed currency symbol must be a string";
+    }
+    if (!_.isString(quotation.variable)) {
+      throw "Variable currency symbol must be a string";
+    }
+    if (!_.isNumber(quotation.rate) || quotation.rate <= 0) {
+      throw "Foreign currency rate must be a positive number";
+    }
+  }
+
+  /**
+   * Removes an exchange rate.
+   *
+   * @param currencyPair - The currency pair to remove
+   * @param {string} currencyPair.fixed - The fixed currency symbol
+   * @param {string} currencyPair.variable - The variable currency symbol
+   */
+  function removeExchangeRate(currencyPair) {
+    _.remove(_this.exchangeRates, currencyPair);
+  }
+
+  /**
+   * Converts a value from one currency to another. Uses the inverse of an exchange
+   * rate if an inverse currency pair is found.
+   *
+   * @param {Object} toConvert - The data object
+   * @param {number} toConvert.value - The value to convert
+   * @param {string} toConvert.from - The currency of the value
+   * @param {string} toConvert.to - The currency to convert the value to
+   * @return {number} - The value in the "to" currency
+   */
+  function convertCurrency(toConvert) {
+    var rate;
+    var quotation = _.find(_this.exchangeRates, {fixed: toConvert.from, variable: toConvert.to});
+
+    if (quotation) {
+      rate = new Decimal(quotation.rate, EXCHANGE_RATE_DECIMALS);
+    } else {
+      var searchPair = {variable: toConvert.from, fixed: toConvert.to};
+      var inverseQuotation = _.find(_this.exchangeRates, searchPair);
+      if (inverseQuotation) {
+        rate = new Decimal(1).divideBy(new Decimal(inverseQuotation.rate, EXCHANGE_RATE_DECIMALS));
+      }
+    }
+
+    if (!rate) {
+      throw "Could not find an exchange rate for the requested conversion.";
+    }
+
+    return new Decimal(toConvert.value).multiply(rate).toNumber();
+  }
 
   /**
    * A person.
