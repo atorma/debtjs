@@ -448,8 +448,17 @@ var BalanceSheet = function(data) {
       return _balance.value().toNumber() === 0;
     }
 
+    /**
+     *
+     * @param {string} [currency] - Currency in which to get the value. Default is this expense's currency.
+     * @return {number} The balance of this expense.
+     */
     function getBalance() {
-      return _balance.value().toNumber();
+      return convertCurrency({
+        value: _balance.value(),
+        from: _this.currency,
+        to: currency || _this.currency
+      });
     }
 
     function getParticipations() {
