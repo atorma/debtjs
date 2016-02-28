@@ -1,0 +1,31 @@
+<section>
+  <md-list>
+    <md-list-item ng-repeat="quotation in vm.exchangeRates">
+      <div class="md-list-item-text exchange-rate" flex layout="row" layout-align="start center">
+        <span>One</span>
+        <md-input-container md-no-float>
+          <label>fixed currency</label>
+          <input type="text" ng-model="quotation.fixed" ng-change="vm.updateExchangeRate(quotation)"/>
+        </md-input-container>
+        <span>buys</span>
+        <md-input-container md-no-float>
+          <label>rate</label>
+          <input type="number" ng-model="quotation.rate" ng-change="vm.updateExchangeRate(quotation)"/>
+        </md-input-container>
+        <md-input-container md-no-float>
+          <label>variable currency</label>
+          <input type="text" ng-model="quotation.variable" ng-change="vm.updateExchangeRate(quotation)"/>
+        </md-input-container>
+        <md-icon class="md-secondary" aria-label="Remove" md-svg-icon="action:ic_delete_24px"
+                 ng-click="vm.removeExchangeRate(quotation)"></md-icon>
+      </div>
+    </md-list-item>
+  </md-list>
+</section>
+
+<mfb-menu position="br" effect="none" toggling-method="hover"
+          label="Add exchange rate"
+          template-url="ng-mfb-menu-md.tpl.html"
+          resting-icon="editor:ic_attach_money_24px" active-icon="editor:ic_attach_money_24px"
+          main-action="vm.addExchangeRate()">
+</mfb-menu>

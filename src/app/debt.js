@@ -29,6 +29,7 @@ require("./balance-sheet");
 require("./persons");
 require("./expenses");
 require("./utils");
+require("./currencies");
 
 function configureLocalStorage(localStorageServiceProvider) {
   localStorageServiceProvider.setPrefix("debtApp");
@@ -36,7 +37,7 @@ function configureLocalStorage(localStorageServiceProvider) {
 
 function configureIcons($mdIconProvider) {
   
-  var spriteNames = ['action', 'alert', 'content', 'navigation'];
+  var spriteNames = ['action', 'alert', 'content', 'navigation', 'editor'];
   
   var spriteProps = _.map(spriteNames, function(name) {
     var fileName = 'svg-sprite-' + name + '.svg';

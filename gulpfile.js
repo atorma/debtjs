@@ -23,7 +23,7 @@ var buildConfig = require('./build.conf');
 
 var browserifyBundlers = require('./browserify-bundlers');
 
-var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
+var materialDesignSprites = ['action', 'alert', 'content', 'navigation', 'editor'];
 
 var DEV = "development";
 var PROD = "production";
