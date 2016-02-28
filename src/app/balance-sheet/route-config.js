@@ -10,8 +10,15 @@ function config($stateProvider) {
   $stateProvider
     .state("balanceSheet", {
       url: "/",
-      templateUrl : "balance-sheet/balance-sheet.html",
-      controller : "BalanceSheetCtrl as vm"
+      views: {
+        "": {
+          templateUrl : "balance-sheet/balance-sheet.html",
+          controller : "BalanceSheetCtrl as vm"
+        },
+        "floatingButton": {
+          templateUrl : "balance-sheet/floating-button.html"
+        }
+      }
     });
   
 }

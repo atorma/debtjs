@@ -10,8 +10,15 @@ function config($stateProvider) {
 	$stateProvider
 		.state("expense", {
 			url: "/expenses/:id",
-	    templateUrl: "expenses/expense-detail.html",
-      controller: "ExpenseDetailCtrl as vm"
+			views: {
+				"": {
+					templateUrl: "expenses/expense-detail.html",
+					controller: "ExpenseDetailCtrl as vm"
+				},
+				"floatingButton": {
+					templateUrl: "expenses/floating-button.html"
+				}
+			}
 		})
 		;
 }
