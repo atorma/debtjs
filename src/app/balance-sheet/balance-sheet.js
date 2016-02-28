@@ -23,7 +23,6 @@ var BalanceSheet = function(data) {
   _this.expenses = expenses;
   _this.participations = participations;
   _this.homeCurrency = undefined; // Symbol
-  _this.exchangeRates = exchangeRates;
 
   if (data) {
     importData(data);
@@ -53,7 +52,8 @@ var BalanceSheet = function(data) {
   _this.throwErrorIfInvalid = throwErrorIfInvalid;
 
   _this.setHomeCurrency = setHomeCurrency;
-  _this.addExchangeRate = addExchangeRate;
+  _this.getExchangeRates = getExchangeRates;
+  _this.addOrUpdateExchangeRate = addOrUpdateExchangeRate;
   _this.removeExchangeRate = removeExchangeRate;
   _this.convertCurrency = convertCurrency;
 
@@ -214,16 +214,24 @@ var BalanceSheet = function(data) {
   }
 
   /**
-   * Adds an exchange rate.
+   * @return copy of exchange rates in this sheet
+   */
+  function getExchangeRates() {
+    return _.cloneDeep(exchangeRates);
+  }
+
+  /**
+   * Adds or updates an exchange rate.
    *
    * @param {Object} quotation - The exchange rate object
    * @param {string} quotation.fixed - The fixed currency symbol
    * @param {string} quotation.variable - The variable currency symbol
    * @param {number} quotation.rate - The rate: 1 unit of the fixed currency buys this amount of the variable currency. Must be a positive number with at most 4 decimals.
    */
-  function addExchangeRate(quotation) {
+  function addOrUpdateExchangeRate(quotation) {
     validateQuotation(quotation);
-    _this.exchangeRates.push(quotation);
+    removeExchangeRate(quotation);
+    exchangeRates.push(quotation);
   }
 
   function validateQuotation(quotation) {
@@ -246,7 +254,7 @@ var BalanceSheet = function(data) {
    * @param {string} currencyPair.variable - The variable currency symbol
    */
   function removeExchangeRate(currencyPair) {
-    _.remove(_this.exchangeRates, currencyPair);
+    _.remove(exchangeRates, {fixed: currencyPair.fixed, variable: currencyPair.variable});
   }
 
   /**
@@ -266,13 +274,13 @@ var BalanceSheet = function(data) {
       return new Decimal(toConvert.value).toNumber();
     }
 
-    var quotation = _.find(_this.exchangeRates, {fixed: toConvert.from, variable: toConvert.to});
+    var quotation = _.find(exchangeRates, {fixed: toConvert.from, variable: toConvert.to});
 
     if (quotation) {
       rate = new Decimal(quotation.rate, EXCHANGE_RATE_DECIMALS);
     } else {
       var searchPair = {variable: toConvert.from, fixed: toConvert.to};
-      var inverseQuotation = _.find(_this.exchangeRates, searchPair);
+      var inverseQuotation = _.find(exchangeRates, searchPair);
       if (inverseQuotation) {
         rate = new Decimal(1/inverseQuotation.rate, EXCHANGE_RATE_DECIMALS);
       }
