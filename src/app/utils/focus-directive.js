@@ -9,9 +9,13 @@ angular.module("debtApp")
 function focus($timeout) {
   return {
     restrict: "A",
-    link: function($scope, iElem) {
+    link: function($scope, iElem, iAttrs) {
+      var focusExpr = iAttrs.focus || 'true';
       $timeout(function() {
-        iElem[0].focus();
+        var shouldFocus = $scope.$eval(focusExpr);
+        if (shouldFocus) {
+          iElem[0].focus();
+        }
       }, 0);
     }
   };
