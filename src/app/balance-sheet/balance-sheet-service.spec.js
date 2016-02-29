@@ -31,7 +31,8 @@ describe("BalanceSheetService", function() {
         fixed: "EUR",
         variable: "USD",
         rate: 1.1010
-      }]
+      }],
+      defaultCurrency: "EUR"
     };
     
     localStorageService = jasmine.createSpyObj("localStorageService", ["get", "set"]);

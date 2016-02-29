@@ -59,6 +59,14 @@ describe("CurrencyListCtrl", function() {
     expect(vm.exchangeRates).toEqual(balanceSheetService.balanceSheet.getExchangeRates());
   });
 
+  it("exposes list of currencies", function() {
+    expect(vm.currencies).toEqual(balanceSheetService.balanceSheet.getCurrencies());
+  });
+
+  it("exposes default currency", function() {
+    expect(vm.defaultCurrency).toEqual(balanceSheetService.balanceSheet.getDefaultCurrency());
+  });
+
   describe("addExchangeRate()", function() {
 
     it("adds empty exchange rate in list", function() {
@@ -70,6 +78,7 @@ describe("CurrencyListCtrl", function() {
     it("emits 'balance sheet updated' event", function() {
       expectEventEmitted(vm.addExchangeRate, events.BALANCE_SHEET_UPDATED);
     });
+
   });
 
   describe("updateExchangeRate()", function() {
@@ -87,6 +96,20 @@ describe("CurrencyListCtrl", function() {
       expectEventEmitted(function() {
         vm.updateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.01});
       }, events.BALANCE_SHEET_UPDATED);
+    });
+
+    it("updates list of currencies", function() {
+      vm.updateExchangeRate({fixed: "EUR", variable: "DKK", rate: 7.31});
+
+      expect(vm.currencies).toEqual(balanceSheetService.balanceSheet.getCurrencies());
+    });
+
+    it("updates default currency", function() {
+      var updatedDefault = "JPY";
+      spyOn(balanceSheet, 'getDefaultCurrency').and.returnValue(updatedDefault);
+      vm.updateExchangeRate({fixed: "EUR", variable: "DKK", rate: 7.31});
+
+      expect(vm.defaultCurrency).toEqual(updatedDefault);
     });
   });
 
@@ -106,8 +129,40 @@ describe("CurrencyListCtrl", function() {
     it("emits 'balance sheet updated' event", function() {
       expectEventEmitted(vm.removeExchangeRate, events.BALANCE_SHEET_UPDATED);
     });
+
+    it("updates list of currencies", function() {
+      _.each(vm.exchangeRates, function(er) {
+        vm.removeExchangeRate(er);
+      });
+
+      expect(vm.currencies.length).toEqual(0);
+    });
+
+    it("updates default currency", function() {
+      var updatedDefault = "JPY";
+      spyOn(balanceSheet, 'getDefaultCurrency').and.returnValue(updatedDefault);
+      vm.removeExchangeRate({fixed: "EUR", variable: "DKK"});
+
+      expect(vm.defaultCurrency).toEqual(updatedDefault);
+    });
   });
 
+  describe("updateDefaultCurrency()", function() {
+
+    it("updates default currency of balance sheet with current value", function() {
+      spyOn(balanceSheet, 'setDefaultCurrency');
+      vm.defaultCurrency = "EUR";
+      vm.updateDefaultCurrency();
+
+      expect(balanceSheet.setDefaultCurrency).toHaveBeenCalledWith("EUR");
+    });
+
+    it("emits 'balance sheet updated' event", function() {
+      spyOn(balanceSheet, 'setDefaultCurrency');
+      expectEventEmitted(vm.updateDefaultCurrency, events.BALANCE_SHEET_UPDATED);
+    });
+
+  });
 
 });
 

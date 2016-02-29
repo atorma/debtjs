@@ -16,13 +16,13 @@ var BalanceSheet = function(data) {
   var expenses = [];
   var participations = [];
   var exchangeRates = [];
+  var defaultCurrency;
   var idSequence = 1;
 
   _this.name = "New sheet";
   _this.persons = persons;
   _this.expenses = expenses;
   _this.participations = participations;
-  _this.homeCurrency = undefined; // Symbol
 
   if (data) {
     importData(data);
@@ -51,7 +51,8 @@ var BalanceSheet = function(data) {
   _this.isValid = isValid;
   _this.throwErrorIfInvalid = throwErrorIfInvalid;
 
-  _this.setHomeCurrency = setHomeCurrency;
+  _this.getDefaultCurrency = getDefaultCurrency;
+  _this.setDefaultCurrency = setDefaultCurrency;
   _this.getExchangeRates = getExchangeRates;
   _this.getCurrencies = getCurrencies;
   _this.addOrUpdateExchangeRate = addOrUpdateExchangeRate;
@@ -206,12 +207,25 @@ var BalanceSheet = function(data) {
     toRemove.expense.shareCost();
   }
 
+  function getDefaultCurrency() {
+    return defaultCurrency;
+  }
 
-  function setHomeCurrency(currencySymbol) {
-    if (currencySymbol && !_.isString(currencySymbol)) {
-      throw "Home currency name must be a string";
+  function setDefaultCurrency(currencySymbol) {
+    var found = _.indexOf(getCurrencies(), currencySymbol) > -1;
+    if (!found) {
+      throw "Default currency " + currencySymbol + " does not have an exchange rate";
     }
-    _this.homeCurrency = currencySymbol;
+    defaultCurrency = currencySymbol;
+  }
+
+  function updateDefaultCurrencyIfNeeded() {
+    var currencies = getCurrencies();
+    if ((defaultCurrency === undefined || _.indexOf(currencies, defaultCurrency) === -1) && exchangeRates.length > 0) {
+      defaultCurrency = exchangeRates[0].fixed;
+    } else {
+      defaultCurrency = undefined;
+    }
   }
 
   /**
@@ -247,6 +261,7 @@ var BalanceSheet = function(data) {
     validateQuotation(quotation);
     removeExchangeRate(quotation);
     exchangeRates.push(quotation);
+    updateDefaultCurrencyIfNeeded();
   }
 
   function validateQuotation(quotation) {
@@ -271,6 +286,7 @@ var BalanceSheet = function(data) {
   function removeExchangeRate(currencyPair) {
     if (!currencyPair) return;
     _.remove(exchangeRates, {fixed: currencyPair.fixed, variable: currencyPair.variable});
+    updateDefaultCurrencyIfNeeded();
   }
 
   /**
@@ -593,6 +609,7 @@ var BalanceSheet = function(data) {
       return {personId: pt.person.id, expenseId: pt.expense.id, paid: pt.paid, share: pt.share};
     });
     data.exchangeRates = getExchangeRates();
+    data.defaultCurrency = defaultCurrency;
     return data;
   }
 
@@ -628,6 +645,10 @@ var BalanceSheet = function(data) {
     _.each(data.exchangeRates, function(q) {
       addOrUpdateExchangeRate(q);
     });
+
+    if (data.defaultCurrency) {
+      setDefaultCurrency(data.defaultCurrency);
+    }
 
     throwErrorIfInvalid();
   }
@@ -677,6 +698,9 @@ var BalanceSheet = function(data) {
       }
     });
 
+    if (defaultCurrency && _.indexOf(getCurrencies(), defaultCurrency) === -1) {
+      throw new Error("Default currency has no exchange rate");
+    }
   }
 
   function Error(message) {

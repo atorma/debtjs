@@ -104,6 +104,32 @@ describe("Balance sheet currencies", function () {
       }).toThrow();
     });
 
+    describe("default currency", function() {
+
+      it("set as first fixed currency if default is undefined", function() {
+        expect(sheet.getDefaultCurrency()).toBeUndefined();
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
+        expect(sheet.getDefaultCurrency()).toEqual("EUR");
+        sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "GBP", rate: 0.7131});
+      });
+
+      it("sets as first fixed currency if default currency removed", function() {
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
+        sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "GBP", rate: 0.7131});
+        sheet.removeExchangeRate({fixed: "EUR", variable: "GBP"});
+        expect(sheet.getDefaultCurrency()).toEqual("USD");
+      });
+
+      it("sets as undefined if all currencies removed", function() {
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
+        sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "GBP", rate: 0.7131});
+        sheet.removeExchangeRate({fixed: "EUR", variable: "GBP"});
+        sheet.removeExchangeRate({fixed: "USD", variable: "GBP"});
+        expect(sheet.getDefaultCurrency()).toBeUndefined();
+      });
+
+    });
+
   });
 
   describe("expense and participations", function() {
