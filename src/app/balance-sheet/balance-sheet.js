@@ -254,6 +254,7 @@ var BalanceSheet = function(data) {
    * @param {string} currencyPair.variable - The variable currency symbol
    */
   function removeExchangeRate(currencyPair) {
+    if (!currencyPair) return;
     _.remove(exchangeRates, {fixed: currencyPair.fixed, variable: currencyPair.variable});
   }
 
@@ -576,6 +577,7 @@ var BalanceSheet = function(data) {
     data.participations = _.map(participations, function(pt) {
       return {personId: pt.person.id, expenseId: pt.expense.id, paid: pt.paid, share: pt.share};
     });
+    data.exchangeRates = getExchangeRates();
     return data;
   }
 
@@ -589,7 +591,7 @@ var BalanceSheet = function(data) {
       idSequence = 1;
     }
 
-    var separately = {persons: true, expenses: true, participations: true};
+    var separately = {persons: true, expenses: true, participations: true, exchangeRates: true};
     _.extend(_this, _.pick(data, function(value, key) {
       return !separately[key];
     }));
@@ -606,6 +608,10 @@ var BalanceSheet = function(data) {
       var person = getPerson(p.personId);
       var expense = getExpense(p.expenseId);
       createParticipation({person: person, expense: expense, paid: p.paid, share: p.share});
+    });
+
+    _.each(data.exchangeRates, function(q) {
+      addOrUpdateExchangeRate(q);
     });
 
     throwErrorIfInvalid();

@@ -8,10 +8,13 @@ var BalanceSheet = require("../balance-sheet/balance-sheet");
 
 describe("CurrencyListCtrl", function() {
 
+  var vm;
+
   var $scope;
   var balanceSheet;
   var balanceSheetService;
-  var vm;
+  var events;
+
 
   beforeEach(angular.mock.module("debtApp"));
 
@@ -27,16 +30,30 @@ describe("CurrencyListCtrl", function() {
     balanceSheetService.balanceSheet = balanceSheet;
   });
 
-  beforeEach(angular.mock.inject(function($rootScope, $controller) {
-
+  beforeEach(angular.mock.inject(function($rootScope, $controller, _events_) {
+    events = _events_;
     $scope = $rootScope.$new();
 
     vm = $controller("CurrencyListCtrl", {
       balanceSheetService: balanceSheetService,
+      events: events,
       $scope: $scope
     });
 
   }));
+
+  function expectEventEmitted(fun, eventName) {
+    var eventEmitted = false;
+    $scope.$parent.$on(eventName, function() {
+      eventEmitted = true;
+    });
+
+    fun();
+    $scope.$digest();
+
+    expect(eventEmitted).toBe(true);
+  }
+
 
   it("exposes exchange rate list", function() {
     expect(vm.exchangeRates).toEqual(balanceSheetService.balanceSheet.getExchangeRates());
@@ -50,6 +67,9 @@ describe("CurrencyListCtrl", function() {
       expect(_.last(vm.exchangeRates)).toEqual({fixed: undefined, variable: undefined, rate: undefined});
     });
 
+    it("emits 'balance sheet updated' event", function() {
+      expectEventEmitted(vm.addExchangeRate, events.BALANCE_SHEET_UPDATED);
+    });
   });
 
   describe("updateExchangeRate()", function() {
@@ -63,6 +83,11 @@ describe("CurrencyListCtrl", function() {
       expect(balanceSheet.addOrUpdateExchangeRate).toHaveBeenCalledWith(exchangeRate);
     });
 
+    it("emits 'balance sheet updated' event", function() {
+      expectEventEmitted(function() {
+        vm.updateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.01});
+      }, events.BALANCE_SHEET_UPDATED);
+    });
   });
 
   describe("removeExchangeRate()", function() {
@@ -78,6 +103,9 @@ describe("CurrencyListCtrl", function() {
       expect(vm.exchangeRates).not.toContain(exchangeRate);
     });
 
+    it("emits 'balance sheet updated' event", function() {
+      expectEventEmitted(vm.removeExchangeRate, events.BALANCE_SHEET_UPDATED);
+    });
   });
 
 

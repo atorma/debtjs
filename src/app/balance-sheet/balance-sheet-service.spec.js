@@ -58,6 +58,7 @@ describe("BalanceSheetService", function() {
       expect(sheet.persons.length).toBe(balanceSheetData.persons.length);
       expect(sheet.expenses.length).toBe(balanceSheetData.expenses.length);
       expect(sheet.participations.length).toBe(balanceSheetData.participations.length);
+      expect(sheet.getExchangeRates()).toEqual(balanceSheetData.exchangeRates);
     });
     
     it("with a new balance sheet if no data in localStorage", function() {
