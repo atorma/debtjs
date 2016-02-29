@@ -8,7 +8,8 @@
                  placeholder="fixed currency"
                  ng-model="quotation.fixed"
                  ng-change="vm.updateExchangeRate(quotation)"
-                 ng-required="true"/>
+                 ng-required="true"
+                 focus="$last && !quotation.fixed"/>
         </md-input-container>
         <span>to</span>
         <md-input-container md-no-float="true" style="padding-bottom: 2px">
