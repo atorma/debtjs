@@ -24,13 +24,24 @@ describe("Balance sheet currencies", function () {
 
     it("has method for getting copy of exchange rates", function() {
       var exchangeRates = [
-        {fixed: "EUR", variable: "GBP", rate: 0.7898},
+        {fixed: "GBP", variable: "EUR", rate: 1.2100},
         {fixed: "EUR", variable: "USD", rate: 1.1030}
       ];
       sheet.addOrUpdateExchangeRate(exchangeRates[0]);
       sheet.addOrUpdateExchangeRate(exchangeRates[1]);
 
       expect(sheet.getExchangeRates()).toEqual(exchangeRates);
+    });
+
+    it("has method for getting list of currencies in alphabetical order", function() {
+      var exchangeRates = [
+        {fixed: "EUR", variable: "GBP", rate: 0.7898},
+        {fixed: "EUR", variable: "USD", rate: 1.1030}
+      ];
+      sheet.addOrUpdateExchangeRate(exchangeRates[0]);
+      sheet.addOrUpdateExchangeRate(exchangeRates[1]);
+
+      expect(sheet.getCurrencies()).toEqual(["EUR", "GBP", "USD"]);
     });
 
     it("can convert a value from one currency to another in two decimal accuracy", function() {

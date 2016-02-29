@@ -53,6 +53,7 @@ var BalanceSheet = function(data) {
 
   _this.setHomeCurrency = setHomeCurrency;
   _this.getExchangeRates = getExchangeRates;
+  _this.getCurrencies = getCurrencies;
   _this.addOrUpdateExchangeRate = addOrUpdateExchangeRate;
   _this.removeExchangeRate = removeExchangeRate;
   _this.convertCurrency = convertCurrency;
@@ -218,6 +219,20 @@ var BalanceSheet = function(data) {
    */
   function getExchangeRates() {
     return _.cloneDeep(exchangeRates);
+  }
+
+  /**
+   * @return list of currencies in alphabetical order
+   */
+  function getCurrencies() {
+    return _.chain(exchangeRates)
+      .reduce(function(result, er) {
+        result.push(er.fixed);
+        result.push(er.variable);
+        return result;
+      }, [])
+      .uniq().sort()
+      .value();
   }
 
   /**
