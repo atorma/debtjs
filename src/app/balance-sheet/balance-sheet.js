@@ -598,12 +598,12 @@ var BalanceSheet = function(data) {
 
   function exportData() {
     var isNotFunction = _.negate(_.isFunction);
-    var data = _.pick(_this, isNotFunction);
+    var data = _.pickBy(_this, isNotFunction);
     data.persons = _.map(persons, function(p) {
-      return _.pick(p, isNotFunction);
+      return _.pickBy(p, isNotFunction);
     });
     data.expenses = _.map(expenses, function(e) {
-      return _.pick(e, isNotFunction);
+      return _.pickBy(e, isNotFunction);
     });
     data.participations = _.map(participations, function(pt) {
       return {personId: pt.person.id, expenseId: pt.expense.id, paid: pt.paid, share: pt.share};
@@ -617,14 +617,14 @@ var BalanceSheet = function(data) {
     idSequence = _([])
         .concat(data.persons)
         .concat(data.expenses)
-        .pluck("id")
+        .map("id")
         .max() + 1;
-    if (idSequence == -Infinity) {
+    if (_.isNaN(idSequence)) {
       idSequence = 1;
     }
 
     var separately = {persons: true, expenses: true, participations: true, exchangeRates: true};
-    _.extend(_this, _.pick(data, function(value, key) {
+    _.extend(_this, _.pickBy(data, function(value, key) {
       return !separately[key];
     }));
 
