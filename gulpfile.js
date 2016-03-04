@@ -13,25 +13,15 @@ var karma = require('karma').server;
 var webserver = require('gulp-webserver');
 var _ = require('lodash');
 var manifest = require('gulp-manifest');
-var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
 var ngAnnotate = require('gulp-ng-annotate');
 var preprocess = require('gulp-preprocess');
 var gulpIf = require('gulp-if');
 
-var paths = {
-  main: 'src/app/debt.js',
-  html: ['src/app/**/*.html', '!src/app/**/*.spec.html'],
-  resources: ['src/resources/**'],
-  lib: ['src/lib/**/*.*'],
-  libResources: ['node_modules/angular-material/angular-material.css', 'node_modules/ng-material-floating-button/mfb/dist/mfb.css*', 'src/lib/**/*.*', '!src/lib/**/*.js'],
-  tests: 'src/app/**/*.spec.js',
-  build: 'build',
-  manifestFiles: ['build/**/*', '!build/**/*.spec.*', '!build/**/*.map', '!build/**/*.manifest']
-};
 
-var bundles = require('./browserify-bundles');
-var packageJson = require('./package.json');
+var buildConfig = require('./build.conf');
+
+var browserifyBundlers = require('./browserify-bundlers');
 
 var materialDesignSprites = ['action', 'alert', 'content', 'navigation'];
 
@@ -39,7 +29,7 @@ var DEV = "development";
 var PROD = "production";
 var context = {
   env: DEV,
-  version: packageJson.version
+  version: require('./package.json').version
 };
 
 
@@ -50,9 +40,9 @@ gulp.task('build-dev', function(cb) {
     [
       'js-libs',
       'js-app',
+      'js-tests',
       'html',
       'resources',
-      'lib',
       'lib-resources'
     ],
     cb);
@@ -65,9 +55,9 @@ gulp.task('build-prod', function(cb) {
     [
       'js-libs',
       'js-app',
+      'js-tests',
       'html',
       'resources',
-      'lib',
       'lib-resources'
     ],
     'manifest',
@@ -75,105 +65,136 @@ gulp.task('build-prod', function(cb) {
 });
 
 gulp.task('watch', function(cb) {
-  runSequence(['watch:js-app', 'watch:html', 'watch:resources'], cb);
+  runSequence(['watch:js-app', 'watch:js-tests', 'watch:html', 'watch:resources'], cb);
 });
 
 
 gulp.task('test', function() {
   return karma.start({
     configFile: __dirname + '/karma.conf.js',
-    singleRun: true
+    singleRun: true,
+    autoWatch: false
   });
 });
 
-gulp.task('tdd', function(done) {
+gulp.task('develop', function(cb) {
+  runSequence(['build-dev', 'watch'], ['webserver'], cb);
+});
+
+gulp.task('tdd', ['develop'], function(done) {
   karma.start({
-    configFile: __dirname + '/karma.conf.js'
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: true,
+    autoWatch: false
   }, done);
 });
 
-gulp.task('develop', function(cb) {
-  runSequence(['build-dev', 'watch'], ['webserver', 'tdd'], cb);
-});
-
-
 gulp.task('clean', function() {
-  return del(paths.build + '/**');
+  return del(buildConfig.paths.build + '/**');
 });
 
 
 function browserifyBuild(params) {
-  return params.browserified.bundle()
+  var bundler = params.bundler({
+    debug: context.env === DEV
+  });
+
+  return bundler.bundle()
     .on('error', gutil.log.bind(gutil.log, "Browserify error:"))
     .pipe(source(params.outputFileName))
     .pipe(buffer())
+    .pipe(gulpIf(context.env == DEV, sourcemaps.init({loadMaps: true})))
     .pipe(gulpIf(params.ngAnnotate, ngAnnotate()))
-    .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(gulpIf(context.env == PROD, uglify()))
-    .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest(paths.build));
+    .pipe(gulpIf(context.env == DEV, sourcemaps.write('./', {sourceRoot: '..'})))
+    .pipe(gulp.dest(buildConfig.paths.build));
 }
 
 gulp.task('js-libs', function() {
   return browserifyBuild({
-    browserified: bundles.libBundle,
+    bundler: browserifyBundlers.createLibBundler,
     ngAnnotate: false,
-    outputFileName: 'libs.js'
+    outputFileName: buildConfig.paths.libDestName
   });
 });
 
 gulp.task('js-app', function() {
   return browserifyBuild({
-    browserified: bundles.appBundle,
-    ngAnnotate: true,
-    outputFileName: 'debt.js'
+    bundler: browserifyBundlers.createAppBundler,
+    ngAnnotate: context.env === PROD,
+    outputFileName: buildConfig.paths.appDestName
   });
 });
 
 gulp.task('watch:js-app', function() {
-  var bundler = watchify(bundles.appBundle)
-    .on('log', gutil.log.bind(gutil.log, "Watchify build:"))
-    .on('update', build);
+
+  var bundler = function(opts) {
+    return watchify(browserifyBundlers.createAppBundler(opts))
+      .on('log', gutil.log.bind(gutil.log, "Watchify (app):"))
+      .on('update', build);
+  };
 
   return build();
 
   function build() {
     return browserifyBuild({
-      browserified: bundler,
-      ngAnnotate: true,
-      outputFileName: 'debt.js'
+      bundler: bundler,
+      ngAnnotate: context.env === PROD,
+      outputFileName: buildConfig.paths.appDestName
     });
   }
+});
 
+gulp.task('js-tests', function() {
+  context.env = DEV;
+  return browserifyBuild({
+    bundler: browserifyBundlers.createTestBundler,
+    ngAnnotate: context.env === PROD,
+    outputFileName: buildConfig.paths.testDestName
+  });
+});
+
+gulp.task('watch:js-tests', function () {
+  var watchifier = function(opts) {
+    return watchify(browserifyBundlers.createTestBundler(opts))
+      .on('log', gutil.log.bind(gutil.log, "Watchify (tests):"))
+      .on('update', build);
+  };
+
+  return build();
+
+  function build() {
+    return browserifyBuild({
+      bundler: watchifier,
+      ngAnnotate: context.env === PROD,
+      outputFileName: buildConfig.paths.testDestName
+    });
+  }
 });
 
 gulp.task('html', function() {
-  return gulp.src(paths.html)
+  return gulp.src(buildConfig.paths.html)
     .pipe(preprocess({context: context}))
-    .pipe(gulp.dest(paths.build));
+    .pipe(gulp.dest(buildConfig.paths.build));
 });
 
 gulp.task('watch:html', function() {
-  gulp.watch(paths.html, ['html']);
+  gulp.watch(buildConfig.paths.html, ['html']);
 });
 
 gulp.task('resources', function() {
-  return gulp.src(paths.resources)
-    .pipe(gulp.dest(paths.build + '/resources'));
+  return gulp.src(buildConfig.paths.resources)
+    .pipe(gulp.dest(buildConfig.paths.build + '/resources'));
 });
 
 gulp.task('watch:resources', function() {
-  gulp.watch(paths.resources, ['resources']);
+  gulp.watch(buildConfig.paths.resources, ['resources']);
 });
 
-gulp.task('lib', function() {
-  return gulp.src(paths.lib)
-    .pipe(gulp.dest(paths.build));
-});
 
 gulp.task('lib-resources', function(done) {
-  gulp.src(paths.libResources)
-    .pipe(gulp.dest(paths.build + '/resources'));
+  gulp.src(buildConfig.paths.libResources)
+    .pipe(gulp.dest(buildConfig.paths.build + '/resources'));
 
   var materialDesignSpritePaths = _.map(materialDesignSprites, function(name) {
     var fileName = 'svg-sprite-' + name + '.svg';
@@ -182,14 +203,14 @@ gulp.task('lib-resources', function(done) {
 
   _.each(materialDesignSpritePaths, function(path) {
     gulp.src(path)
-      .pipe(gulp.dest(paths.build + '/resources/icons/'));
+      .pipe(gulp.dest(buildConfig.paths.build + '/resources/icons/'));
   });
 
   done();
 });
 
 gulp.task('manifest', function() {
-  return gulp.src(paths.manifestFiles)
+  return gulp.src(buildConfig.paths.manifestFiles)
     .pipe(manifest({
       timestamp: true,
       preferOnline: true,
@@ -198,22 +219,16 @@ gulp.task('manifest', function() {
       exclude: 'debt.appcache',
       fallback: ['/ offline.html']
     }))
-    .pipe(gulp.dest(paths.build));
+    .pipe(gulp.dest(buildConfig.paths.build));
 });
 
 gulp.task('watch:manifest', function() {
-  gulp.watch(paths.manifestFiles, ['manifest']);
-});
-
-gulp.task('jshint', function() {
-  gulp.src('src/app/**/*.js')
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'));
+  gulp.watch(buildConfig.paths.manifestFiles, ['manifest']);
 });
 
 
 gulp.task('webserver', function() {
-  gulp.src(paths.build)
+  gulp.src(buildConfig.paths.build)
     .pipe(webserver({
       port: 8080,
       livereload: true
