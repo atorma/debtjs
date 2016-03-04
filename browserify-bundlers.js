@@ -41,12 +41,14 @@ function createAppBundler(browserifyOpts) {
 
 
 function createTestBundler(browserifyOpts) {
+  // Specs currently require the code they test. This means that app source code
+  // gets included into the spec bundle. For some reason, externalizing the
+  // app source files causes tests to fail because the can't find the required app code.
   var testFiles = glob.sync(buildConfig.paths.jsSpecs); // Browserify can't handle glob patterns
 
   return createBundler(browserifyOpts)
     .add(testFiles)
-    .external(appDependencies)
-    .external(buildConfig.paths.jsSrc);
+    .external(appDependencies);
 }
 
 function createBundler(additionalOpts) {

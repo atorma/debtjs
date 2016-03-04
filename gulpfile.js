@@ -103,10 +103,10 @@ function browserifyBuild(params) {
     .on('error', gutil.log.bind(gutil.log, "Browserify error:"))
     .pipe(source(params.outputFileName))
     .pipe(buffer())
-    .pipe(gulpIf(context.env == DEV, sourcemaps.init({loadMaps: true})))
+    .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(gulpIf(params.ngAnnotate, ngAnnotate()))
     .pipe(gulpIf(context.env == PROD, uglify()))
-    .pipe(gulpIf(context.env == DEV, sourcemaps.write('./', {sourceRoot: '..'})))
+    .pipe(sourcemaps.write('./', {sourceRoot: '..'}))
     .pipe(gulp.dest(buildConfig.paths.build));
 }
 
