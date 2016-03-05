@@ -493,7 +493,7 @@ var BalanceSheet = function(data) {
      * @param {string} [currency] - Currency in which to get the value. Default is this expense's currency.
      * @return {number} The balance of this expense.
      */
-    function getBalance() {
+    function getBalance(currency) {
       return convertCurrency({
         value: _balance.value(),
         from: _this.currency,
