@@ -72,8 +72,8 @@ gulp.task('watch', function(cb) {
 gulp.task('test', function() {
   return karma.start({
     configFile: __dirname + '/karma.conf.js',
-    singleRun: true,
-    autoWatch: false
+    singleRun: false,
+    autoWatch: true
   });
 });
 
