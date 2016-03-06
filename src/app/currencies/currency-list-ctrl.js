@@ -4,14 +4,15 @@ var angular = require("angular");
 var _ = require('lodash');
 
 angular.module("debtApp")
-  .controller("CurrencyListCtrl", CurrencyListCtrl);
+  .controller("CurrencyListCtrl", CurrencyListCtrl)
+  .controller("ExchangeRateDialogCtrl", ExchangeRateDialogCtrl);
 
 
-function CurrencyListCtrl(balanceSheetService, events, $scope) {
+function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog) {
   var vm = this;
 
   vm.init = init;
-  vm.addExchangeRate = addExchangeRate;
+  vm.openExchangeRateDialog = openExchangeRateDialog;
   vm.updateExchangeRate = updateExchangeRate;
   vm.removeExchangeRate = removeExchangeRate;
   vm.updateDefaultCurrency = updateDefaultCurrency;
@@ -24,28 +25,57 @@ function CurrencyListCtrl(balanceSheetService, events, $scope) {
     vm.defaultCurrency = balanceSheetService.balanceSheet.getDefaultCurrency();
   }
 
-  function addExchangeRate() {
-    vm.exchangeRates.push({fixed: undefined, variable: undefined, rate: undefined});
-    $scope.$emit(events.BALANCE_SHEET_UPDATED);
+  function openExchangeRateDialog() {
+
+    return $mdDialog.show({
+      templateUrl: "currencies/exchange-rate-dialog.html",
+      controller: "ExchangeRateDialogCtrl as vm"
+    }).then(function(quotation) {
+      updateExchangeRate(quotation);
+    });
+
   }
 
   function updateExchangeRate(exchangeRate) {
     balanceSheetService.balanceSheet.addOrUpdateExchangeRate(exchangeRate);
     $scope.$emit(events.BALANCE_SHEET_UPDATED);
-    vm.currencies = balanceSheetService.balanceSheet.getCurrencies();
-    vm.defaultCurrency = balanceSheetService.balanceSheet.getDefaultCurrency();
+    init();
   }
 
   function removeExchangeRate(exchangeRate) {
     balanceSheetService.balanceSheet.removeExchangeRate(exchangeRate);
     _.remove(vm.exchangeRates, exchangeRate);
     $scope.$emit(events.BALANCE_SHEET_UPDATED);
-    vm.currencies = balanceSheetService.balanceSheet.getCurrencies();
-    vm.defaultCurrency = balanceSheetService.balanceSheet.getDefaultCurrency();
+    init();
   }
 
   function updateDefaultCurrency() {
     balanceSheetService.balanceSheet.setDefaultCurrency(vm.defaultCurrency);
     $scope.$emit(events.BALANCE_SHEET_UPDATED);
+    init();
   }
+
+}
+
+function ExchangeRateDialogCtrl($mdDialog) {
+  var vm = this;
+
+  vm.ok = ok;
+  vm.cancel = cancel;
+  vm.init = init;
+
+  init();
+
+  function init() {
+    vm.quotation = {};
+  }
+
+  function ok() {
+    $mdDialog.hide(vm.quotation);
+  }
+
+  function cancel() {
+    $mdDialog.cancel();
+  }
+
 }

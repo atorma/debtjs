@@ -3,36 +3,20 @@
   <md-list>
     <md-list-item ng-repeat="quotation in vm.exchangeRates">
       <div class="md-list-item-text exchange-rate" flex layout="row" layout-align="start center">
-        <md-input-container md-no-float="true" style="padding-bottom: 2px">
-          <input type="text"
-                 placeholder="fixed currency"
-                 ng-model="quotation.fixed"
-                 ng-change="vm.updateExchangeRate(quotation)"
-                 ng-required="true"
-                 focus="$last && !quotation.fixed"/>
-        </md-input-container>
-        <span>to</span>
-        <md-input-container md-no-float="true" style="padding-bottom: 2px">
-          <input type="text"
-                 placeholder="variable currency"
-                 ng-model="quotation.variable"
-                 ng-change="vm.updateExchangeRate(quotation)"
-                 ng-required="true"/>
-        </md-input-container>
+        <span flex="33">{{::quotation.fixed}} to {{::quotation.variable}}</span>
         <md-input-container md-no-float="true" style="padding-bottom: 2px">
           <input type="number"
                  placeholder="exchange rate"
-                 ng-model="quotation.rate"
-                 ng-change="vm.updateExchangeRate(quotation)"
+                 ng-model="::quotation.rate"
+                 ng-change="::vm.updateExchangeRate(quotation)"
                  min="0.0001"/>
         </md-input-container>
         <span flex></span>
-        <md-button ng-click="vm.removeExchangeRate(quotation)">
+        <md-button ng-click="::vm.removeExchangeRate(quotation)">
           <md-icon aria-label="Remove" md-svg-icon="action:ic_delete_24px"></md-icon>
         </md-button>
       </div>
     </md-list-item>
-
     <md-list-item ng-if="!vm.exchangeRates || vm.exchangeRates.length == 0">
       <div class="md-list-item-text">
         No exchange rates. Click the floating button to add an exchange rate.
@@ -45,8 +29,8 @@
   <md-subheader class="md-primary md-no-sticky padding-vertical">Settings</md-subheader>
   <div flex layout="row" layout-align="start center">
     <label for="default-currency" class="margin-right">Default currency</label>
-    <md-select id="default-currency" placeholder="Default currency" ng-model="vm.defaultCurrency" ng-change="vm.updateDefaultCurrency()" >
-      <md-option ng-repeat="currency in vm.currencies">{{currency}}</md-option>
+    <md-select id="default-currency" placeholder="Default currency" ng-model="::vm.defaultCurrency" ng-change="::vm.updateDefaultCurrency()" >
+      <md-option ng-repeat="currency in vm.currencies">{{::currency}}</md-option>
     </md-select>
   </div>
 </section>
@@ -55,5 +39,5 @@
           label="Add exchange rate"
           template-url="ng-mfb-menu-md.tpl.html"
           resting-icon="editor:ic_attach_money_24px" active-icon="editor:ic_attach_money_24px"
-          main-action="vm.addExchangeRate()">
+          main-action="::vm.openExchangeRateDialog()">
 </mfb-menu>

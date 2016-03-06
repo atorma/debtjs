@@ -67,19 +67,6 @@ describe("CurrencyListCtrl", function() {
     expect(vm.defaultCurrency).toEqual(balanceSheetService.balanceSheet.getDefaultCurrency());
   });
 
-  describe("addExchangeRate()", function() {
-
-    it("adds empty exchange rate in list", function() {
-      vm.addExchangeRate();
-
-      expect(_.last(vm.exchangeRates)).toEqual({fixed: undefined, variable: undefined, rate: undefined});
-    });
-
-    it("emits 'balance sheet updated' event", function() {
-      expectEventEmitted(vm.addExchangeRate, events.BALANCE_SHEET_UPDATED);
-    });
-
-  });
 
   describe("updateExchangeRate()", function() {
 
