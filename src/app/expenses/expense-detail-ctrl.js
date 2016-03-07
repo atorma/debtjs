@@ -34,7 +34,7 @@ function ExpenseDetailCtrl(balanceSheetService,
   vm.setParticipation = setParticipation;
   vm.updateExpense = updateExpense;
   vm.removeExpense = removeExpense;
-  vm.updateExpenseCurrency = updateExpenseCurrency;
+  vm.setCurrency = setCurrency;
 
   init();
 
@@ -105,9 +105,11 @@ function ExpenseDetailCtrl(balanceSheetService,
     }
   }
 
-  function updateExpenseCurrency(currency) {
+  function setCurrency(currency) {
+    console.log("Expense currency: " + vm.expense.currency);
+    console.log("Setting currency: " + currency);
     vm.expense.currency = currency;
-    updateExpense();
+    $scope.$emit(events.BALANCE_SHEET_UPDATED);
   }
 
 

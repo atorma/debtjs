@@ -229,5 +229,20 @@ describe("ExpenseDetailCtrl", function() {
 
   });
 
+  describe("setCurrency", function() {
+
+    it("sets expense currency", function() {
+      expense.currency = undefined;
+      vm.setCurrency("EUR");
+      expect(expense.currency).toEqual("EUR");
+    });
+
+    it("emits 'balance sheet updated' event", function() {
+      expectEventEmitted(vm.setCurrency, events.BALANCE_SHEET_UPDATED);
+    });
+
+
+  });
+
 });
 
