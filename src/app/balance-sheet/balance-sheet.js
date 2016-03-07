@@ -239,12 +239,16 @@ var BalanceSheet = function(data) {
    * @return list of currencies in alphabetical order
    */
   function getCurrencies() {
-    return _.chain(exchangeRates)
+    var expenseCurrencies = _.map(expenses, "currency");
+
+    var exchangeRatesCurrencies = _.chain(exchangeRates)
       .reduce(function(result, er) {
         result.push(er.fixed);
         result.push(er.variable);
         return result;
-      }, [])
+      }, []);
+
+    return exchangeRatesCurrencies.concat(expenseCurrencies)
       .uniq().sort()
       .value();
   }

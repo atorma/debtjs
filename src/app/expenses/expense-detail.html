@@ -22,7 +22,20 @@
   
     <div layout="row" layout-align="start center">
       <label for="cost" flex>Cost</label>
-      <div id="cost" style="margin: 15px; padding-right: 8px">{{vm.cost | money}}</div>
+      <div id="cost" style="margin: 15px; padding-right: 8px;">{{vm.cost | money}}</div>
+    </div>
+
+    <div layout="row" layout-align="start center">
+      <label flex>Currency</label>
+      <md-autocomplete md-selected-item="vm.expense.currency"
+                       md-search-text="vm.currencySearchText"
+                       md-search-text-change="vm.updateExpenseCurrency(vm.currencySearchText)"
+                       md-items="currency in vm.balanceSheet.getCurrencies()"
+                       md-item-text="currency" style="margin-right: 15px;">
+        <md-item-template>
+          <span md-highlight-text="vm.currencySearchText">{{currency}}</span>
+        </md-item-template>
+      </md-autocomplete>
     </div>
     
     <div layout="row" layout-align="start center">

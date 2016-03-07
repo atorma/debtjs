@@ -34,6 +34,7 @@ function ExpenseDetailCtrl(balanceSheetService,
   vm.setParticipation = setParticipation;
   vm.updateExpense = updateExpense;
   vm.removeExpense = removeExpense;
+  vm.updateExpenseCurrency = updateExpenseCurrency;
 
   init();
 
@@ -102,6 +103,11 @@ function ExpenseDetailCtrl(balanceSheetService,
       var debts = debtService.computeDebts(vm.expense.getParticipations());
       return debtService.organizeByDebtor(debts);
     }
+  }
+
+  function updateExpenseCurrency(currency) {
+    vm.expense.currency = currency;
+    updateExpense();
   }
 
 

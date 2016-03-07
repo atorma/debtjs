@@ -68,18 +68,29 @@ describe("Balance sheet currencies", function () {
         expect(sheet.getExchangeRates()).toEqual([]);
       });
 
+      //it("throws an error if ")
+
     });
 
-    it("getCurrencies() returns currencies in alphabetical order", function() {
-      var exchangeRates = [
-        {fixed: "EUR", variable: "GBP", rate: 0.7898},
-        {fixed: "EUR", variable: "USD", rate: 1.1030}
-      ];
-      sheet.addOrUpdateExchangeRate(exchangeRates[0]);
-      sheet.addOrUpdateExchangeRate(exchangeRates[1]);
+    describe("getCurrencies()", function() {
 
-      expect(sheet.getCurrencies()).toEqual(["EUR", "GBP", "USD"]);
+      it("returns currencies of expenses and exchange rates in alphabetical order", function() {
+        var exchangeRates = [
+          {fixed: "EUR", variable: "GBP", rate: 0.7898},
+          {fixed: "EUR", variable: "USD", rate: 1.1030}
+        ];
+        sheet.addOrUpdateExchangeRate(exchangeRates[0]);
+        sheet.addOrUpdateExchangeRate(exchangeRates[1]);
+
+        expense1.currency = "DKK";
+        expense2.currency = "EUR";
+
+        expect(sheet.getCurrencies()).toEqual(["DKK", "EUR", "GBP", "USD"]);
+      });
+
     });
+
+
 
     describe("convertCurrency()", function() {
 
