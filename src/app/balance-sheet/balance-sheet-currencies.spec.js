@@ -2,7 +2,6 @@
 
 var BalanceSheet = require('./balance-sheet');
 var _ = require("lodash");
-var Decimal = require("simple-decimal-money");
 
 describe("Balance sheet currencies", function () {
 
@@ -20,9 +19,9 @@ describe("Balance sheet currencies", function () {
   });
 
 
-  describe("balance sheet", function() {
+  describe("Balance sheet", function() {
 
-    it("has method for getting copy of exchange rates", function() {
+    it("getExchangeRates() returns copy of exchange rates", function() {
       var exchangeRates = [
         {fixed: "GBP", variable: "EUR", rate: 1.2100},
         {fixed: "EUR", variable: "USD", rate: 1.1030}
@@ -33,7 +32,45 @@ describe("Balance sheet currencies", function () {
       expect(sheet.getExchangeRates()).toEqual(exchangeRates);
     });
 
-    it("has method for getting list of currencies in alphabetical order", function() {
+    describe("addOrUpdateExchangeRate()", function() {
+
+      it("adds or updates an exchange rate", function() {
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
+        expect(sheet.getExchangeRates()).toEqual([{fixed: "EUR", variable: "GBP", rate: 0.7898}]);
+
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.8});
+        expect(sheet.getExchangeRates().length).toBe(1);
+        expect(sheet.getExchangeRates()).toEqual([{fixed: "EUR", variable: "GBP", rate: 0.8}]);
+      });
+
+      it("throws an error if the input quotation is invalid", function() {
+        expect(function() {
+          sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: -1});
+        }).toThrow();
+        expect(function() {
+          sheet.addOrUpdateExchangeRate({fixed: undefined, variable: "GBP", rate: 0.7898});
+        }).toThrow();
+        expect(function() {
+          sheet.addOrUpdateExchangeRate({fixed: {name: "aargh"}, variable: "GBP", rate: 0.7898});
+        }).toThrow();
+        expect(function() {
+          sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: -1, rate: 0.7898});
+        }).toThrow();
+      });
+    });
+
+    describe("removeExchangeRate()", function() {
+
+      it("removes input exchange rate", function() {
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
+        sheet.removeExchangeRate({fixed: "EUR", variable: "GBP"});
+
+        expect(sheet.getExchangeRates()).toEqual([]);
+      });
+
+    });
+
+    it("getCurrencies() returns currencies in alphabetical order", function() {
       var exchangeRates = [
         {fixed: "EUR", variable: "GBP", rate: 0.7898},
         {fixed: "EUR", variable: "USD", rate: 1.1030}
@@ -44,67 +81,39 @@ describe("Balance sheet currencies", function () {
       expect(sheet.getCurrencies()).toEqual(["EUR", "GBP", "USD"]);
     });
 
-    it("can convert a value from one currency to another in two decimal accuracy", function() {
-      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
-      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
+    describe("convertCurrency()", function() {
 
-      expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"})).toBe(1.97);
-      expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "USD"})).toBe(2.76);
+      it("converts a value from one currency to another in two decimal accuracy", function() {
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
+
+        expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"})).toBe(1.97);
+        expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "USD"})).toBe(2.76);
+      });
+
+      it("converts a value from one currency to another using an inverse rate unless an exact rate is available", function() {
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
+        sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "EUR", rate: 0.1}); // Totally weird, but this is the exact rate
+
+        expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"})).toBe(1.97); // Computed using exact rate
+        expect(sheet.convertCurrency({value: 2.5, from: "GBP", to: "EUR"})).toBe(3.17); // Computed using inverse rate
+
+        expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "USD"})).toBe(2.76); // Computed using exact rate
+        expect(sheet.convertCurrency({value: 2.5, from: "USD", to: "EUR"})).toBe(0.25); // Computed using exact rate
+      });
+
+      it("throws error if it cannot find an exchange rate when converting currency", function() {
+        expect(function() {
+          sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"});
+        }).toThrow();
+      });
+
+
     });
 
-    it("can convert a value from one currency to another using an inverse rate unless an exact rate is available", function() {
-      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
-      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
-      sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "EUR", rate: 0.1}); // Totally weird, but this is the exact rate
 
-      expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"})).toBe(1.97); // Computed using exact rate
-      expect(sheet.convertCurrency({value: 2.5, from: "GBP", to: "EUR"})).toBe(3.17); // Computed using inverse rate
-
-      expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "USD"})).toBe(2.76); // Computed using exact rate
-      expect(sheet.convertCurrency({value: 2.5, from: "USD", to: "EUR"})).toBe(0.25); // Computed using exact rate
-    });
-
-    it("throws error if it cannot find an exchange rate when converting currency", function() {
-      expect(function() {
-        sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"});
-      }).toThrow();
-    });
-
-    it("can update an exchange rate", function() {
-      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
-      expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"})).toBe(1.97);
-
-      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.8});
-
-      expect(sheet.getExchangeRates().length).toBe(1);
-      expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"})).toBe(2.00);
-    });
-
-    it("can remove an exchange rate", function() {
-      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
-      sheet.removeExchangeRate({fixed: "EUR", variable: "GBP"});
-
-      expect(function() {
-        sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"});
-      }).toThrow();
-    });
-
-    it("throws an error if a quotation to add is invalid", function() {
-      expect(function() {
-        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: -1});
-      }).toThrow();
-      expect(function() {
-        sheet.addOrUpdateExchangeRate({fixed: undefined, variable: "GBP", rate: 0.7898});
-      }).toThrow();
-      expect(function() {
-        sheet.addOrUpdateExchangeRate({fixed: {name: "aargh"}, variable: "GBP", rate: 0.7898});
-      }).toThrow();
-      expect(function() {
-        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: -1, rate: 0.7898});
-      }).toThrow();
-    });
-
-    describe("default currency", function() {
+    describe("has a default currency", function() {
 
       it("set as first fixed currency if default is undefined", function() {
         expect(sheet.getDefaultCurrency()).toBeUndefined();
@@ -113,14 +122,14 @@ describe("Balance sheet currencies", function () {
         sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "GBP", rate: 0.7131});
       });
 
-      it("sets as first fixed currency if default currency removed", function() {
+      it("set as first fixed currency if default currency removed", function() {
         sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
         sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "GBP", rate: 0.7131});
         sheet.removeExchangeRate({fixed: "EUR", variable: "GBP"});
         expect(sheet.getDefaultCurrency()).toEqual("USD");
       });
 
-      it("sets as undefined if all currencies removed", function() {
+      it("set as undefined if all currencies removed", function() {
         sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
         sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "GBP", rate: 0.7131});
         sheet.removeExchangeRate({fixed: "EUR", variable: "GBP"});
@@ -143,11 +152,14 @@ describe("Balance sheet currencies", function () {
       prt21 = sheet.createParticipation({person: person2, expense: expense1, paid: 5, share: 12.5});
     });
 
-    it("are defined in what ever currency the expense is, even if undefined", function() {
+    it("cost and shares are defined in what ever currency the expense is, even if undefined", function() {
+      expense1.currency = undefined;
+
       expect(expense1.getCost()).toBe(25);
+      expect(expense1.getSumOfShares()).toBe(25);
     });
 
-    it("can be 'converted' expense's currency without the need for an exchange rate", function() {
+    it("can be 'converted' to expense's currency without the need for an exchange rate", function() {
       expense1.currency = "EUR";
 
       expect(prt11.getPaid()).toBe(20);
@@ -162,18 +174,20 @@ describe("Balance sheet currencies", function () {
 
       expect(expense1.getCost()).toBe(25);
       expect(expense1.getCost("EUR")).toBe(25);
+      expect(expense1.getSumOfShares()).toBe(25);
+      expect(expense1.getSumOfShares("EUR")).toBe(25);
     });
 
     it("can be converted to given currency if expense currency is defined and an exhange rate exists", function() {
       expense1.currency = "EUR";
 
       expect(prt11.getPaid("GBP")).toBe(15.80);
-      expect(prt11.getShare("GBP")).toBe(9.87);
-
       expect(prt21.getPaid("GBP")).toBe(3.95);
-      expect(prt21.getShare("GBP")).toBe(9.87);
-
       expect(expense1.getCost("GBP")).toBe(19.75);
+
+      expect(prt11.getShare("GBP")).toBe(9.87);
+      expect(prt21.getShare("GBP")).toBe(9.87);
+      expect(expense1.getSumOfShares("GBP")).toBe(19.75); // Converted values do not need to sum up exactly
     });
   });
 
