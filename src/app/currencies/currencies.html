@@ -1,5 +1,6 @@
 <section>
   <md-subheader class="md-primary md-no-sticky padding-vertical">Exchange rates</md-subheader>
+
   <md-list>
     <md-list-item ng-repeat="quotation in vm.exchangeRates">
       <div class="md-list-item-text exchange-rate" flex layout="row" layout-align="start center">
@@ -17,23 +18,33 @@
         </md-button>
       </div>
     </md-list-item>
-    <md-list-item ng-if="!vm.exchangeRates || vm.exchangeRates.length == 0">
-      <div class="md-list-item-text">
-        No exchange rates. Click the floating button to add an exchange rate.
-      </div>
-    </md-list-item>
   </md-list>
+
+  <p ng-if="!vm.exchangeRates || vm.exchangeRates.length == 0" class="padding-left">
+    Enable currencies by adding an exchange rate. Click the floating button below.
+  </p>
 </section>
 
 <section>
   <md-subheader class="md-primary md-no-sticky padding-vertical">Settings</md-subheader>
-  <div flex layout="row" layout-align="start center">
-    <label for="default-currency" class="margin-right">Default currency</label>
-    <md-select id="default-currency" placeholder="Default currency" ng-model="::vm.defaultCurrency" ng-change="::vm.updateDefaultCurrency()" >
-      <md-option ng-repeat="currency in vm.currencies">{{::currency}}</md-option>
-    </md-select>
+
+  <div layout="column" class="padding-left">
+
+    <div flex layout="row" layout-align="start center">
+      <label flex for="default-currency">Default currency</label>
+      <md-select id="default-currency"
+                 placeholder="Default currency"
+                 ng-model="::vm.defaultCurrency"
+                 ng-change="::vm.updateDefaultCurrency()"
+                 style="padding-right: 8px; margin-right: 15px" >
+        <md-option ng-repeat="currency in vm.currencies">{{::currency}}</md-option>
+      </md-select>
+    </div>
+
   </div>
+
 </section>
+
 
 <mfb-menu position="br" effect="none" toggling-method="hover"
           label="Add exchange rate"

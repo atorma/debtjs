@@ -15,8 +15,10 @@ var BalanceSheet = function(data) {
   var persons = [];
   var expenses = [];
   var participations = [];
+
   var exchangeRates = [];
   var defaultCurrency;
+
   var idSequence = 1;
 
   _this.name = "New sheet";
@@ -51,6 +53,7 @@ var BalanceSheet = function(data) {
   _this.isValid = isValid;
   _this.throwErrorIfInvalid = throwErrorIfInvalid;
 
+  _this.currenciesEnabled = currenciesEnabled;
   _this.getDefaultCurrency = getDefaultCurrency;
   _this.setDefaultCurrency = setDefaultCurrency;
   _this.getExchangeRates = getExchangeRates;
@@ -205,6 +208,11 @@ var BalanceSheet = function(data) {
     });
 
     toRemove.expense.shareCost();
+  }
+
+
+  function currenciesEnabled() {
+    return exchangeRates && exchangeRates.length > 0;
   }
 
   function getDefaultCurrency() {
