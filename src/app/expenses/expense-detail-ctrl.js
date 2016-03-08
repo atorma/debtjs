@@ -106,8 +106,6 @@ function ExpenseDetailCtrl(balanceSheetService,
   }
 
   function setCurrency(currency) {
-    console.log("Expense currency: " + vm.expense.currency);
-    console.log("Setting currency: " + currency);
     vm.expense.currency = currency;
     $scope.$emit(events.BALANCE_SHEET_UPDATED);
   }
