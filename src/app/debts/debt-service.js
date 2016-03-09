@@ -1,6 +1,7 @@
 "use strict";
 
 var angular = require("angular");
+var _ = require("lodash");
 
 angular
   .module("debtApp")
@@ -15,9 +16,28 @@ function debtService(solveDebts) {
   };
   
   /////////////////////////////////////////
-  
-  function computeDebts(participations) {
-    return solveDebts(participations);
+
+  function computeDebts(participations, currency) {
+    if (currency !== undefined) {
+      participations = _.map(participations, function(p) {
+        return {
+          person: p.person,
+          expense: p.expense,
+          paid: p.getPaid(currency),
+          share: p.getShare(currency)
+        };
+      });
+    }
+
+    var debts = solveDebts(participations);
+
+    if (currency !== undefined) {
+      debts = _.map(debts, function(debt) {
+        return _.extend(debt, {currency: currency});
+      });
+    }
+
+    return debts;
   } 
   
   function organizeByDebtor(debts) {
