@@ -234,7 +234,18 @@ gulp.task('webserver', function() {
   gulp.src(buildConfig.paths.build)
     .pipe(webserver({
       port: 8080,
-      livereload: true
+      livereload: {
+        enable: true,
+        filter: function(fileName) {
+          if (fileName.match(/.map$/)) { // exclude all source maps from livereload
+            return false;
+          } else if (fileName.match(/.spec.js$/)) { // exclude test bundles
+            return false;
+          } else {
+            return true;
+          }
+        }
+      }
     }));
 });
 
