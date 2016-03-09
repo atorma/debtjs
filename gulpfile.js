@@ -100,7 +100,10 @@ function browserifyBuild(params) {
   });
 
   return bundler.bundle()
-    .on('error', gutil.log.bind(gutil.log, "Browserify error:"))
+    .on('error', function(err) {
+      gutil.log('Browserify error:', err);
+      this.emit('end');
+    })
     .pipe(source(params.outputFileName))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
