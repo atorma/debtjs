@@ -37,9 +37,7 @@ function createAppBundler(browserifyOpts) {
   // Make sure watchified app bundle is build if any app file is changed.
   // It used to work by just adding the main js file, but seems like after
   // test bundle was set to include all files it stopped working. This is a workaround.
-  var allJsFiles = glob.sync(buildConfig.paths.jsAll);
-  var specJsFiles = glob.sync(buildConfig.paths.jsSpecs);
-  var appJsFiles = _.without(allJsFiles, specJsFiles);
+  var appJsFiles = glob.sync(buildConfig.paths.jsAll, {ignore: buildConfig.paths.jsSpecs});
 
   return createBundler(browserifyOpts)
     .add(buildConfig.paths.jsMain)
