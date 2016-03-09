@@ -1,7 +1,7 @@
 module.exports = {
   paths: {
     jsMain: 'src/app/debt.js',
-    jsSrc: 'src/app/**/*.js',
+    jsAll: 'src/app/**/*.js',
     jsSpecs: 'src/app/**/*.spec.js',
     html: ['src/app/**/*.html', '!src/app/**/*.spec.html'],
     resources: ['src/resources/**'],

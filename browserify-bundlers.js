@@ -34,20 +34,29 @@ function createLibBunder(browserifyOpts) {
 }
 
 function createAppBundler(browserifyOpts) {
+  // Make sure watchified app bundle is build if any app file is changed.
+  // It used to work by just adding the main js file, but seems like after
+  // test bundle was set to include all files it stopped working. This is a workaround.
+  var allJsFiles = glob.sync(buildConfig.paths.jsAll);
+  var specJsFiles = glob.sync(buildConfig.paths.jsSpecs);
+  var appJsFiles = _.without(allJsFiles, specJsFiles);
+
   return createBundler(browserifyOpts)
     .add(buildConfig.paths.jsMain)
+    .add(appJsFiles)
     .external(appDependencies);
 }
 
-
+// Specs currently require the code they test. This means that app source code
+// gets included into the spec bundle. For some reason, externalizing the
+// app source files causes tests to fail because the can't find the required app code.
+// We add all the source files to the bundle so that rebuild of the app + test bundle
+// happens when either app files or test files are updated.
 function createTestBundler(browserifyOpts) {
-  // Specs currently require the code they test. This means that app source code
-  // gets included into the spec bundle. For some reason, externalizing the
-  // app source files causes tests to fail because the can't find the required app code.
-  var testFiles = glob.sync(buildConfig.paths.jsSpecs); // Browserify can't handle glob patterns
-
+  var allJsFiles = glob.sync(buildConfig.paths.jsAll);
   return createBundler(browserifyOpts)
-    .add(testFiles)
+    .add(buildConfig.paths.jsMain)
+    .add(allJsFiles)
     .external(appDependencies);
 }
 

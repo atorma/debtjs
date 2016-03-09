@@ -5,7 +5,6 @@ module.exports = function(config) {
     basePath: buildConfig.paths.build,
     files: [
       buildConfig.paths.libDestName,
-      buildConfig.paths.appDestName,
       buildConfig.paths.testDestName,
       {pattern: '**/*.js.map', included: false, served: true}
     ],
