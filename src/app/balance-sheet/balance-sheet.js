@@ -84,7 +84,15 @@ var BalanceSheet = function(data) {
     });
   }
 
-
+  /**
+   * Creates a person.
+   *
+   * @param {Object} [data] - Person data
+   * @param {String} [data.name=Person <number>] - Person's name
+   * @param {Object} [options] - Options for creating a person
+   * @param {boolean} [options.createParticipations=true] - Whether the person is set to participate in all existing expenses
+   * @returns {Person} - The created Person object
+   */
   function createPerson(data, options) {
     data = _.extend({
       name: "Person " + (persons.length + 1)
@@ -132,6 +140,16 @@ var BalanceSheet = function(data) {
     });
   }
 
+  /**
+   * Creates an expense.
+   *
+   * @param {Object} [data] - Expense data
+   * @param {String} [data.name=Expense <number>] - Expense's name
+   * @param {String} [data.currency] - The currency the expense was paid in
+   * @param {Object} [options] - Options for creating an expense
+   * @param {boolean} [options.createParticipations=true] - Whether all existing persons are set to participate in the expense
+   * @returns {Expense} - The created Expense object
+   */
   function createExpense(data, options) {
     data = _.extend({
       name: "Expense " + (expenses.length + 1),
@@ -180,6 +198,16 @@ var BalanceSheet = function(data) {
     });
   }
 
+  /**
+   * Creates a participation of a Person to an Expense.
+   *
+   * @param {Object} data - Participation data
+   * @param {Person} data.person - The participant person
+   * @param {Expense} data.expense - The expense to participate in
+   * @param {number} [data.paid=0] - How much the person has paid for the expense (in the expense currency)
+   * @param {number} [data.share=0] - The person's share of the expense's total cost (in the expense currency)
+   * @returns {Participation} - The created Participation object
+   */
   function createParticipation(data) {
     if (getParticipation(data)) {
       throw "Duplicate participation";
@@ -548,13 +576,14 @@ var BalanceSheet = function(data) {
   }
 
   /**
-   * A participation of a person to an expense.
+   * Creates a participation of a Person to an Expense.
    *
-   * Data:
-   *  person: the Person object
-   *  expense: the Expense object
-   *  paid: how much the person has paid for the expense (float with max two decimals)
-   *  share: the person's share of the expense cost
+   * @param {Object} data - Participation data
+   * @param {Person} data.person - The participant person
+   * @param {Expense} data.expense - The expense to participate in
+   * @param {number} [data.paid=0] - How much the person has paid for the expense (in the expense currency)
+   * @param {number} [data.share=0] - The person's share of the expense's total cost (in the expense currency)
+   * @constructor
    */
   function Participation(data) {
     var _this = this;
