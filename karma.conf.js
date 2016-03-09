@@ -1,12 +1,12 @@
 var buildConfig = require('./build.conf');
 
+// Including ONLY those files that affect tests seems to be the key to get test watching to work in IntelliJ.
 module.exports = function(config) {
   config.set({
     basePath: buildConfig.paths.build,
     files: [
-      buildConfig.paths.libDestName,
-      buildConfig.paths.testDestName,
-      {pattern: '**/*.js.map', included: false, served: true}
+      buildConfig.paths.libDestName, {pattern: buildConfig.paths.libDestName + '.map', included: false, served: true},
+      buildConfig.paths.testDestName, {pattern: buildConfig.paths.testDestName + '.map', included: false, served: true}
     ],
     exclude: [],
     frameworks: ['jasmine'],
