@@ -34,15 +34,15 @@ function solve(input) {
 	
 	function validate() {
     	if (!input || !input.A || !input.b) {
-    		throw "Null matrix A or vector b in system Ax = b";
+    		throw new TypeError("Null matrix A or vector b in system Ax = b");
     	}
     	
     	if (input.A.length < 1 || input.A[0].length < 1) {
-    		throw "Matrix A in Ax = b has no rows or no columns";
+    		throw new TypeError("Matrix A in Ax = b has no rows or no columns");
     	}
 		
     	if (input.A.length != input.b.length) {
-    		throw "The dimensions of the matrix and the constant vector are incompatible"; 
+    		throw new RangeError("The dimensions of the matrix and the constant vector are incompatible");
     	}
 	}
 

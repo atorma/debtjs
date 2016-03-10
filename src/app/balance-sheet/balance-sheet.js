@@ -210,7 +210,7 @@ var BalanceSheet = function(data) {
    */
   function createParticipation(data) {
     if (getParticipation(data)) {
-      throw "Duplicate participation";
+      throw new Error("Duplicate participation");
     }
 
     data = _.extend({
@@ -250,7 +250,7 @@ var BalanceSheet = function(data) {
   function setDefaultCurrency(currencySymbol) {
     var found = _.indexOf(getCurrencies(), currencySymbol) > -1;
     if (!found) {
-      throw "Default currency " + currencySymbol + " does not have an exchange rate";
+      throw new Erro("Default currency " + currencySymbol + " does not have an exchange rate");
     }
     defaultCurrency = currencySymbol;
   }
@@ -306,13 +306,13 @@ var BalanceSheet = function(data) {
 
   function validateQuotation(quotation) {
     if (!_.isString(quotation.fixed)) {
-      throw "Fixed currency symbol must be a string";
+      throw new TypeError("Fixed currency symbol must be a string");
     }
     if (!_.isString(quotation.variable)) {
-      throw "Variable currency symbol must be a string";
+      throw new TypeError("Variable currency symbol must be a string");
     }
     if (!_.isNumber(quotation.rate) || quotation.rate <= 0) {
-      throw "Foreign currency rate must be a positive number";
+      throw new RangeError("Foreign currency rate must be a positive number");
     }
   }
 
@@ -359,7 +359,7 @@ var BalanceSheet = function(data) {
     }
 
     if (!rate) {
-      throw "Could not find an exchange rate for the requested conversion.";
+      throw new ReferenceError("Could not find an exchange rate for the requested conversion.");
     }
 
     return new Decimal(toConvert.value*100).multiply(rate).divideBy(100).toNumber();
@@ -589,7 +589,7 @@ var BalanceSheet = function(data) {
     var _this = this;
 
     if (!data || !data.person || !data.expense) {
-      throw "Undefined participation";
+      throw new ReferenceError("Undefined participation");
     }
 
     // Data
@@ -742,10 +742,6 @@ var BalanceSheet = function(data) {
     if (defaultCurrency && _.indexOf(getCurrencies(), defaultCurrency) === -1) {
       throw new Error("Default currency has no exchange rate");
     }
-  }
-
-  function Error(message) {
-    this.message = message;
   }
 
 };

@@ -68,8 +68,6 @@ describe("Balance sheet currencies", function () {
         expect(sheet.getExchangeRates()).toEqual([]);
       });
 
-      //it("throws an error if ")
-
     });
 
     describe("getCurrencies()", function() {
