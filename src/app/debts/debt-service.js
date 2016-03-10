@@ -44,7 +44,7 @@ function debtService(solveDebts) {
     var debtorList = [];
     var debtorIndices = {};
     
-    angular.forEach(debts, function(d) {
+    _.each(debts, function(d) {
       var debtorIndex = debtorIndices[d.debtor.id];
       var debtor;
       if (debtorIndex === undefined) {
@@ -54,10 +54,10 @@ function debtService(solveDebts) {
         debtorIndices[d.debtor.id] = debtorIndex;
       }
       debtor = debtorList[debtorIndex];
-      debtor.debts.push({creditor: d.creditor, amount: d.amount});
+      debtor.debts.push(_.omit(d, "debtor")) ;
     });
-    
-    angular.forEach(debtorList, function(d) {
+
+    _.each(debtorList, function(d) {
       d.debts.sort(function(d1, d2) {
         return d1.creditor.name.localeCompare(d2.creditor.name);
       });

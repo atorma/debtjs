@@ -15,9 +15,9 @@ describe("debtService", function() {
 
   beforeEach(function() {
     mockDebts = [
-      {debtor: {id: 1, name: "Valtteri"}, creditor: {id: 9, name: "Anssi"}, amount: 10},
-      {debtor: {id: 2, name: "Johannes"}, creditor: {id: 8, name: "Tomi"}, amount: 15},
-      {debtor: {id: 2, name: "Johannes"}, creditor: {id: 9, name: "Anssi"}, amount: 27}
+      {debtor: {id: 1, name: "Valtteri"}, creditor: {id: 9, name: "Anssi"}, amount: 10, currency: "FOO"},
+      {debtor: {id: 2, name: "Johannes"}, creditor: {id: 8, name: "Tomi"}, amount: 15, currency: "FOO"},
+      {debtor: {id: 2, name: "Johannes"}, creditor: {id: 9, name: "Anssi"}, amount: 27, currency: "FOO"}
     ];
 
     solveDebts = jasmine.createSpy("solveDebts");
@@ -94,14 +94,14 @@ describe("debtService", function() {
     expect(debtsByDebtor[0]).toEqual({
       debtor: {id: 2, name: "Johannes"},
       debts: [
-        {creditor: {id: 9, name: "Anssi"}, amount: 27},
-        {creditor: {id: 8, name: "Tomi"}, amount: 15}
+        {creditor: {id: 9, name: "Anssi"}, amount: 27, currency: "FOO"},
+        {creditor: {id: 8, name: "Tomi"}, amount: 15, currency: "FOO"}
       ]
     });
     expect(debtsByDebtor[1]).toEqual({
       debtor: {id: 1, name: "Valtteri"},
       debts: [
-        {creditor: {id: 9, name: "Anssi"}, amount: 10}
+        {creditor: {id: 9, name: "Anssi"}, amount: 10, currency: "FOO"}
       ]
     });
   });
