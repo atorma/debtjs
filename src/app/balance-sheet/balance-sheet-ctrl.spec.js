@@ -67,6 +67,7 @@ describe("BalanceSheetCtrl", function() {
     });
     
     it("computes debts by debtor using non-settled participatins", function() {
+      balanceSheet.currency = "EUR";
       balanceSheet.participations = "all participations";
       var nonSettledParticipations = "non-settled participations";
       spyOn(balanceSheet, "getNonSettledParticipations").and.returnValue(nonSettledParticipations);
@@ -79,7 +80,7 @@ describe("BalanceSheetCtrl", function() {
       
       vm.refresh();
       
-      expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations);
+      expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations, "EUR");
       expect(debtService.organizeByDebtor).toHaveBeenCalledWith(debts);
       expect(vm.debtsByDebtor).toBe(debtsByDebtor);
     });

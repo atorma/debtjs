@@ -8,6 +8,17 @@
 </h1>
 
 <section>
+  <div ng-if="::vm.balanceSheet.currenciesEnabled()" layout="row" layout-align="start center">
+    <label for="currency" flex>Currency</label>
+    <md-select id="currency" style="margin-right: 15px;"
+               ng-model="vm.balanceSheet.currency"
+               ng-change="vm.updateSheet()">
+      <md-option ng-value="currency" ng-repeat="currency in ::vm.balanceSheet.getCurrencies()">{{currency}}</md-option>
+    </md-select>
+  </div>
+</section>
+
+<section>
   <md-subheader class="md-primary md-no-sticky padding-left padding-vertical">Expenses</md-subheader>
   <md-card>
     <md-list class="menu">
@@ -19,7 +30,12 @@
         <div class="md-list-item-text" layout="row">
           <span ng-class="{settled: expense.settled}">{{expense.name}}</span>
           <span flex></span>
-          <span>{{expense.getCost() | money}}</span>
+          <span ng-if="::!vm.balanceSheet.currenciesEnabled()">
+            {{expense.getCost() | money}}
+          </span>
+          <span ng-if="::vm.balanceSheet.currenciesEnabled()">
+            {{expense.currency}} {{expense.getCost() | money}}
+          </span>
         </div>
         <md-divider ng-if="!$last"></md-divider>
       </md-list-item>
@@ -43,7 +59,12 @@
         <div class="md-list-item-text" layout="row">
           <span>{{person.name}}</span>
           <span flex></span>
-          <span>{{person.getBalance() | balance}}</span>
+          <span ng-if="::!vm.balanceSheet.currenciesEnabled()">
+            {{person.getBalance() | balance}}
+          </span>
+          <span ng-if="::vm.balanceSheet.currenciesEnabled()">
+            {{vm.balanceSheet.currency}} {{person.getBalance(vm.balanceSheet.currency) | balance}}
+          </span>
         </div>
         <md-divider ng-if="!$last"></md-divider>
       </md-list-item>
@@ -64,7 +85,7 @@
         <div class="md-list-item-text" layout="column">
           <span class="margin-bottom">{{d.debtor.name}} owes</span>
           <span ng-repeat="c in d.debts" class="margin-bottom" style="margin-left: 16px;">
-            {{c.creditor.name}}: {{c.amount | money}}
+            {{c.creditor.name}}: {{c.currency}} {{c.amount | money}}
           </span>
           <div class="invisible-linebreak"><br/></div>
         </div>
