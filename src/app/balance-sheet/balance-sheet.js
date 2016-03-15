@@ -239,18 +239,29 @@ var BalanceSheet = function(data) {
   }
 
 
+  /**
+   * @returns {boolean} Whether currencies are enabled in this balance sheet
+   */
   function currenciesEnabled() {
     return exchangeRates && exchangeRates.length > 0;
   }
 
+  /**
+   * @returns {string} The default currency of this balance sheet (undefined if and only if no exchange rates)
+   */
   function getDefaultCurrency() {
     return defaultCurrency;
   }
 
+  /**
+   * Sets the default currency.
+   *
+   * @param {string} currencySymbol - The default currency
+   */
   function setDefaultCurrency(currencySymbol) {
     var found = _.indexOf(getCurrencies(), currencySymbol) > -1;
     if (!found) {
-      throw new Erro("Default currency " + currencySymbol + " does not have an exchange rate");
+      throw new Error("Default currency " + currencySymbol + " does not have an exchange rate");
     }
     defaultCurrency = currencySymbol;
   }
@@ -265,7 +276,7 @@ var BalanceSheet = function(data) {
   }
 
   /**
-   * @return copy of exchange rates in this sheet
+   * @return {string[]} copy of exchange rates in this sheet
    */
   function getExchangeRates() {
     return _.cloneDeep(exchangeRates);
@@ -342,6 +353,10 @@ var BalanceSheet = function(data) {
   function convertCurrency(toConvert) {
     var rate;
 
+    if (!toConvert) {
+      throw new ReferenceError("Undefined or null conversion data");
+    }
+
     if (toConvert.from == toConvert.to) {
       return new Decimal(toConvert.value).toNumber();
     }
@@ -359,18 +374,18 @@ var BalanceSheet = function(data) {
     }
 
     if (!rate) {
-      throw new ReferenceError("Could not find an exchange rate for the requested conversion.");
+      throw new ReferenceError("Could not find an exchange rate for the requested conversion " + toConvert.from + "->" + toConvert.to + ".");
     }
 
     return new Decimal(toConvert.value*100).multiply(rate).divideBy(100).toNumber();
   }
 
   /**
-   * A person.
+   * Creates a Person object.
    *
-   * @param data
-   *  id: The person's id.
-   *  name: The person's name
+   * @param {Object} [data] - Initial data
+   * @param {number} [data.id] - Id
+   * @param {string} [data.name} - Name
    * @constructor
    */
   function Person(data) {
@@ -380,6 +395,7 @@ var BalanceSheet = function(data) {
 
     // Methods
 
+    _this.getCurrency = getCurrency;
     _this.equals = equals;
     _this.getCost = getCost;
     _this.getSumOfShares = getSumOfShares;
@@ -399,48 +415,80 @@ var BalanceSheet = function(data) {
         return !pt.expense.settled;
       });
 
-    var _cost = _nonSettledParticipations
-      .filter(function(pt) {
-        return !pt.expense.settled;
-      })
-      .map("paid").reduce(function(cost, paid) {
-        return cost.add(paid);
-      }, new Decimal(0));
 
-    var _sumOfShares = _nonSettledParticipations
-      .map("share").reduce(function(sum, share) {
-        return sum.add(share);
-      }, new Decimal(0));
-
-    var _balance = _nonSettledParticipations
-      .map(function(pt) {
-        return (new Decimal(pt.share)).subtract(pt.paid);
-      })
-      .reduce(function(sum, b) {
-        return sum.add(b);
-      }, new Decimal(0));
-
-
-    function getCost() {
-      return _cost.value().toNumber();
+    function getTotal(participationMapping) {
+      return _nonSettledParticipations
+        .map(participationMapping)
+        .reduce(function(total, value) {
+          return total.add(value);
+        }, new Decimal(0))
+        .value()
+        .toNumber();
     }
 
-    function getSumOfShares() {
-      return _sumOfShares.value().toNumber();
+
+    function getCurrency() {
+      return _this.currency || getDefaultCurrency();
     }
 
+    /**
+     *
+     * @param {string} [currency] - The currency in which to get the total (default: balance sheet's default currency)
+     * @returns {number} - The total amount this person has paid
+     */
+    function getCost(currency) {
+      currency = currency || getCurrency();
+      return getTotal(function(pt) {
+        return pt.getPaid(currency);
+      });
+    }
+
+    /**
+     *
+     * @param {string} [currency] - The currency in which to get the total (default: balance sheet's default currency)
+     * @returns {number} - This person's total share of all the expenses
+     */
+    function getSumOfShares(currency) {
+      currency = currency || getCurrency();
+      return getTotal(function(pt) {
+        return pt.getShare(currency);
+      });
+    }
+
+    /**
+     * Checks whether this person's costs and shares sum up to zero, i.e. the person neither
+     * owes money nor is owed money by anyone else.
+     *
+     * @returns {boolean} - Whether this person's costs and shares sum up to zero
+     */
     function isBalanced() {
-      return _balance.value().toNumber() === 0;
+      return getBalance() === 0;
     }
 
-    function getBalance() {
-      return _balance.value().toNumber();
+    /**
+     * Computes the difference between the total share and cost paid by this person.
+     * If the difference is negative, then the person's share is smaller than the costs
+     * she has paid, that is others owe her money.
+     *
+     * @param {string} [currency] - The currency in which to get the balance (default: balance sheet's default currency)
+     * @returns {number} - The difference between the total share and cost paid by this person
+     */
+    function getBalance(currency) {
+      currency = currency || getCurrency();
+      return new Decimal( getSumOfShares(currency) ).subtract( getCost(currency) ).toNumber();
     }
 
+    /**
+     * @returns {Participation[]} - The expense participations of this person
+     */
     function getParticipations() {
       return _myParticipations.value();
     }
 
+    /**
+     * @param {Object} other - Another object
+     * @returns {boolean} - True if this person is equal to the other object
+     */
     function equals(other) {
       return (other instanceof Person) && (other.id === _this.id);
     }
@@ -461,11 +509,11 @@ var BalanceSheet = function(data) {
     var _this = this;
 
     // Data
-
     _.extend(_this, data);
 
     // Methods
 
+    _this.getCurrency = getCurrency;
     _this.getCost = getCost;
     _this.getSumOfShares = getSumOfShares;
     _this.getBalance = getBalance;
@@ -480,65 +528,57 @@ var BalanceSheet = function(data) {
       return _this.equals(p.expense);
     });
 
-    var _cost = _myParticipations
-      .map("paid").reduce(function(cost, paid) {
-        return cost.add(paid);
-      }, new Decimal(0));
 
-    var _sumOfShares = _myParticipations
-      .map("share").reduce(function(sum, share) {
-        return sum.add(share);
-      }, new Decimal(0));
+    function getTotal(participationMapping) {
+      return _myParticipations
+        .map(participationMapping)
+        .reduce(function(total, value) {
+          return total.add(value);
+        }, new Decimal(0))
+        .value()
+        .toNumber();
+    }
 
-    var _balance = _myParticipations
-      .map(function(pt) {
-        return (new Decimal(pt.share)).subtract(pt.paid);
-      })
-      .reduce(function(sum, b) {
-        return sum.add(b);
-      }, new Decimal(0));
+    function getCurrency() {
+      return _this.currency || getDefaultCurrency();
+    }
 
     /**
      *
-     * @param {string} [currency] - Currency in which to get the value. Default is this expense's currency.
+     * @param {string} [currency] - Currency in which to get the value. Default is this expense's currency or if undefined, the balance sheet's default currency.
      * @return {number} The cost of this expense.
      */
     function getCost(currency) {
-      return convertCurrency({
-        value: _cost.value(),
-        from: _this.currency,
-        to: currency || _this.currency
+      currency = currency || _this.getCurrency();
+      return getTotal(function(pt) {
+        return pt.getPaid(currency);
       });
     }
 
     /**
      *
-     * @param {string} [currency] - Currency in which to get the value. Default is this expense's currency.
+     * @param {string} [currency] - Currency in which to get the value. Default is this expense's currency or if undefined, the balance sheet's default currency.
      * @return {number} The sum of shares of this expense.
      */
     function getSumOfShares(currency) {
-      return convertCurrency({
-        value: _sumOfShares.value(),
-        from: _this.currency,
-        to: currency || _this.currency
+      currency = currency || _this.getCurrency();
+      return getTotal(function(pt) {
+        return pt.getShare(currency);
       });
     }
 
     function isBalanced() {
-      return _balance.value().toNumber() === 0;
+      return getBalance(_this.currency) === 0;
     }
 
     /**
      *
-     * @param {string} [currency] - Currency in which to get the value. Default is this expense's currency.
+     * @param {string} [currency] - Currency in which to get the value. Default is this expense's currency or if undefined, the balance sheet's default currency.
      * @return {number} The balance of this expense.
      */
     function getBalance(currency) {
-      return convertCurrency({
-        value: _balance.value(),
-        from: _this.currency,
-        to: currency || _this.currency
-      });
+      currency = currency || _this.getCurrency();
+      return new Decimal( getSumOfShares(currency) ).subtract( getCost(currency) ).toNumber();
     }
 
     function getParticipations() {
@@ -613,7 +653,7 @@ var BalanceSheet = function(data) {
     function getPaid(currency) {
       return convertCurrency({
         value: _this.paid,
-        from: _this.expense.currency,
+        from: _this.expense.getCurrency(),
         to: currency || _this.expense.currency
       });
     }
@@ -626,7 +666,7 @@ var BalanceSheet = function(data) {
     function getShare(currency) {
       return convertCurrency({
         value: _this.share,
-        from: _this.expense.currency,
+        from: _this.expense.getCurrency(),
         to: currency || _this.expense.currency
       });
     }
