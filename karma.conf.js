@@ -5,8 +5,8 @@ module.exports = function(config) {
   config.set({
     basePath: buildConfig.paths.build,
     files: [
-      buildConfig.paths.libDestName, {pattern: buildConfig.paths.libDestName + '.map', included: false, served: true},
-      buildConfig.paths.testDestName, {pattern: buildConfig.paths.testDestName + '.map', included: false, served: true}
+      buildConfig.paths.libDestName, {pattern: buildConfig.paths.libDestName + '.map', included: false, served: true, watched: false},
+      buildConfig.paths.testDestName, {pattern: buildConfig.paths.testDestName + '.map', included: false, served: true, watched: false}
     ],
     exclude: [],
     frameworks: ['jasmine'],
