@@ -66,8 +66,14 @@ describe("BalanceSheetCtrl", function() {
       expect(vm.balanceSheet).toEqual(newSheet);
     });
     
-    it("computes debts by debtor using non-settled participatins", function() {
-      balanceSheet.currency = "EUR";
+    it("computes debts by debtor using non-settled participations", function() {
+      balanceSheet.addOrUpdateExchangeRate({
+        fixed: "USD",
+        variable: "EUR",
+        rate: 0.92
+      });
+      balanceSheet.setDefaultCurrency("EUR");
+
       balanceSheet.participations = "all participations";
       var nonSettledParticipations = "non-settled participations";
       spyOn(balanceSheet, "getNonSettledParticipations").and.returnValue(nonSettledParticipations);
