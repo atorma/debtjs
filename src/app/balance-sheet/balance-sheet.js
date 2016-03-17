@@ -17,7 +17,7 @@ var BalanceSheet = function(data) {
   var participations = [];
 
   var exchangeRates = [];
-  var defaultCurrency;
+  var balanceSheetCurrency;
 
   var idSequence = 1;
 
@@ -54,8 +54,7 @@ var BalanceSheet = function(data) {
   _this.throwErrorIfInvalid = throwErrorIfInvalid;
 
   _this.currenciesEnabled = currenciesEnabled;
-  _this.getDefaultCurrency = getDefaultCurrency;
-  _this.setDefaultCurrency = setDefaultCurrency;
+  _this.currency = currency;
   _this.getExchangeRates = getExchangeRates;
   _this.getCurrencies = getCurrencies;
   _this.addOrUpdateExchangeRate = addOrUpdateExchangeRate;
@@ -247,31 +246,29 @@ var BalanceSheet = function(data) {
   }
 
   /**
-   * @returns {string} The default currency of this balance sheet (undefined if and only if no exchange rates)
-   */
-  function getDefaultCurrency() {
-    return defaultCurrency;
-  }
-
-  /**
-   * Sets the default currency.
+   * A getter-setter for this balance sheet's currency.
    *
-   * @param {string} currencySymbol - The default currency
+   * @param {string} [currency] - The currency to set
+   * @returns {string} If the input currency is undefined, returns the currency of this balance sheet (undefined if and only if no exchange rates)
    */
-  function setDefaultCurrency(currencySymbol) {
-    var found = _.indexOf(getCurrencies(), currencySymbol) > -1;
-    if (!found) {
-      throw new Error("Default currency " + currencySymbol + " does not have an exchange rate");
+  function currency(currency) {
+    if (currency === undefined) {
+      return balanceSheetCurrency;
+    } else {
+      var found = _.indexOf(getCurrencies(), currency) > -1;
+      if (!found) {
+        throw new Error("Currency '" + currency + "' does not have an exchange rate");
+      }
+      balanceSheetCurrency = cleanUpCurrency(currency);
     }
-    defaultCurrency = currencySymbol;
   }
 
-  function updateDefaultCurrencyIfNeeded() {
+  function updateBalanceSheetCurrencyIfNeeded() {
     var currencies = getCurrencies();
-    if ((defaultCurrency === undefined || _.indexOf(currencies, defaultCurrency) === -1) && exchangeRates.length > 0) {
-      defaultCurrency = exchangeRates[0].fixed;
+    if ((balanceSheetCurrency === undefined || _.indexOf(currencies, balanceSheetCurrency) === -1) && exchangeRates.length > 0) {
+      balanceSheetCurrency = exchangeRates[0].fixed;
     } else {
-      defaultCurrency = undefined;
+      balanceSheetCurrency = undefined;
     }
   }
 
@@ -312,7 +309,7 @@ var BalanceSheet = function(data) {
     validateQuotation(quotation);
     removeExchangeRate(quotation);
     exchangeRates.push(quotation);
-    updateDefaultCurrencyIfNeeded();
+    updateBalanceSheetCurrencyIfNeeded();
   }
 
   function validateQuotation(quotation) {
@@ -355,7 +352,7 @@ var BalanceSheet = function(data) {
     if (!currencyPair) return;
     currencyPair = cleanUpCurrencyPair(currencyPair);
     _.remove(exchangeRates, {fixed: currencyPair.fixed, variable: currencyPair.variable});
-    updateDefaultCurrencyIfNeeded();
+    updateBalanceSheetCurrencyIfNeeded();
   }
 
   /**
@@ -448,7 +445,7 @@ var BalanceSheet = function(data) {
 
 
     function getCurrency() {
-      return _this.currency || getDefaultCurrency();
+      return _this.currency || currency();
     }
 
     /**
@@ -560,7 +557,7 @@ var BalanceSheet = function(data) {
     }
 
     function getCurrency() {
-      return _this.currency || getDefaultCurrency();
+      return _this.currency || currency();
     }
 
     /**
@@ -710,7 +707,7 @@ var BalanceSheet = function(data) {
       return {personId: pt.person.id, expenseId: pt.expense.id, paid: pt.paid, share: pt.share};
     });
     data.exchangeRates = getExchangeRates();
-    data.defaultCurrency = defaultCurrency;
+    data.balanceSheetCurrency = balanceSheetCurrency;
     return data;
   }
 
@@ -747,8 +744,8 @@ var BalanceSheet = function(data) {
       addOrUpdateExchangeRate(q);
     });
 
-    if (data.defaultCurrency) {
-      setDefaultCurrency(data.defaultCurrency);
+    if (data.balanceSheetCurrency) {
+      currency(data.balanceSheetCurrency);
     }
 
     throwErrorIfInvalid();
@@ -799,7 +796,7 @@ var BalanceSheet = function(data) {
       }
     });
 
-    if (defaultCurrency && _.indexOf(getCurrencies(), defaultCurrency) === -1) {
+    if (balanceSheetCurrency && _.indexOf(getCurrencies(), balanceSheetCurrency) === -1) {
       throw new Error("Default currency has no exchange rate");
     }
   }

@@ -30,7 +30,7 @@ function BalanceSheetCtrl(balanceSheetService, debtService, events, $scope) {
   function computeDebts() {
     if (vm.balanceSheet.isBalanced()) {
       var participations = vm.balanceSheet.getNonSettledParticipations();
-      var debts = debtService.computeDebts(participations, vm.balanceSheet.getDefaultCurrency());
+      var debts = debtService.computeDebts(participations, vm.balanceSheet.currency());
       return debtService.organizeByDebtor(debts);
     } else {
       return undefined;

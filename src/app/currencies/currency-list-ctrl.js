@@ -22,7 +22,7 @@ function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog) {
   function init() {
     vm.exchangeRates = balanceSheetService.balanceSheet.getExchangeRates();
     vm.currencies = balanceSheetService.balanceSheet.getCurrencies();
-    vm.defaultCurrency = balanceSheetService.balanceSheet.getDefaultCurrency();
+    vm.defaultCurrency = balanceSheetService.balanceSheet.currency();
   }
 
   function openExchangeRateDialog() {
@@ -50,7 +50,7 @@ function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog) {
   }
 
   function updateDefaultCurrency() {
-    balanceSheetService.balanceSheet.setDefaultCurrency(vm.defaultCurrency);
+    balanceSheetService.balanceSheet.currency(vm.defaultCurrency);
     $scope.$emit(events.BALANCE_SHEET_UPDATED);
     init();
   }

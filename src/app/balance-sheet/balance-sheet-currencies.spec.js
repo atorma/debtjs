@@ -125,38 +125,38 @@ describe("Balance sheet currencies", function () {
     describe("has a default currency", function() {
 
       it("initially undefined", function() {
-        expect(sheet.getDefaultCurrency()).toBeUndefined();
+        expect(sheet.currency()).toBeUndefined();
       });
 
       it("can be set as a fixed or variable currency in the exchange rate list", function() {
         sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
         sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "GBP", rate: 0.7131});
 
-        sheet.setDefaultCurrency("EUR");
-        expect(sheet.getDefaultCurrency()).toBe("EUR");
-        sheet.setDefaultCurrency("GBP");
-        expect(sheet.getDefaultCurrency()).toBe("GBP");
-        sheet.setDefaultCurrency("USD");
-        expect(sheet.getDefaultCurrency()).toBe("USD");
+        sheet.currency("EUR");
+        expect(sheet.currency()).toBe("EUR");
+        sheet.currency("GBP");
+        expect(sheet.currency()).toBe("GBP");
+        sheet.currency("USD");
+        expect(sheet.currency()).toBe("USD");
 
         expect(function() {
-          sheet.setDefaultCurrency("FOO");
+          sheet.currency("FOO");
         }).toThrow();
-        expect(sheet.getDefaultCurrency()).toBe("USD");
+        expect(sheet.currency()).toBe("USD");
       });
 
       it("set as first fixed currency if default is undefined", function() {
         sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
-        expect(sheet.getDefaultCurrency()).toEqual("EUR");
+        expect(sheet.currency()).toEqual("EUR");
         sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "GBP", rate: 0.7131});
-        expect(sheet.getDefaultCurrency()).toEqual("EUR");
+        expect(sheet.currency()).toEqual("EUR");
       });
 
       it("set as first fixed currency if default currency removed", function() {
         sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
         sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "GBP", rate: 0.7131});
         sheet.removeExchangeRate({fixed: "EUR", variable: "GBP"});
-        expect(sheet.getDefaultCurrency()).toEqual("USD");
+        expect(sheet.currency()).toEqual("USD");
       });
 
       it("set as undefined if all currencies removed", function() {
@@ -164,7 +164,7 @@ describe("Balance sheet currencies", function () {
         sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "GBP", rate: 0.7131});
         sheet.removeExchangeRate({fixed: "EUR", variable: "GBP"});
         sheet.removeExchangeRate({fixed: "USD", variable: "GBP"});
-        expect(sheet.getDefaultCurrency()).toBeUndefined();
+        expect(sheet.currency()).toBeUndefined();
       });
 
     });
@@ -294,7 +294,7 @@ describe("Balance sheet currencies", function () {
         expense1.currency = "EUR";
         expense2.currency = "EUR";
 
-        sheet.setDefaultCurrency("EUR");
+        sheet.currency("EUR");
 
         expect(person1.getCost()).toBe(23.5);
         expect(person1.getSumOfShares()).toBe(21);
@@ -304,7 +304,7 @@ describe("Balance sheet currencies", function () {
         expect(person2.getSumOfShares()).toBe(21);
         expect(person2.getBalance()).toBe(2.5);
 
-        sheet.setDefaultCurrency("GBP");
+        sheet.currency("GBP");
 
         expect(person1.getCost()).toBe(18.56);
         expect(person1.getSumOfShares()).toBe(16.58);
