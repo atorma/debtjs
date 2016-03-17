@@ -117,19 +117,22 @@ describe("ExpenseDetailCtrl", function() {
       expect(expense.shareCost).toHaveBeenCalled();
     });
 
-    it("computes debts by debtor", function() {
+    it("computes debts by debtor in the expense's currency", function() {
       var participations = [{person: "Dummy"}];
       spyOn(expense, "getParticipations").and.returnValue(participations);
+      var expenseCurrency = "EXPENSE CURRENCY";
+      spyOn(expense, "getCurrency").and.returnValue(expenseCurrency);
       
       var debts = [{debtor: {id: 1, name: "Valtteri"}, creditor: {id: 9, name: "Anssi"}, amount: 10}];
-      debtService.computeDebts = function(input) {
+      debtService.computeDebts = function(input, currency) {
         expect(input).toBe(participations);
+        expect(currency).toBe(expenseCurrency);
         return debts;
       };
       
       var debtsByDebtor = [{
           debtor: {id: 1, name: "Valtteri"},
-          debts: [{creditor: {id: 9, name: "Anssi"}, amount: 10}]
+          debts: [{creditor: {id: 9, name: "Anssi"}, amount: 10, currency: expenseCurrency}]
         }];
       debtService.organizeByDebtor = function(input) {
         expect(input).toBe(debts);

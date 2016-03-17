@@ -100,7 +100,7 @@ function ExpenseDetailCtrl(balanceSheetService,
 
   function computeDebts() {
     if (vm.expense.isBalanced()) {
-      var debts = debtService.computeDebts(vm.expense.getParticipations());
+      var debts = debtService.computeDebts(vm.expense.getParticipations(), vm.expense.getCurrency());
       return debtService.organizeByDebtor(debts);
     }
   }
