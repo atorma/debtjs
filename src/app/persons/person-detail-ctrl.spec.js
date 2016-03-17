@@ -166,11 +166,15 @@ describe("PersonDetailCtrl", function() {
     describe("debts", function() {
 
       var nonSettledParticipations;
+      var personsCurrency;
 
       beforeEach(function() {
         balanceSheet.participations = "wrong participations to use";
         nonSettledParticipations = "dummy non-settled participations";
         spyOn(balanceSheet, "getNonSettledParticipations").and.returnValue(nonSettledParticipations);
+
+        personsCurrency = "PERSON'S CURRENCY";
+        spyOn(person, "getCurrency").and.returnValue(personsCurrency);
       });
       
       it("computed with role creditor when person's balance is negative", function() {
@@ -182,16 +186,16 @@ describe("PersonDetailCtrl", function() {
         var otherCreditor = balanceSheet.createPerson({name: "Other creditor"});
         
         var debts = [
-                     {debtor: debtor1, creditor: otherCreditor, amount: 10},
-                     {debtor: debtor2, creditor: person, amount: 50}
+                     {debtor: debtor1, creditor: otherCreditor, amount: 10, currency: personsCurrency},
+                     {debtor: debtor2, creditor: person, amount: 50, currency: personsCurrency}
                     ];
         debtService.computeDebts.and.returnValue(debts);
         
         vm.refresh();
 
-        expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations);
+        expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations, personsCurrency);
         expect(vm.debtRole).toEqual("creditor");
-        expect(vm.debts).toEqual([{person: debtor2, amount: 50}]);
+        expect(vm.debts).toEqual([{person: debtor2, amount: 50, currency: personsCurrency}]);
       });
       
       it("computed with role debtor when person's balance is positive", function() {
@@ -203,16 +207,16 @@ describe("PersonDetailCtrl", function() {
         var otherDebtor = balanceSheet.createPerson({name: "Other debtor"});
         
         var debts = [
-                     {debtor: person, creditor: creditor1, amount: 10},
-                     {debtor: otherDebtor, creditor: creditor2, amount: 50}
+                     {debtor: person, creditor: creditor1, amount: 10, currency: personsCurrency},
+                     {debtor: otherDebtor, creditor: creditor2, amount: 50, currency: personsCurrency}
                     ];
         debtService.computeDebts.and.returnValue(debts);
         
         vm.refresh();
 
-        expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations);
+        expect(debtService.computeDebts).toHaveBeenCalledWith(nonSettledParticipations, personsCurrency);
         expect(vm.debtRole).toEqual("debtor");
-        expect(vm.debts).toEqual([{person: creditor1, amount: 10}]);
+        expect(vm.debts).toEqual([{person: creditor1, amount: 10, currency: personsCurrency}]);
       });
       
       it("not computed and role is settled when person's balance is zero", function() {

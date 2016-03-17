@@ -114,13 +114,13 @@ function PersonDetailCtrl(balanceSheetService,
       "creditor": "debtor"
     };
 
-    var debts = debtService.computeDebts(vm.balanceSheet.getNonSettledParticipations());
+    var debts = debtService.computeDebts(vm.balanceSheet.getNonSettledParticipations(), vm.person.getCurrency());
     result.debts = _.chain(debts)
       .filter(function(d) {
         return d[result.role].equals(vm.person);
       })
       .map(function(d) {
-        return {person: d[counterRole[result.role]], amount: d.amount};
+        return {person: d[counterRole[result.role]], amount: d.amount, currency: d.currency};
       })
       .value();
 
