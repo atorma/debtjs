@@ -156,7 +156,7 @@
         <p layout="column">
           <span class="margin-bottom">{{d.debtor.name}} owes </span>
           <span ng-repeat="c in d.debts" class="margin-bottom" style="margin-left: 16px;">
-            {{c.creditor.name}}: {{c.currency}} {{c.amount | money}}
+            {{c.creditor.name}}: <span ng-if="::vm.balanceSheet.currenciesEnabled()">{{c.currency}}</span> {{c.amount | money}}
           </span>
           <span class="invisible-linebreak"><br/></span>
         </p>
