@@ -54,11 +54,6 @@ describe("PersonDetailCtrl", function() {
       return $q.when();
     };
 
-    // Debounce function that actually doesn't debounce (faster, simpler tests)
-    var debounce = function(fun) {
-      return fun;
-    };
-    
     vm = $controller("PersonDetailCtrl", {
       balanceSheetService: balanceSheetService,
       debtService: debtService,
