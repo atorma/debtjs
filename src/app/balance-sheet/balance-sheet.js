@@ -316,15 +316,32 @@ var BalanceSheet = function(data) {
   }
 
   function validateQuotation(quotation) {
-    if (!_.isString(quotation.fixed)) {
-      throw new TypeError("Fixed currency symbol must be a string");
+    if (!_.isString(quotation.fixed) || _.trim(quotation.fixed) === "") {
+      throw new TypeError("Fixed currency symbol must be a non-empty string");
     }
-    if (!_.isString(quotation.variable)) {
-      throw new TypeError("Variable currency symbol must be a string");
+    if (!_.isString(quotation.variable) || _.trim(quotation.variable) === "") {
+      throw new TypeError("Variable currency symbol must be a non-empty string");
     }
     if (!_.isNumber(quotation.rate) || quotation.rate <= 0) {
       throw new RangeError("Foreign currency rate must be a positive number");
     }
+  }
+
+  function cleanUpCurrency(currency) {
+    if (!currency) {
+      return undefined;
+    } else if (_.isString(currency) && _.trim(currency).length === 0) {
+      return undefined;
+    } else {
+      return currency;
+    }
+  }
+
+  function cleanUpCurrencyPair(currencyPair) {
+    currencyPair = _.clone(currencyPair);
+    currencyPair.fixed = cleanUpCurrency(currencyPair.fixed);
+    currencyPair.variable = cleanUpCurrency(currencyPair.variable);
+    return currencyPair;
   }
 
   /**
@@ -336,6 +353,7 @@ var BalanceSheet = function(data) {
    */
   function removeExchangeRate(currencyPair) {
     if (!currencyPair) return;
+    currencyPair = cleanUpCurrencyPair(currencyPair);
     _.remove(exchangeRates, {fixed: currencyPair.fixed, variable: currencyPair.variable});
     updateDefaultCurrencyIfNeeded();
   }
@@ -346,9 +364,9 @@ var BalanceSheet = function(data) {
    *
    * @param {Object} toConvert - The data object
    * @param {number} toConvert.value - The value to convert
-   * @param {string} toConvert.from - The currency of the value
-   * @param {string} toConvert.to - The currency to convert the value to
-   * @return {number} - The value in the "to" currency
+   * @param {string} toConvert.fixed - The currency of the value to be converted
+   * @param {string} toConvert.variable - The currency to convert the value to
+   * @return {number} - The value in the variable currency
    */
   function convertCurrency(toConvert) {
     var rate;
@@ -357,16 +375,18 @@ var BalanceSheet = function(data) {
       throw new ReferenceError("Undefined or null conversion data");
     }
 
-    if (toConvert.from == toConvert.to) {
+    toConvert = cleanUpCurrencyPair(toConvert);
+
+    if (toConvert.fixed == toConvert.variable) {
       return new Decimal(toConvert.value).toNumber();
     }
 
-    var quotation = _.find(exchangeRates, {fixed: toConvert.from, variable: toConvert.to});
+    var quotation = _.find(exchangeRates, {fixed: toConvert.fixed, variable: toConvert.variable});
 
     if (quotation) {
       rate = new Decimal(quotation.rate, EXCHANGE_RATE_DECIMALS);
     } else {
-      var searchPair = {variable: toConvert.from, fixed: toConvert.to};
+      var searchPair = {variable: toConvert.fixed, fixed: toConvert.variable};
       var inverseQuotation = _.find(exchangeRates, searchPair);
       if (inverseQuotation) {
         rate = new Decimal(1/inverseQuotation.rate, EXCHANGE_RATE_DECIMALS);
@@ -374,7 +394,7 @@ var BalanceSheet = function(data) {
     }
 
     if (!rate) {
-      throw new ReferenceError("Could not find an exchange rate for the requested conversion " + toConvert.from + "->" + toConvert.to + ".");
+      throw new ReferenceError("Could not find an exchange rate for the requested conversion '" + toConvert.fixed + "' -> '" + toConvert.variable + "'.");
     }
 
     return new Decimal(toConvert.value*100).multiply(rate).divideBy(100).toNumber();
@@ -653,8 +673,8 @@ var BalanceSheet = function(data) {
     function getPaid(currency) {
       return convertCurrency({
         value: _this.paid,
-        from: _this.expense.getCurrency(),
-        to: currency || _this.expense.currency
+        fixed: _this.expense.getCurrency(),
+        variable: currency || _this.expense.currency
       });
     }
 
@@ -666,8 +686,8 @@ var BalanceSheet = function(data) {
     function getShare(currency) {
       return convertCurrency({
         value: _this.share,
-        from: _this.expense.getCurrency(),
-        to: currency || _this.expense.currency
+        fixed: _this.expense.getCurrency(),
+        variable: currency || _this.expense.currency
       });
     }
 

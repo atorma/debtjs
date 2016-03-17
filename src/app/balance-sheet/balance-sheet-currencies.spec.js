@@ -96,8 +96,8 @@ describe("Balance sheet currencies", function () {
         sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
         sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
 
-        expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"})).toBe(1.97);
-        expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "USD"})).toBe(2.76);
+        expect(sheet.convertCurrency({value: 2.5, fixed: "EUR", variable: "GBP"})).toBe(1.97);
+        expect(sheet.convertCurrency({value: 2.5, fixed: "EUR", variable: "USD"})).toBe(2.76);
       });
 
       it("converts a value from one currency to another using an inverse rate unless an exact rate is available", function() {
@@ -105,16 +105,16 @@ describe("Balance sheet currencies", function () {
         sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
         sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "EUR", rate: 0.1}); // Totally weird, but this is the exact rate
 
-        expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"})).toBe(1.97); // Computed using exact rate
-        expect(sheet.convertCurrency({value: 2.5, from: "GBP", to: "EUR"})).toBe(3.17); // Computed using inverse rate
+        expect(sheet.convertCurrency({value: 2.5, fixed: "EUR", variable: "GBP"})).toBe(1.97); // Computed using exact rate
+        expect(sheet.convertCurrency({value: 2.5, fixed: "GBP", variable: "EUR"})).toBe(3.17); // Computed using inverse rate
 
-        expect(sheet.convertCurrency({value: 2.5, from: "EUR", to: "USD"})).toBe(2.76); // Computed using exact rate
-        expect(sheet.convertCurrency({value: 2.5, from: "USD", to: "EUR"})).toBe(0.25); // Computed using exact rate
+        expect(sheet.convertCurrency({value: 2.5, fixed: "EUR", variable: "USD"})).toBe(2.76); // Computed using exact rate
+        expect(sheet.convertCurrency({value: 2.5, fixed: "USD", variable: "EUR"})).toBe(0.25); // Computed using exact rate
       });
 
       it("throws error if it cannot find an exchange rate when converting currency", function() {
         expect(function() {
-          sheet.convertCurrency({value: 2.5, from: "EUR", to: "GBP"});
+          sheet.convertCurrency({value: 2.5, fixed: "EUR", variable: "GBP"});
         }).toThrow();
       });
 
