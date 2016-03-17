@@ -15,14 +15,12 @@ function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog) {
   vm.openExchangeRateDialog = openExchangeRateDialog;
   vm.updateExchangeRate = updateExchangeRate;
   vm.removeExchangeRate = removeExchangeRate;
-  vm.updateDefaultCurrency = updateDefaultCurrency;
 
   init();
 
   function init() {
     vm.exchangeRates = balanceSheetService.balanceSheet.getExchangeRates();
     vm.currencies = balanceSheetService.balanceSheet.getCurrencies();
-    vm.defaultCurrency = balanceSheetService.balanceSheet.currency();
   }
 
   function openExchangeRateDialog() {
@@ -45,12 +43,6 @@ function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog) {
   function removeExchangeRate(exchangeRate) {
     balanceSheetService.balanceSheet.removeExchangeRate(exchangeRate);
     _.remove(vm.exchangeRates, exchangeRate);
-    $scope.$emit(events.BALANCE_SHEET_UPDATED);
-    init();
-  }
-
-  function updateDefaultCurrency() {
-    balanceSheetService.balanceSheet.currency(vm.defaultCurrency);
     $scope.$emit(events.BALANCE_SHEET_UPDATED);
     init();
   }

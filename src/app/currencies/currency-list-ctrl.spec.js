@@ -63,10 +63,6 @@ describe("CurrencyListCtrl", function() {
     expect(vm.currencies).toEqual(balanceSheetService.balanceSheet.getCurrencies());
   });
 
-  it("exposes default currency", function() {
-    expect(vm.defaultCurrency).toEqual(balanceSheetService.balanceSheet.currency());
-  });
-
 
   describe("updateExchangeRate()", function() {
 
@@ -91,13 +87,6 @@ describe("CurrencyListCtrl", function() {
       expect(vm.currencies).toEqual(balanceSheetService.balanceSheet.getCurrencies());
     });
 
-    it("updates default currency", function() {
-      var updatedDefault = "JPY";
-      spyOn(balanceSheet, 'currency').and.returnValue(updatedDefault);
-      vm.updateExchangeRate({fixed: "EUR", variable: "DKK", rate: 7.31});
-
-      expect(vm.defaultCurrency).toEqual(updatedDefault);
-    });
   });
 
   describe("removeExchangeRate()", function() {
@@ -125,31 +114,8 @@ describe("CurrencyListCtrl", function() {
       expect(vm.currencies.length).toEqual(0);
     });
 
-    it("updates default currency", function() {
-      var updatedDefault = "JPY";
-      spyOn(balanceSheet, 'currency').and.returnValue(updatedDefault);
-      vm.removeExchangeRate({fixed: "EUR", variable: "DKK"});
-
-      expect(vm.defaultCurrency).toEqual(updatedDefault);
-    });
   });
 
-  describe("updateDefaultCurrency()", function() {
-
-    it("updates default currency of balance sheet with current value", function() {
-      spyOn(balanceSheet, 'currency');
-      vm.defaultCurrency = "EUR";
-      vm.updateDefaultCurrency();
-
-      expect(balanceSheet.currency).toHaveBeenCalledWith("EUR");
-    });
-
-    it("emits 'balance sheet updated' event", function() {
-      spyOn(balanceSheet, 'currency');
-      expectEventEmitted(vm.updateDefaultCurrency, events.BALANCE_SHEET_UPDATED);
-    });
-
-  });
 
 });
 

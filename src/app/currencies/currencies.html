@@ -25,27 +25,6 @@
   </p>
 </section>
 
-<section>
-  <md-subheader class="md-primary md-no-sticky padding-vertical">Settings</md-subheader>
-
-  <div layout="column" class="padding-left">
-
-    <div flex layout="row" layout-align="start center">
-      <label flex for="default-currency">Default currency</label>
-      <md-select id="default-currency"
-                 placeholder="Default currency"
-                 ng-model="::vm.defaultCurrency"
-                 ng-change="::vm.updateDefaultCurrency()"
-                 style="padding-right: 8px; margin-right: 15px" >
-        <md-option ng-repeat="currency in vm.currencies">{{::currency}}</md-option>
-      </md-select>
-    </div>
-
-  </div>
-
-</section>
-
-
 <mfb-menu position="br" effect="none" toggling-method="hover"
           label="Add exchange rate"
           template-url="ng-mfb-menu-md.tpl.html"
