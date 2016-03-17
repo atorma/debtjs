@@ -84,7 +84,8 @@
         </md-button>
       </div>
 
-      <div layout="row">
+      <div layout="row" layout-align="start center">
+        <span class="input-currency" ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span>
         <md-input-container class="no-padding-left">
           <label>Paid</label>
           <input type="number" money-input style="width: 8em" ng-required="vm.isParticipant[person.id]"
@@ -120,7 +121,8 @@
         <icon-button-strut hide-gt-sm></icon-button-strut>
       </div>
 
-      <div layout="row" >
+      <div layout="row" layout-align="start center">
+        <span class="input-currency" ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span>
         <md-input-container class="no-padding-left">
           <label>Paid</label>
           <input type="number" money-input style="width: 8em" ng-model="vm.cost" ng-readonly="true" />
@@ -154,7 +156,7 @@
         <p layout="column">
           <span class="margin-bottom">{{d.debtor.name}} owes </span>
           <span ng-repeat="c in d.debts" class="margin-bottom" style="margin-left: 16px;">
-            {{c.creditor.name}}: {{c.amount | money}}
+            {{c.creditor.name}}: {{c.currency}} {{c.amount | money}}
           </span>
           <span class="invisible-linebreak"><br/></span>
         </p>
