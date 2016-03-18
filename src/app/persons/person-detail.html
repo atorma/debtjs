@@ -56,7 +56,7 @@
       </div>
       
       <div layout="row" layout-align="start center">
-        <span class="input-currency" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::expense.getCurrency()}}</span>
+        <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::expense.getCurrency()}}</span>
         <md-input-container class="no-padding-left">
           <label>Paid</label>
           <input type="number" money-input style="width: 8em"
@@ -92,7 +92,7 @@
       </div>
       
       <div layout="row" layout-align="start center">
-        <span class="input-currency" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::vm.person.getCurrency()}}</span>
+        <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::vm.person.getCurrency()}}</span>
         <md-input-container class="no-padding-left">
           <label>Paid</label>
           <input type="number" money-input style="width: 8em" ng-model="vm.cost" ng-readonly="true" />

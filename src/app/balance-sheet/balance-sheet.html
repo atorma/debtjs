@@ -10,7 +10,7 @@
 <section>
   <div ng-if="::vm.balanceSheet.currenciesEnabled()" layout="row" layout-align="start center">
     <label for="currency" flex>Currency</label>
-    <md-select id="currency" style="margin-right: 15px;"
+    <md-select id="currency" class="currency-select" style="margin-right: 15px;"
                ng-model="vm.balanceSheet.currency"
                ng-model-options="{getterSetter: true}"
                ng-change="vm.updateSheet()">
