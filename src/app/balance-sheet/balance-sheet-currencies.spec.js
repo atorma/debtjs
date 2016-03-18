@@ -1,7 +1,7 @@
 "use strict";
 
 var BalanceSheet = require('./balance-sheet');
-var _ = require("lodash");
+var CurrencyConversionError = require("./currency-conversion-error");
 
 describe("Balance sheet currencies", function () {
 
@@ -115,10 +115,9 @@ describe("Balance sheet currencies", function () {
       it("throws error if it cannot find an exchange rate when converting currency", function() {
         expect(function() {
           sheet.convertCurrency({value: 2.5, fixed: "EUR", variable: "GBP"});
-        }).toThrow();
+        }).toThrowError(CurrencyConversionError);
       });
-
-
+      
     });
 
 
@@ -224,35 +223,35 @@ describe("Balance sheet currencies", function () {
     it("throws error if conversion not possible", function() {
       expect(function() {
         prt11.getPaid("FOO");
-      }).toThrow();
+      }).toThrowError(CurrencyConversionError);
 
       expect(function() {
         prt11.getShare("FOO");
-      }).toThrow();
+      }).toThrowError(CurrencyConversionError);
 
       expect(function() {
         expense1.getCost("FOO");
-      }).toThrow();
+      }).toThrowError(CurrencyConversionError);
 
       expect(function() {
         expense1.getSumOfShares("FOO");
-      }).toThrow();
+      }).toThrowError(CurrencyConversionError);
 
       expect(function() {
         expense1.getBalance("FOO");
-      }).toThrow();
+      }).toThrowError(CurrencyConversionError);
 
       expect(function() {
         person1.getCost("FOO");
-      }).toThrow();
+      }).toThrowError(CurrencyConversionError);
 
       expect(function() {
         person1.getSumOfShares("FOO");
-      }).toThrow();
+      }).toThrowError(CurrencyConversionError);
 
       expect(function() {
         person1.getBalance("FOO");
-      }).toThrow();
+      }).toThrowError(CurrencyConversionError);
     });
 
 

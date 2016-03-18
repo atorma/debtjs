@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var angular = require("angular");
 var Decimal = require("simple-decimal-money");
+var CurrencyConversionError = require("./currency-conversion-error");
 
 var BalanceSheet = function(data) {
 
@@ -369,7 +370,7 @@ var BalanceSheet = function(data) {
     var rate;
 
     if (!toConvert) {
-      throw new ReferenceError("Undefined or null conversion data");
+      throw new CurrencyConversionError("Undefined or null conversion data");
     }
 
     toConvert = cleanUpCurrencyPair(toConvert);
@@ -391,7 +392,7 @@ var BalanceSheet = function(data) {
     }
 
     if (!rate) {
-      throw new ReferenceError("Could not find an exchange rate for the requested conversion '" + toConvert.fixed + "' -> '" + toConvert.variable + "'.");
+      throw new CurrencyConversionError("Could not find an exchange rate for the requested conversion '" + toConvert.fixed + "' -> '" + toConvert.variable + "'.");
     }
 
     return new Decimal(toConvert.value*100).multiply(rate).divideBy(100).toNumber();
