@@ -1,7 +1,6 @@
 "use strict";
 
 var angular = require("angular");
-var _ = require("lodash");
 
 angular.module("debtApp")
   .constant("balanceSheetSaveInterval", 500)
@@ -159,7 +158,7 @@ function DebtAppCtrl(balanceSheetService,
       controller: function($scope, $mdDialog) {
         $scope.close = function() {
           $mdDialog.hide();
-        }
+        };
       }
     });
     vm.mainMenu.toggle();
