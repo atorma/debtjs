@@ -26,7 +26,7 @@ describe("DebtAppCtrl", function() {
 
     balanceSheetJson = '{"name": "test"}';
     
-    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["save", "createNew", "exportToJson", "loadFromJson"]);
+    balanceSheetService = jasmine.createSpyObj("balanceSheetService", ["init", "save", "createNew", "exportToJson", "loadFromJson"]);
     balanceSheetService.balanceSheet = balanceSheet;
     balanceSheetService.exportToJson.and.returnValue(balanceSheetJson);
 
@@ -98,25 +98,16 @@ describe("DebtAppCtrl", function() {
 
   describe("init()", function() {
 
-    it("refreshes scope", function() {
-      spyOn(vm, "refresh");
+    it("initializes balance sheet service", function() {
+      var initializedSheet = {name: "Initialized sheet"};
+      balanceSheetService.init.and.callFake(function() {
+        balanceSheetService.balanceSheet = initializedSheet;
+      });
 
       vm.init();
 
-      expect(vm.refresh).toHaveBeenCalled();
-    });
-
-  });
-
-
-  describe("refresh()", function() {
-
-    it("updates exposed balance sheet reference", function() {
-      balanceSheetService.balanceSheet = "updated sheet";
-
-      vm.refresh();
-
-      expect(vm.balanceSheet).toEqual("updated sheet");
+      expect(balanceSheetService.init).toHaveBeenCalled();
+      expect(vm.balanceSheet).toBe(initializedSheet);
     });
 
   });

@@ -48,9 +48,12 @@ describe("BalanceSheetService", function() {
   
   
   
-  describe("is initialized", function() {
+  describe("init() initializes the service", function() {
+
     
     it("with balance sheet data in localStorage when available", function() {
+      balanceSheetService.init();
+      
       var sheet = balanceSheetService.balanceSheet;
       
       expect(localStorageService.get).toHaveBeenCalledWith(SHEET_LOCAL_STORAGE_KEY);
@@ -74,18 +77,19 @@ describe("BalanceSheetService", function() {
       expect(sheet.participations.length).toBe(0);
     });
     
-    it("with undefined sheet and stored error from localStorage data fails", function() {
+    it("with undefined sheet and throws error if importing sheet from localStorage data fails", function() {
+      balanceSheetService.init();
+      
       balanceSheetService.balanceSheet = undefined;
       delete balanceSheetData.participations[0].personId;
-      expect(balanceSheetService.init).not.toThrow();
+      expect(balanceSheetService.init).toThrow();
       expect(balanceSheetService.balanceSheet).not.toBeDefined();
-      expect(balanceSheetService.error).toBeDefined();
     });
     
   });
   
   describe("loads balanceSheet from JSON", function() {
-    
+
     it("and saves the result if the JSON is valid", function() {
       balanceSheetService.loadFromJson(JSON.stringify(balanceSheetData));
       
@@ -105,6 +109,8 @@ describe("BalanceSheetService", function() {
   
   
   it("exports balanceSheet data to JSON", function() {
+    balanceSheetService.init();
+
     var json = balanceSheetService.exportToJson();
     var data = JSON.parse(json);
     expect(data).toEqual(balanceSheetData);
@@ -112,12 +118,15 @@ describe("BalanceSheetService", function() {
   
   
   describe("save to localStorage", function() {
+
+    beforeEach(function() {
+      balanceSheetService.init();
+    });
     
     it("validates balance sheet and throws error if invalid", function() {
       spyOn(balanceSheetService.balanceSheet, "throwErrorIfInvalid").and.throwError("some error");
       expect(balanceSheetService.save).toThrow();
       expect(localStorageService.set).not.toHaveBeenCalled();
-      expect(balanceSheetService.error).toBeDefined();
     });
     
   });

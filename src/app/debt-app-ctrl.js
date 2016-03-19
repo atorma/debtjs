@@ -16,7 +16,8 @@ function DebtAppCtrl(balanceSheetService,
                      $mdDialog,
                      $mdSidenav,
                      $state,
-                     $scope) {
+                     $scope,
+                     $log) {
 
   var vm = this;
 
@@ -50,14 +51,13 @@ function DebtAppCtrl(balanceSheetService,
   function init() {
     $scope.$on(events.BALANCE_SHEET_UPDATED, debounce(onBalanceSheetUpdated, balanceSheetSaveInterval, $scope, true));
     $scope.$on(events.ERROR, handleErrorEvent);
+    balanceSheetService.init();
     vm.refresh();
   }
 
   function onBalanceSheetUpdated() {
     vm.refresh();
-    if (!vm.errorMessage) {
-      vm.save();
-    }
+    vm.save();
   }
 
   function save() {
@@ -65,6 +65,7 @@ function DebtAppCtrl(balanceSheetService,
       balanceSheetService.save();
       vm.errorMessage = undefined;
     } catch (e) {
+      $log.error(e);
       vm.errorMessage = "Cannot save: " + e.message;
     }
   }
