@@ -401,8 +401,8 @@ var BalanceSheet = function(data) {
   /**
    * Creates a Person object.
    *
-   * @param {Object} [data] - Initial data
-   * @param {number} [data.id] - Id
+   * @param {Object} data - Initial data
+   * @param {number} data.id - Id
    * @param {string} [data.name} - Name
    * @constructor
    */
@@ -517,10 +517,10 @@ var BalanceSheet = function(data) {
   /**
    * An expense.
    *
-   * @param data
-   *  id: The expense's id.
-   *  name: The expense's name
-   *  sharing: The expense's cost sharing mode. Value "equal" = share costs equally. All other values mean custom sharing.
+   * @param {object} data - Initial data
+   * @param {number} data.id - The expense's id
+   * @param {string} [data.name] - The expense's name
+   * @param {string} [sharing] -  The expense's cost sharing mode. Value "equal" = share costs equally. All other values mean custom sharing.
    * @constructor
    */
   function Expense(data) {
