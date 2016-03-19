@@ -13,13 +13,14 @@ var _ = require("lodash");
 angular
   .module("debtApp", ["ngMaterial", "ui.router", "LocalStorageModule", "ng-mfb", "ngFileUpload"])
   .constant("events", {
-    BALANCE_SHEET_UPDATED: "balance sheet updated"
+    BALANCE_SHEET_UPDATED: "balance sheet updated",
+    ERROR: "error"
   })
   .constant("debtCalculationInterval", 500)
-  .value("debounce", _.debounce) // allows stubbing this for faster tests
   .config(configureLocalStorage)
   .config(configureIcons)
   .config(hrefSanitization)
+  .config(decorateExceptionHandler)
   .run(makeStateAvailableInScope);
 
 require("./debt-app-ctrl");
@@ -30,6 +31,8 @@ require("./persons");
 require("./expenses");
 require("./utils");
 require("./currencies");
+
+var CurrencyConversionError = require("./balance-sheet/currency-conversion-error");
 
 function configureLocalStorage(localStorageServiceProvider) {
   localStorageServiceProvider.setPrefix("debtApp");
@@ -55,6 +58,23 @@ function configureIcons($mdIconProvider) {
 
 function hrefSanitization($compileProvider) {
   $compileProvider.aHrefSanitizationWhitelist(/^(blob||https?):/);
+}
+
+function decorateExceptionHandler($provide, events) {
+  $provide.decorator('$exceptionHandler', function($delegate, $log, $injector) {
+    return function(exception, cause) {
+      $delegate(exception, cause);
+
+      var $rootScope = $injector.get('$rootScope');
+      $rootScope.$broadcast(events.ERROR, exception, cause);
+
+      if (exception instanceof CurrencyConversionError) {
+        var $state = $injector.get('$state');
+        $state.go("currencies");
+      }
+
+    };
+  });
 }
 
 // Injection of $state may trigger a GET, which can show as an 

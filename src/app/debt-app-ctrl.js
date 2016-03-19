@@ -48,7 +48,8 @@ function DebtAppCtrl(balanceSheetService,
   }
 
   function init() {
-    $scope.$on(events.BALANCE_SHEET_UPDATED, debounce(onBalanceSheetUpdated, balanceSheetSaveInterval));
+    $scope.$on(events.BALANCE_SHEET_UPDATED, debounce(onBalanceSheetUpdated, balanceSheetSaveInterval, $scope, true));
+    $scope.$on(events.ERROR, handleErrorEvent);
     vm.refresh();
   }
 
@@ -77,6 +78,10 @@ function DebtAppCtrl(balanceSheetService,
     }
   }
 
+  // TODO How to clear error message? User click, timed, after successful save?
+  function handleErrorEvent(event, error) {
+    vm.errorMessage = error.message;
+  }
 
   function createPerson() {
     openCreatePersonDialog()

@@ -10,7 +10,7 @@ describe("DebtAppCtrl", function() {
   var vm;
 
   var events;
-  var $scope, $childScope, $state, $q, $window;
+  var $rootScope, $scope, $childScope, $state, $q, $window;
   var balanceSheetService;
   var balanceSheet;
   var balanceSheetJson;
@@ -47,7 +47,7 @@ describe("DebtAppCtrl", function() {
   }));
 
   
-  beforeEach(angular.mock.inject(function(_events_, $rootScope, $controller, _$q_, $mdDialog, _$window_) {
+  beforeEach(angular.mock.inject(function(_events_, _$rootScope_, $controller, _$q_, $mdDialog, _$window_) {
     events = _events_;
     $q = _$q_;
 
@@ -55,7 +55,8 @@ describe("DebtAppCtrl", function() {
 
     openCreatePersonDialog.and.returnValue($q.when({}));
     openCreateExpenseDialog.and.returnValue($q.when({}));
-    
+
+    $rootScope = _$rootScope_;
     $scope = $rootScope.$new();
     $childScope = $scope.$new();
 
@@ -85,6 +86,15 @@ describe("DebtAppCtrl", function() {
 
     expect(eventBroadcasted).toBe(true);
   }
+
+  it("listens to error events and displays error messages", function() {
+    var errorMessage = "Error message";
+    var error = new Error(errorMessage);
+    $rootScope.$broadcast(events.ERROR, error);
+
+    expect(vm.errorMessage).toBe(errorMessage);
+  });
+
 
   describe("init()", function() {
 
@@ -278,7 +288,6 @@ describe("DebtAppCtrl", function() {
     });
 
   });
-
 
 
 });
