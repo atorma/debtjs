@@ -284,17 +284,14 @@ var BalanceSheet = function(data) {
    * @return list of currencies in alphabetical order
    */
   function getCurrencies() {
-    var expenseCurrencies = _.map(expenses, "currency");
-
-    var exchangeRatesCurrencies = _.chain(exchangeRates)
+    return _.chain(exchangeRates)
       .reduce(function(result, er) {
         result.push(er.fixed);
         result.push(er.variable);
         return result;
-      }, []);
-
-    return exchangeRatesCurrencies.concat(expenseCurrencies)
-      .uniq().sort()
+      }, [])
+      .uniq()
+      .sort()
       .value();
   }
 
@@ -520,18 +517,19 @@ var BalanceSheet = function(data) {
    * @param {object} data - Initial data
    * @param {number} data.id - The expense's id
    * @param {string} [data.name] - The expense's name
-   * @param {string} [sharing] -  The expense's cost sharing mode. Value "equal" = share costs equally. All other values mean custom sharing.
+   * @param {string} [data.sharing] -  The expense's cost sharing mode. Value "equal" = share costs equally. All other values mean custom sharing.
    * @constructor
    */
   function Expense(data) {
     var _this = this;
+    var expenseCurrency;
 
     // Data
     _.extend(_this, data);
 
     // Methods
 
-    _this.getCurrency = getCurrency;
+    _this.currency = currency;
     _this.getCost = getCost;
     _this.getSumOfShares = getSumOfShares;
     _this.getBalance = getBalance;
@@ -557,8 +555,20 @@ var BalanceSheet = function(data) {
         .toNumber();
     }
 
-    function getCurrency() {
-      return _this.currency || currency();
+    /**
+     *
+     * @returns {*}
+     */
+    function currency(currency) {
+      if (currency === undefined) {
+        return expenseCurrency || balanceSheetCurrency;
+      } else {
+        var found = _.indexOf(getCurrencies(), currency) > -1;
+        if (!found) {
+          throw new Error("Currency '" + currency + "' does not have an exchange rate");
+        }
+        expenseCurrency = cleanUpCurrency(currency);
+      }
     }
 
     /**
@@ -567,7 +577,7 @@ var BalanceSheet = function(data) {
      * @return {number} The cost of this expense.
      */
     function getCost(currency) {
-      currency = currency || _this.getCurrency();
+      currency = currency || _this.currency();
       return getTotal(function(pt) {
         return pt.getPaid(currency);
       });
@@ -579,14 +589,14 @@ var BalanceSheet = function(data) {
      * @return {number} The sum of shares of this expense.
      */
     function getSumOfShares(currency) {
-      currency = currency || _this.getCurrency();
+      currency = currency || _this.currency();
       return getTotal(function(pt) {
         return pt.getShare(currency);
       });
     }
 
     function isBalanced() {
-      return getBalance(_this.currency) === 0;
+      return getBalance(_this.currency()) === 0;
     }
 
     /**
@@ -595,7 +605,7 @@ var BalanceSheet = function(data) {
      * @return {number} The balance of this expense.
      */
     function getBalance(currency) {
-      currency = currency || _this.getCurrency();
+      currency = currency || _this.currency();
       return new Decimal( getSumOfShares(currency) ).subtract( getCost(currency) ).toNumber();
     }
 
@@ -671,8 +681,8 @@ var BalanceSheet = function(data) {
     function getPaid(currency) {
       return convertCurrency({
         value: _this.paid,
-        fixed: _this.expense.getCurrency(),
-        variable: currency || _this.expense.currency
+        fixed: _this.expense.currency(),
+        variable: currency || _this.expense.currency()
       });
     }
 
@@ -684,8 +694,8 @@ var BalanceSheet = function(data) {
     function getShare(currency) {
       return convertCurrency({
         value: _this.share,
-        fixed: _this.expense.getCurrency(),
-        variable: currency || _this.expense.currency
+        fixed: _this.expense.currency(),
+        variable: currency || _this.expense.currency()
       });
     }
 
@@ -797,9 +807,6 @@ var BalanceSheet = function(data) {
       }
     });
 
-    if (balanceSheetCurrency && _.indexOf(getCurrencies(), balanceSheetCurrency) === -1) {
-      throw new Error("Default currency has no exchange rate");
-    }
   }
 
 };

@@ -59,8 +59,8 @@ describe("debtService", function() {
     });
 
     it("converts participations to given currency if defined and the currency to computed debts", function() {
-      e1.currency = "EUR";
       balanceSheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "DKK", rate: 7.2313});
+      e1.currency("EUR");
 
       var result = debtService.computeDebts(participations, "DKK");
 
@@ -76,7 +76,8 @@ describe("debtService", function() {
     });
 
     it("throws error if a participation cannot be converted to requested currency", function() {
-      e1.currency = "EUR";
+      balanceSheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.109});
+      e1.currency("EUR");
 
       expect(function() {
         debtService.computeDebts(participations, "DKK");

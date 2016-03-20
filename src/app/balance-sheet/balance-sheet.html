@@ -35,7 +35,7 @@
             {{::expense.getCost() | money}}
           </span>
           <span ng-if="::vm.balanceSheet.currenciesEnabled()">
-            {{::expense.getCurrency()}} {{::expense.getCost() | money}}
+            {{::expense.currency()}} {{::expense.getCost() | money}}
           </span>
         </div>
         <md-divider ng-if="!$last"></md-divider>

@@ -26,17 +26,13 @@
     </div>
 
     <div ng-if="::vm.balanceSheet.currenciesEnabled()" layout="row" layout-align="start center">
-      <label flex>Currency</label>
-      <md-autocomplete md-selected-item="vm.expense.currency"
-                       md-search-text="vm.currencySearchText"
-                       md-search-text-change="vm.setCurrency(vm.currencySearchText)"
-                       md-selected-item-change="vm.setCurrency(vm.expense.currency)"
-                       md-items="currency in vm.balanceSheet.getCurrencies()"
-                       md-item-text="currency" style="margin-right: 15px;">
-        <md-item-template>
-          <span md-highlight-text="vm.currencySearchText">{{currency}}</span>
-        </md-item-template>
-      </md-autocomplete>
+      <label for="currency" flex>Currency</label>
+      <md-select id="currency" class="currency-select" style="margin-right: 15px;"
+                 ng-model="vm.expense.currency"
+                 ng-model-options="{getterSetter: true}"
+                 ng-change="vm.updateExpense()">
+        <md-option ng-value="currency" ng-repeat="currency in ::vm.balanceSheet.getCurrencies()">{{currency}}</md-option>
+      </md-select>
     </div>
     
     <div layout="row" layout-align="start center">

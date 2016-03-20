@@ -100,13 +100,13 @@ function ExpenseDetailCtrl(balanceSheetService,
 
   function computeDebts() {
     if (vm.expense.isBalanced()) {
-      var debts = debtService.computeDebts(vm.expense.getParticipations(), vm.expense.getCurrency());
+      var debts = debtService.computeDebts(vm.expense.getParticipations(), vm.expense.currency());
       return debtService.organizeByDebtor(debts);
     }
   }
 
   function setCurrency(currency) {
-    vm.expense.currency = currency;
+    vm.expense.currency(currency);
     $scope.$emit(events.BALANCE_SHEET_UPDATED);
   }
 

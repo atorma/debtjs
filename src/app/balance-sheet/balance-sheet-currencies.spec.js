@@ -72,23 +72,18 @@ describe("Balance sheet currencies", function () {
 
     describe("getCurrencies()", function() {
 
-      it("returns currencies of expenses and exchange rates in alphabetical order", function() {
+      it("returns currencies of exchange rates in alphabetical order", function() {
         var exchangeRates = [
           {fixed: "EUR", variable: "GBP", rate: 0.7898},
           {fixed: "EUR", variable: "USD", rate: 1.1030}
         ];
         sheet.addOrUpdateExchangeRate(exchangeRates[0]);
         sheet.addOrUpdateExchangeRate(exchangeRates[1]);
-
-        expense1.currency = "DKK";
-        expense2.currency = "EUR";
-
-        expect(sheet.getCurrencies()).toEqual(["DKK", "EUR", "GBP", "USD"]);
+        
+        expect(sheet.getCurrencies()).toEqual(["EUR", "GBP", "USD"]);
       });
 
     });
-
-
 
     describe("convertCurrency()", function() {
 
@@ -119,7 +114,6 @@ describe("Balance sheet currencies", function () {
       });
       
     });
-
 
     describe("has a default currency", function() {
 
@@ -170,6 +164,38 @@ describe("Balance sheet currencies", function () {
 
   });
 
+  describe("Expense", function() {
+
+    it("has currency equal to balance sheet currency by default", function() {
+      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
+
+      sheet.currency("EUR");
+      expect(expense1.currency()).toEqual("EUR");
+
+      sheet.currency("USD");
+      expect(expense1.currency()).toEqual("USD");
+    });
+
+    it("has currency that can be defined", function() {
+      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
+      sheet.currency("EUR");
+
+      expense1.currency("EUR");
+      expect(expense1.currency()).toEqual("EUR");
+      expense1.currency("USD");
+      expect(expense1.currency()).toEqual("USD");
+    });
+
+    it("throws error if trying to set currency without exchange rate", function() {
+      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
+
+      expect(function() {
+        expense1.currency("FOO");
+      }).toThrow();
+    });
+
+  });
+
   describe("shares and costs", function() {
 
     var prt11, prt21, prt12, prt22;
@@ -184,13 +210,12 @@ describe("Balance sheet currencies", function () {
       prt22 = sheet.createParticipation({person: person2, expense: expense2, paid: 13.5, share: 8.5});
     });
 
-
     // We sum up converted payments and shares instead of converting sums of payments and shares
     // in order to keep sums consistent with their constituents. Because shares can be arbitrary,
     // we cannot just divide totals between participants.
     it("can be converted to given currency if expense currency is defined and an exhange rate exists, and totals are based on rounded shares", function() {
-      expense1.currency = "EUR";
-      expense2.currency = "EUR";
+      expense1.currency("EUR");
+      expense2.currency("EUR");
 
       expect(prt11.getPaid("GBP")).toBe(15.80);
       expect(prt21.getPaid("GBP")).toBe(3.95);
@@ -254,18 +279,17 @@ describe("Balance sheet currencies", function () {
       }).toThrowError(CurrencyConversionError);
     });
 
-
     describe("of expenses and participations", function() {
 
       it("sum up as entered if expense currency is undefined", function() {
-        expense1.currency = undefined;
+        expense1.currency(undefined);
 
         expect(expense1.getCost()).toBe(25);
         expect(expense1.getSumOfShares()).toBe(25);
       });
 
       it("can be 'converted' to expense's currency without the need for an exchange rate", function() {
-        expense1.currency = "EUR";
+        expense1.currency("EUR");
 
         expect(prt11.getPaid()).toBe(20);
         expect(prt11.getPaid("EUR")).toBe(20);
@@ -290,8 +314,8 @@ describe("Balance sheet currencies", function () {
     describe("of persons", function() {
 
       it("sum up as balance sheet's default currency if no input currency", function() {
-        expense1.currency = "EUR";
-        expense2.currency = "EUR";
+        expense1.currency("EUR");
+        expense2.currency("EUR");
 
         sheet.currency("EUR");
 
@@ -317,8 +341,7 @@ describe("Balance sheet currencies", function () {
     });
 
   });
-
-
+  
 
 });
 

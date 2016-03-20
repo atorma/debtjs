@@ -121,7 +121,7 @@ describe("ExpenseDetailCtrl", function() {
       var participations = [{person: "Dummy"}];
       spyOn(expense, "getParticipations").and.returnValue(participations);
       var expenseCurrency = "EXPENSE CURRENCY";
-      spyOn(expense, "getCurrency").and.returnValue(expenseCurrency);
+      spyOn(expense, "currency").and.returnValue(expenseCurrency);
       
       var debts = [{debtor: {id: 1, name: "Valtteri"}, creditor: {id: 9, name: "Anssi"}, amount: 10}];
       debtService.computeDebts = function(input, currency) {
@@ -235,9 +235,9 @@ describe("ExpenseDetailCtrl", function() {
   describe("setCurrency", function() {
 
     it("sets expense currency", function() {
-      expense.currency = undefined;
+      spyOn(expense, "currency");
       vm.setCurrency("EUR");
-      expect(expense.currency).toEqual("EUR");
+      expect(expense.currency).toHaveBeenCalledWith("EUR");
     });
 
     it("emits 'balance sheet updated' event", function() {
