@@ -401,7 +401,7 @@ var BalanceSheet = function(data) {
     }
 
     if (!rate) {
-      throw new CurrencyConversionError("Could not find an exchange rate for the requested conversion '" + toConvert.fixed + "' -> '" + toConvert.variable + "'.");
+      throw new CurrencyConversionError("Could not find an exchange rate for conversion '" + toConvert.fixed + "' -> '" + toConvert.variable + "'.");
     }
 
     return new Decimal(toConvert.value*100).multiply(rate).divideBy(100).toNumber();
