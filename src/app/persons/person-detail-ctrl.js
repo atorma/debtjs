@@ -114,7 +114,7 @@ function PersonDetailCtrl(balanceSheetService,
       "creditor": "debtor"
     };
 
-    var debts = debtService.computeDebts(vm.balanceSheet.getNonSettledParticipations(), vm.person.getCurrency());
+    var debts = debtService.computeDebts(vm.balanceSheet.getNonSettledParticipations(), vm.person.currency());
     result.debts = _.chain(debts)
       .filter(function(d) {
         return d[result.role].equals(vm.person);

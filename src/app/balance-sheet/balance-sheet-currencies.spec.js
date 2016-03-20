@@ -196,6 +196,21 @@ describe("Balance sheet currencies", function () {
 
   });
 
+  describe("Person", function() {
+
+    it("has currency equal to balance sheet currency", function() {
+      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
+
+      sheet.currency("EUR");
+      expect(person1.currency()).toEqual("EUR");
+
+      sheet.currency("USD");
+      expect(person1.currency()).toEqual("USD");
+    });
+
+
+  });
+
   describe("shares and costs", function() {
 
     var prt11, prt21, prt12, prt22;

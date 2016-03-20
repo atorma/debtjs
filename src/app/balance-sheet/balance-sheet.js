@@ -410,7 +410,7 @@ var BalanceSheet = function(data) {
 
     // Methods
 
-    _this.getCurrency = getCurrency;
+    _this.currency = currency;
     _this.equals = equals;
     _this.getCost = getCost;
     _this.getSumOfShares = getSumOfShares;
@@ -441,9 +441,8 @@ var BalanceSheet = function(data) {
         .toNumber();
     }
 
-
-    function getCurrency() {
-      return _this.currency || currency();
+    function currency() {
+      return balanceSheetCurrency;
     }
 
     /**
@@ -452,7 +451,7 @@ var BalanceSheet = function(data) {
      * @returns {number} - The total amount this person has paid
      */
     function getCost(currency) {
-      currency = currency || getCurrency();
+      currency = currency || _this.currency();
       return getTotal(function(pt) {
         return pt.getPaid(currency);
       });
@@ -464,7 +463,7 @@ var BalanceSheet = function(data) {
      * @returns {number} - This person's total share of all the expenses
      */
     function getSumOfShares(currency) {
-      currency = currency || getCurrency();
+      currency = currency || _this.currency();
       return getTotal(function(pt) {
         return pt.getShare(currency);
       });
@@ -489,7 +488,7 @@ var BalanceSheet = function(data) {
      * @returns {number} - The difference between the total share and cost paid by this person
      */
     function getBalance(currency) {
-      currency = currency || getCurrency();
+      currency = currency || _this.currency();
       return new Decimal( getSumOfShares(currency) ).subtract( getCost(currency) ).toNumber();
     }
 

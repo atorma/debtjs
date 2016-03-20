@@ -174,7 +174,7 @@ describe("PersonDetailCtrl", function() {
         spyOn(balanceSheet, "getNonSettledParticipations").and.returnValue(nonSettledParticipations);
 
         personsCurrency = "PERSON'S CURRENCY";
-        spyOn(person, "getCurrency").and.returnValue(personsCurrency);
+        spyOn(person, "currency").and.returnValue(personsCurrency);
       });
       
       it("computed with role creditor when person's balance is negative", function() {
