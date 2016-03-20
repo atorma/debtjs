@@ -115,7 +115,7 @@ describe("Balance sheet currencies", function () {
       
     });
 
-    describe("has a default currency", function() {
+    describe("currency", function() {
 
       it("initially undefined", function() {
         expect(sheet.currency()).toBeUndefined();
@@ -154,9 +154,13 @@ describe("Balance sheet currencies", function () {
 
       it("set as undefined if all currencies removed", function() {
         sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
-        sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "GBP", rate: 0.7131});
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "DKK", rate: 7.2501});
+        sheet.currency("EUR");
+
         sheet.removeExchangeRate({fixed: "EUR", variable: "GBP"});
-        sheet.removeExchangeRate({fixed: "USD", variable: "GBP"});
+        expect(sheet.currency()).toBe("EUR"); // There still exists an exchange rate for that currency.
+
+        sheet.removeExchangeRate({fixed: "EUR", variable: "DKK"});
         expect(sheet.currency()).toBeUndefined();
       });
 
@@ -192,6 +196,24 @@ describe("Balance sheet currencies", function () {
       expect(function() {
         expense1.currency("FOO");
       }).toThrow();
+    });
+
+    it("currency is reset when no exchange rate", function() {
+      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1});
+      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "DKK", rate: 7.2});
+      sheet.currency("EUR");
+
+      expense1.currency("USD");
+      expect(expense1.currency()).toEqual("USD");
+
+      sheet.removeExchangeRate({fixed: "EUR", variable: "USD"});
+
+      expect(expense1.currency()).toEqual("EUR");
+
+      sheet.removeExchangeRate({fixed: "EUR", variable: "DKK"});
+
+      expect(expense1.currency()).toEqual(undefined);
+
     });
 
   });

@@ -253,24 +253,35 @@ var BalanceSheet = function(data) {
    * @returns {string} If the input currency is undefined, returns the currency of this balance sheet (undefined if and only if no exchange rates)
    */
   function currency(currency) {
-    if (currency === undefined) {
-      return balanceSheetCurrency;
-    } else {
+    if (arguments.length > 0) {
       var found = _.indexOf(getCurrencies(), currency) > -1;
       if (!found) {
         throw new Error("Currency '" + currency + "' does not have an exchange rate");
       }
       balanceSheetCurrency = cleanUpCurrency(currency);
     }
+
+    return balanceSheetCurrency;
   }
 
   function updateBalanceSheetCurrencyIfNeeded() {
     var currencies = getCurrencies();
-    if ((balanceSheetCurrency === undefined || _.indexOf(currencies, balanceSheetCurrency) === -1) && exchangeRates.length > 0) {
-      balanceSheetCurrency = exchangeRates[0].fixed;
-    } else {
+
+    if (exchangeRates.length === 0) {
       balanceSheetCurrency = undefined;
+    } else if (balanceSheetCurrency === undefined || _.indexOf(currencies, balanceSheetCurrency) === -1) {
+      balanceSheetCurrency = exchangeRates[0].fixed;
     }
+  }
+
+
+  function updateExpenseCurrenciesIfNeeded() {
+    var currencies = getCurrencies();
+    _.each(expenses, function(e) {
+      if (_.indexOf(currencies, e.currency()) === -1) {
+        e.currency(balanceSheetCurrency);
+      }
+    });
   }
 
   /**
@@ -351,6 +362,7 @@ var BalanceSheet = function(data) {
     currencyPair = cleanUpCurrencyPair(currencyPair);
     _.remove(exchangeRates, {fixed: currencyPair.fixed, variable: currencyPair.variable});
     updateBalanceSheetCurrencyIfNeeded();
+    updateExpenseCurrenciesIfNeeded();
   }
 
   /**
@@ -554,20 +566,27 @@ var BalanceSheet = function(data) {
         .toNumber();
     }
 
+
     /**
+     * Gets or sets the currency of this expense.
      *
-     * @returns {*}
+     * @param {string] [currency] - The currency to set. Value undefined resets to default.
+     * @returns {string} - The currency of this expense
      */
     function currency(currency) {
-      if (currency === undefined) {
-        return expenseCurrency || balanceSheetCurrency;
-      } else {
-        var found = _.indexOf(getCurrencies(), currency) > -1;
-        if (!found) {
-          throw new Error("Currency '" + currency + "' does not have an exchange rate");
+      if (arguments.length > 0) {
+        if (currency !== undefined) {
+          var found = _.indexOf(getCurrencies(), currency) > -1;
+          if (!found) {
+            throw new Error("Currency '" + currency + "' does not have an exchange rate");
+          }
+          expenseCurrency = cleanUpCurrency(currency);
+        } else {
+          expenseCurrency = undefined;
         }
-        expenseCurrency = cleanUpCurrency(currency);
       }
+
+      return expenseCurrency || balanceSheetCurrency;
     }
 
     /**
@@ -808,7 +827,7 @@ var BalanceSheet = function(data) {
 
   }
 
-};
+}
 
 
 module.exports = BalanceSheet;
