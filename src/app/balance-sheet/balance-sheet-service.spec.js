@@ -1,6 +1,5 @@
 "use strict";
 
-var _ = require("lodash");
 var angular = require("angular");
 require("angular-mocks/ngMock");
 require("../debt");
@@ -17,10 +16,12 @@ describe("BalanceSheetService", function() {
     balanceSheetData = {
       name: "Exported data",
       persons: [
-        {id: 1, name: "Anssi"}, {id: 2, name: "Malla"}
+        {id: 1, name: "Anssi"},
+        {id: 2, name: "Malla"}
       ],
       expenses: [
-        {id: 3, name: "Food", sharing: "equal", settled: false}
+        {id: 3, name: "Food", currency: "USD", sharing: "equal", settled: false},
+        {id: 4, name: "Gas", currency: "EUR", sharing: "equal", settled: false}
       ],
       participations: [
         {personId: 1, expenseId: 3, paid: 10, share: 5},

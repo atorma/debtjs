@@ -71,6 +71,8 @@ describe("Balance sheet", function () {
       sheet.createParticipation({person: p2, expense: e2, paid: 0, share: 10});
       sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.012});
       sheet.currency("USD");
+      e1.currency("USD");
+      e2.currency("EUR");
     });
     
     it("as data object", function() {
@@ -84,7 +86,9 @@ describe("Balance sheet", function () {
       expect(angular.equals(sheet.expenses, importedSheet.expenses)).toBe(true);
       expect(angular.equals(sheet.participations, importedSheet.participations)).toBe(true);
       expect(angular.equals(sheet.getExchangeRates(), importedSheet.getExchangeRates())).toBe(true);
-      expect(angular.equals(sheet.currency(), importedSheet.currency())).toBe(true);
+      expect(importedSheet.currency()).toEqual(sheet.currency());
+      expect(importedSheet.expenses[0].currency()).toEqual(sheet.expenses[0].currency());
+      expect(importedSheet.expenses[1].currency()).toEqual(sheet.expenses[1].currency());
     });
     
     it("determines next id in sequence without imported data containing it", function() {

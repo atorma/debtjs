@@ -154,7 +154,8 @@ var BalanceSheet = function(data) {
     data = _.extend({
       name: "Expense " + (expenses.length + 1),
       sharing: "equal",
-      settled: false
+      settled: false,
+      currency: undefined
     }, data);
 
     options = _.extend({}, options);
@@ -410,8 +411,8 @@ var BalanceSheet = function(data) {
   /**
    * Creates a Person object.
    *
-   * @param {Object} data - Initial data
-   * @param {number} data.id - Id
+   * @param {Object} [data] - Initial data
+   * @param {number} [data.id] - Id
    * @param {string} [data.name} - Name
    * @constructor
    */
@@ -429,6 +430,7 @@ var BalanceSheet = function(data) {
     _this.getBalance = getBalance;
     _this.isBalanced = isBalanced;
     _this.getParticipations = getParticipations;
+    _this.exportData = exportData;
 
     ///////////////////////////////////////
 
@@ -519,16 +521,22 @@ var BalanceSheet = function(data) {
       return (other instanceof Person) && (other.id === _this.id);
     }
 
+    function exportData() {
+      var isNotFunction = _.negate(_.isFunction);
+      return _.extend(_.pickBy(_this, isNotFunction), {});
+    }
+
   }
 
 
   /**
    * An expense.
    *
-   * @param {object} data - Initial data
-   * @param {number} data.id - The expense's id
+   * @param {object} [data] - Initial data
+   * @param {number} [data.id] - The expense's id
    * @param {string} [data.name] - The expense's name
    * @param {string} [data.sharing] -  The expense's cost sharing mode. Value "equal" = share costs equally. All other values mean custom sharing.
+   * @param {string} [data.currency] - The expense's currency
    * @constructor
    */
   function Expense(data) {
@@ -537,6 +545,7 @@ var BalanceSheet = function(data) {
 
     // Data
     _.extend(_this, data);
+    currency(data.currency);
 
     // Methods
 
@@ -548,6 +557,7 @@ var BalanceSheet = function(data) {
     _this.getParticipations = getParticipations;
     _this.shareCost = shareCost;
     _this.equals = equals;
+    _this.exportData = exportData;
 
     ///////////////////////////////////////
 
@@ -570,7 +580,7 @@ var BalanceSheet = function(data) {
     /**
      * Gets or sets the currency of this expense.
      *
-     * @param {string] [currency] - The currency to set. Value undefined resets to default.
+     * @param {string} [currency] - The currency to set. Value undefined resets to default.
      * @returns {string} - The currency of this expense
      */
     function currency(currency) {
@@ -659,6 +669,13 @@ var BalanceSheet = function(data) {
       return (other instanceof Expense) && (other.id === _this.id);
     }
 
+    function exportData() {
+      var isNotFunction = _.negate(_.isFunction);
+      return _.extend(_.pickBy(_this, isNotFunction), {
+        currency: expenseCurrency
+      });
+    }
+
   }
 
   /**
@@ -687,7 +704,7 @@ var BalanceSheet = function(data) {
     this.getPaid = getPaid;
     this.getShare = getShare;
     this.equals = equals;
-
+    this.exportData = exportData;
 
     ///////////////////////////////////////
 
@@ -720,6 +737,11 @@ var BalanceSheet = function(data) {
     function equals(other) {
       return (other instanceof Participation) && _this.expense.equals(other.expense) && _this.person.equals(other.person);
     }
+
+    function exportData() {
+      return {personId: _this.person.id, expenseId: _this.expense.id, paid: _this.paid, share: _this.share};
+    }
+
   }
 
 
@@ -727,13 +749,13 @@ var BalanceSheet = function(data) {
     var isNotFunction = _.negate(_.isFunction);
     var data = _.pickBy(_this, isNotFunction);
     data.persons = _.map(persons, function(p) {
-      return _.pickBy(p, isNotFunction);
+      return p.exportData();
     });
     data.expenses = _.map(expenses, function(e) {
-      return _.pickBy(e, isNotFunction);
+      return e.exportData();
     });
     data.participations = _.map(participations, function(pt) {
-      return {personId: pt.person.id, expenseId: pt.expense.id, paid: pt.paid, share: pt.share};
+      return pt.exportData();
     });
     data.exchangeRates = getExchangeRates();
     data.balanceSheetCurrency = balanceSheetCurrency;
@@ -755,6 +777,14 @@ var BalanceSheet = function(data) {
       return !separately[key];
     }));
 
+    _.each(data.exchangeRates, function(q) {
+      addOrUpdateExchangeRate(q);
+    });
+
+    if (data.balanceSheetCurrency) {
+      currency(data.balanceSheetCurrency);
+    }
+
     _.each(data.persons, function(p) {
       createPerson(p);
     });
@@ -768,14 +798,6 @@ var BalanceSheet = function(data) {
       var expense = getExpense(p.expenseId);
       createParticipation({person: person, expense: expense, paid: p.paid, share: p.share});
     });
-
-    _.each(data.exchangeRates, function(q) {
-      addOrUpdateExchangeRate(q);
-    });
-
-    if (data.balanceSheetCurrency) {
-      currency(data.balanceSheetCurrency);
-    }
 
     throwErrorIfInvalid();
   }
@@ -827,7 +849,7 @@ var BalanceSheet = function(data) {
 
   }
 
-}
+};
 
 
 module.exports = BalanceSheet;
