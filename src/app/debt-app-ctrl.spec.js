@@ -22,7 +22,8 @@ describe("DebtAppCtrl", function() {
   
   
   beforeEach(function() {
-    balanceSheet = jasmine.createSpyObj("balanceSheet", ["createPerson", "createExpense"]);
+    balanceSheet = jasmine.createSpyObj("balanceSheet", ["createPerson", "createExpense", "currency", "getNonConvertibleCurrencies"]);
+    balanceSheet.getNonConvertibleCurrencies.and.returnValue([]);
 
     balanceSheetJson = '{"name": "test"}';
     
@@ -113,36 +114,46 @@ describe("DebtAppCtrl", function() {
   });
 
 
-  describe("save()", function() {
+  describe("balanceSheetUpdated()", function() {
 
-    it("saves sheet using service", function() {
-      vm.save();
+    it("clears previous error message", function() {
+      vm.errorMessage = "Some error";
 
-      expect(balanceSheetService.save).toHaveBeenCalled();
-    });
-
-    it("displays error message if saving fails", function() {
-      balanceSheetService.save.and.throwError("Some error");
-
-      vm.save();
-
-      expect(vm.errorMessage).toEqual("Cannot save: Some error");
-    });
-    
-    it("clears error message if saving succeeds", function() {
-      vm.errorMessage = "Unable to save";
-
-      vm.save();
+      vm.balanceSheetUpdated();
 
       expect(vm.errorMessage).toBe(undefined);
     });
 
+    it("saves the sheet", function() {
+      vm.balanceSheetUpdated();
+
+      expect(balanceSheetService.save).toHaveBeenCalled();
+    });
+
+    it("finds expense currencies that cannot be converted to the sheet's currency and displays error if any results", function() {
+      balanceSheet.currency.and.returnValue("EUR");
+      balanceSheet.getNonConvertibleCurrencies.and.returnValue([]);
+
+      vm.balanceSheetUpdated();
+
+      expect(balanceSheet.getNonConvertibleCurrencies).toHaveBeenCalledWith("EUR");
+      expect(vm.errorMessage).toBe(undefined);
+
+
+      balanceSheet.getNonConvertibleCurrencies.and.returnValue(["FOO", "BAR"]);
+
+      vm.balanceSheetUpdated();
+
+      expect(balanceSheet.getNonConvertibleCurrencies).toHaveBeenCalledWith("EUR");
+      expect(vm.errorMessage).toEqual("Cannot convert currencies 'FOO', 'BAR' to balance sheet's currency 'EUR'");
+    });
+
     it("is triggered by 'balance sheet updated' event", function() {
-      spyOn(vm, "save");
+      spyOn(vm, "balanceSheetUpdated");
 
       $scope.$emit(events.BALANCE_SHEET_UPDATED);
 
-      expect(vm.save).toHaveBeenCalled();
+      expect(vm.balanceSheetUpdated).toHaveBeenCalled();
     });
 
   });
@@ -151,8 +162,7 @@ describe("DebtAppCtrl", function() {
   describe("creates", function() {
 
     beforeEach(function() {
-      spyOn(vm, "save");
-      spyOn(vm, "refresh");
+      spyOn(vm, "balanceSheetUpdated");
     });
 
 
@@ -167,8 +177,7 @@ describe("DebtAppCtrl", function() {
       $scope.$digest();
 
       expect(balanceSheet.createPerson).toHaveBeenCalledWith(dialogResult.person, dialogResult.options);
-      expect(vm.save).toHaveBeenCalled();
-      expect(vm.refresh).toHaveBeenCalled();
+      expect(vm.balanceSheetUpdated).toHaveBeenCalled();
     });
 
     it("expense using data and options from dialog", function() {
@@ -182,8 +191,7 @@ describe("DebtAppCtrl", function() {
       $scope.$digest();
 
       expect(balanceSheet.createExpense).toHaveBeenCalledWith(dialogResult.expense, dialogResult.options);
-      expect(vm.save).toHaveBeenCalled();
-      expect(vm.refresh).toHaveBeenCalled();
+      expect(vm.balanceSheetUpdated).toHaveBeenCalled();
     });
 
     it("new sheet using service, and updates view state", function() {
@@ -191,8 +199,7 @@ describe("DebtAppCtrl", function() {
       $scope.$digest();
 
       expect(balanceSheetService.createNew).toHaveBeenCalled();
-      expect(vm.save).toHaveBeenCalled();
-      expect(vm.refresh).toHaveBeenCalled();
+      expect(vm.balanceSheetUpdated).toHaveBeenCalled();
 
       expect($state.go).toHaveBeenCalledWith("balanceSheet");
     });
@@ -206,8 +213,7 @@ describe("DebtAppCtrl", function() {
 
       expect(fileService.readAsText).toHaveBeenCalledWith(jsonBlob);
       expect(balanceSheetService.loadFromJson).toHaveBeenCalledWith(balanceSheetJson);
-      expect(vm.save).toHaveBeenCalled();
-      expect(vm.refresh).toHaveBeenCalled();
+      expect(vm.balanceSheetUpdated).toHaveBeenCalled();
 
       expect($state.go).toHaveBeenCalledWith("balanceSheet");
     });
@@ -225,8 +231,7 @@ describe("DebtAppCtrl", function() {
 
       expect(fileService.readAsText).not.toHaveBeenCalled();
       expect(balanceSheetService.loadFromJson).not.toHaveBeenCalled();
-      expect(vm.save).not.toHaveBeenCalled();
-      expect(vm.refresh).not.toHaveBeenCalled();
+      expect(vm.balanceSheetUpdated).not.toHaveBeenCalled();
     });
 
   });

@@ -61,6 +61,8 @@ var BalanceSheet = function(data) {
   _this.addOrUpdateExchangeRate = addOrUpdateExchangeRate;
   _this.removeExchangeRate = removeExchangeRate;
   _this.convertCurrency = convertCurrency;
+  _this.getNonConvertibleCurrencies = getNonConvertibleCurrencies;
+  _this.throwErrorIfInvalidExpenseCurrencies = throwErrorIfInvalidExpenseCurrencies;
 
   /////////////////////////////////////
 
@@ -407,6 +409,33 @@ var BalanceSheet = function(data) {
 
     return new Decimal(toConvert.value*100).multiply(rate).divideBy(100).toNumber();
   }
+
+  function getConvertibleCurrencies(toCurrency) {
+    var convertible = [];
+    _.each(getCurrencies(), function(c) {
+      try {
+        convertCurrency({fixed: c, variable: toCurrency, value: 1});
+        convertible.push(c);
+      } catch (e) {}
+    });
+    return convertible;
+  }
+
+  function getNonConvertibleCurrencies(toCurrency) {
+    return _.difference(getCurrencies(), getConvertibleCurrencies(toCurrency));
+  }
+
+
+  function throwErrorIfInvalidExpenseCurrencies() {
+    _.each(expenses, function(expense) {
+      try {
+        convertCurrency({fixed: expense.currency(), variable: currency(), value: 1});
+      } catch (ex) {
+        throw new CurrencyConversionError("Cannot convert currency '" + expense.currency()  + "' of '" + expense.name + "' to balance sheet's currency '" + currency() + "'");
+      }
+    });
+  }
+
 
   /**
    * Creates a Person object.

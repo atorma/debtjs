@@ -3,7 +3,7 @@
 var BalanceSheet = require('./balance-sheet');
 var CurrencyConversionError = require("./currency-conversion-error");
 
-describe("Balance sheet currencies", function () {
+describe("Currencies", function () {
 
   var sheet = null;
   var person1, person2;
@@ -17,7 +17,6 @@ describe("Balance sheet currencies", function () {
     expense1 = sheet.createExpense();
     expense2 = sheet.createExpense();
   });
-
 
   describe("Balance sheet", function() {
 
@@ -115,7 +114,7 @@ describe("Balance sheet currencies", function () {
       
     });
 
-    describe("currency", function() {
+    describe("currency()", function() {
 
       it("initially undefined", function() {
         expect(sheet.currency()).toBeUndefined();
@@ -165,6 +164,34 @@ describe("Balance sheet currencies", function () {
       });
 
     });
+
+    describe("getNonConvertibleCurrencies()", function() {
+
+      it("returns array of currencies that cannot be converted to input currency", function() {
+        sheet.addOrUpdateExchangeRate({fixed: "GBP", variable: "EUR", rate: 1.2100});
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
+
+        expect(sheet.getNonConvertibleCurrencies("EUR")).toEqual([]);
+        expect(sheet.getNonConvertibleCurrencies("USD")).toEqual(["GBP"]);
+        expect(sheet.getNonConvertibleCurrencies("FOO")).toEqual(["EUR", "GBP", "USD"]);
+      });
+
+    });
+
+    describe("throwErrorIfInvalidExpenseCurrencies()", function() {
+
+      it("throws error if an expense's currency cannot be converted to the sheet's currency", function() {
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "DKK", rate: 7.0});
+        sheet.addOrUpdateExchangeRate({fixed: "FOO", variable: "BAR", rate: 1});
+        sheet.currency("EUR");
+
+        expense1.currency("FOO");
+
+        expect(sheet.throwErrorIfInvalidExpenseCurrencies).toThrowError("Cannot convert currency 'FOO' of 'Expense 1' to balance sheet's currency 'EUR'");
+      });
+
+    });
+
 
   });
 
@@ -229,7 +256,6 @@ describe("Balance sheet currencies", function () {
       sheet.currency("USD");
       expect(person1.currency()).toEqual("USD");
     });
-
 
   });
 
@@ -378,7 +404,6 @@ describe("Balance sheet currencies", function () {
     });
 
   });
-  
 
 });
 

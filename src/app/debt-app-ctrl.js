@@ -1,6 +1,7 @@
 "use strict";
 
 var angular = require("angular");
+var _ = require("lodash");
 
 angular.module("debtApp")
   .constant("balanceSheetSaveInterval", 500)
@@ -31,8 +32,7 @@ function DebtAppCtrl(balanceSheetService,
   vm.createNewSheet = createNewSheet;
   vm.loadSheet = loadSheet;
   vm.exportSheet = exportSheet;
-  vm.save = save;
-  vm.refresh = refresh;
+  vm.balanceSheetUpdated = balanceSheetUpdated;
   vm.showHelp = showHelp;
 
   var confirmCreateNewSheet = $mdDialog.confirm()
@@ -49,37 +49,40 @@ function DebtAppCtrl(balanceSheetService,
   }
 
   function init() {
-    $scope.$on(events.BALANCE_SHEET_UPDATED, debounce(onBalanceSheetUpdated, balanceSheetSaveInterval, $scope, true));
+    $scope.$on(events.BALANCE_SHEET_UPDATED, debounce(function() {
+      vm.balanceSheetUpdated();
+    }), balanceSheetSaveInterval, $scope, true);
     $scope.$on(events.ERROR, handleErrorEvent);
     balanceSheetService.init();
-    vm.refresh();
+    vm.balanceSheet = balanceSheetService.balanceSheet;
   }
 
-  function onBalanceSheetUpdated() {
-    vm.refresh();
-    vm.save();
+  function balanceSheetUpdated() {
+    vm.errorMessage = undefined;
+    tryToSave();
+    findExpensesWithInvalidCurrencies();
   }
 
-  function save() {
+  function tryToSave() {
     try {
       balanceSheetService.save();
-      vm.errorMessage = undefined;
     } catch (e) {
       $log.error(e);
       vm.errorMessage = "Cannot save: " + e.message;
     }
   }
 
-  function refresh() {
-    vm.balanceSheet = balanceSheetService.balanceSheet;
-    if (balanceSheetService.error) {
-      vm.errorMessage = "Invalid sheet: " + balanceSheetService.error.message;
-    } else {
-      vm.errorMessage = undefined;
+  function findExpensesWithInvalidCurrencies() {
+    var nonConvertible = vm.balanceSheet.getNonConvertibleCurrencies(vm.balanceSheet.currency());
+    if (nonConvertible.length > 0) {
+      vm.errorMessage = "Cannot convert " + (nonConvertible.length == 1 ? "currency" : "currencies ");
+      _.each(nonConvertible, function(c, index) {
+        vm.errorMessage = vm.errorMessage + (index > 0 ? ", " : "") + "'" + c + "'";
+      });
+      vm.errorMessage = vm.errorMessage + " to balance sheet's currency '" + vm.balanceSheet.currency() + "'";
     }
   }
-
-  // TODO How to clear error message? User click, timed, after successful save?
+  
   function handleErrorEvent(event, error) {
     vm.errorMessage = error.message;
   }
@@ -88,7 +91,7 @@ function DebtAppCtrl(balanceSheetService,
     openCreatePersonDialog()
       .then(function(dialogResult) {
         balanceSheetService.balanceSheet.createPerson(dialogResult.person, dialogResult.options);
-        onBalanceSheetUpdated();
+        vm.balanceSheetUpdated();
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
       });
   }
@@ -97,7 +100,7 @@ function DebtAppCtrl(balanceSheetService,
     openCreateExpenseDialog()
       .then(function(dialogResult) {
         balanceSheetService.balanceSheet.createExpense(dialogResult.expense, dialogResult.options);
-        onBalanceSheetUpdated();
+        vm.balanceSheetUpdated();
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
       });
   }
@@ -106,7 +109,7 @@ function DebtAppCtrl(balanceSheetService,
     $mdDialog.show(confirmCreateNewSheet)
       .then(function() {
         balanceSheetService.createNew();
-        onBalanceSheetUpdated();
+        vm.balanceSheetUpdated();
         $state.go("balanceSheet");
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
         vm.mainMenu.toggle();
@@ -138,7 +141,7 @@ function DebtAppCtrl(balanceSheetService,
 
   function loadSheetFromJson(json) {
     balanceSheetService.loadFromJson(json);
-    onBalanceSheetUpdated();
+    vm.balanceSheetUpdated();
     $state.go("balanceSheet");
     $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
   }
