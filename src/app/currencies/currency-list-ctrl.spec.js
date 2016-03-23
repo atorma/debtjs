@@ -107,11 +107,12 @@ describe("CurrencyListCtrl", function() {
     });
 
     it("updates list of currencies", function() {
-      _.each(vm.exchangeRates, function(er) {
-        vm.removeExchangeRate(er);
-      });
+      var updatedCurrencies = ["FOO"];
+      spyOn(balanceSheet, "getCurrencies").and.returnValue(updatedCurrencies);
 
-      expect(vm.currencies.length).toEqual(0);
+      vm.removeExchangeRate(balanceSheet.getExchangeRates()[0]);
+
+      expect(vm.currencies).toEqual(updatedCurrencies);
     });
 
   });

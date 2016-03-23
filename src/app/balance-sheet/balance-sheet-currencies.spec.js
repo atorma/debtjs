@@ -71,15 +71,14 @@ describe("Currencies", function () {
 
     describe("getCurrencies()", function() {
 
-      it("returns currencies of exchange rates in alphabetical order", function() {
-        var exchangeRates = [
-          {fixed: "EUR", variable: "GBP", rate: 0.7898},
-          {fixed: "EUR", variable: "USD", rate: 1.1030}
-        ];
-        sheet.addOrUpdateExchangeRate(exchangeRates[0]);
-        sheet.addOrUpdateExchangeRate(exchangeRates[1]);
-        
-        expect(sheet.getCurrencies()).toEqual(["EUR", "GBP", "USD"]);
+      it("returns currencies of exchange rates, balance sheet, and expenses in alphabetical order", function() {
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
+        sheet.currency("JPY");
+        expense1.currency("FOO");
+        expense2.currency("USD");
+
+        expect(sheet.getCurrencies()).toEqual(["EUR", "FOO", "GBP", "JPY", "USD"]);
       });
 
     });
@@ -120,21 +119,23 @@ describe("Currencies", function () {
         expect(sheet.currency()).toBeUndefined();
       });
 
-      it("can be set as a fixed or variable currency in the exchange rate list", function() {
+      it("sets currency to given currency (trimmed)", function() {
         sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "GBP", rate: 0.7898});
-        sheet.addOrUpdateExchangeRate({fixed: "USD", variable: "GBP", rate: 0.7131});
 
         sheet.currency("EUR");
         expect(sheet.currency()).toBe("EUR");
-        sheet.currency("GBP");
-        expect(sheet.currency()).toBe("GBP");
-        sheet.currency("USD");
-        expect(sheet.currency()).toBe("USD");
 
-        expect(function() {
-          sheet.currency("FOO");
-        }).toThrow();
-        expect(sheet.currency()).toBe("USD");
+        sheet.currency(" FOO ");
+        expect(sheet.currency()).toBe("FOO");
+
+        sheet.currency(undefined);
+        expect(sheet.currency()).toBe(undefined);
+
+        sheet.currency(" ");
+        expect(sheet.currency()).toBe(undefined);
+
+        sheet.currency(null);
+        expect(sheet.currency()).toBe(undefined);
       });
 
       it("set as first fixed currency if default is undefined", function() {
@@ -215,15 +216,10 @@ describe("Currencies", function () {
       expect(expense1.currency()).toEqual("EUR");
       expense1.currency("USD");
       expect(expense1.currency()).toEqual("USD");
+      expense1.currency(" FOO ");
+      expect(expense1.currency()).toEqual("FOO");
     });
 
-    it("throws error if trying to set currency without exchange rate", function() {
-      sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
-
-      expect(function() {
-        expense1.currency("FOO");
-      }).toThrow();
-    });
 
     it("currency is reset when no exchange rate", function() {
       sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1});

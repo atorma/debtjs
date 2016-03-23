@@ -257,35 +257,12 @@ var BalanceSheet = function(data) {
    */
   function currency(currency) {
     if (arguments.length > 0) {
-      var found = _.indexOf(getCurrencies(), currency) > -1;
-      if (!found) {
-        throw new Error("Currency '" + currency + "' does not have an exchange rate");
-      }
       balanceSheetCurrency = cleanUpCurrency(currency);
     }
 
     return balanceSheetCurrency;
   }
 
-  function updateBalanceSheetCurrencyIfNeeded() {
-    var currencies = getCurrencies();
-
-    if (exchangeRates.length === 0) {
-      balanceSheetCurrency = undefined;
-    } else if (balanceSheetCurrency === undefined || _.indexOf(currencies, balanceSheetCurrency) === -1) {
-      balanceSheetCurrency = exchangeRates[0].fixed;
-    }
-  }
-
-
-  function updateExpenseCurrenciesIfNeeded() {
-    var currencies = getCurrencies();
-    _.each(expenses, function(e) {
-      if (_.indexOf(currencies, e.currency()) === -1) {
-        e.currency(balanceSheetCurrency);
-      }
-    });
-  }
 
   /**
    * @return {string[]} copy of exchange rates in this sheet
@@ -298,15 +275,25 @@ var BalanceSheet = function(data) {
    * @return list of currencies in alphabetical order
    */
   function getCurrencies() {
-    return _.chain(exchangeRates)
-      .reduce(function(result, er) {
-        result.push(er.fixed);
-        result.push(er.variable);
-        return result;
-      }, [])
+    return _.chain(getExchangeRateCurrencies())
+      .concat(getExpenseCurrencies(), currency())
       .uniq()
       .sort()
       .value();
+  }
+
+  function getExchangeRateCurrencies() {
+    return _.reduce(exchangeRates, function(result, er) {
+      result.push(er.fixed);
+      result.push(er.variable);
+      return result;
+    }, []);
+  }
+
+  function getExpenseCurrencies() {
+    return _.map(expenses, function(e) {
+      return e.currency();
+    });
   }
 
   /**
@@ -342,7 +329,7 @@ var BalanceSheet = function(data) {
     } else if (_.isString(currency) && _.trim(currency).length === 0) {
       return undefined;
     } else {
-      return currency;
+      return _.trim(currency);
     }
   }
 
@@ -425,6 +412,26 @@ var BalanceSheet = function(data) {
     return _.difference(getCurrencies(), getConvertibleCurrencies(toCurrency));
   }
 
+
+  function updateBalanceSheetCurrencyIfNeeded() {
+    var currencies = getExchangeRateCurrencies();
+
+    if (exchangeRates.length === 0) {
+      balanceSheetCurrency = undefined;
+    } else if (balanceSheetCurrency === undefined || _.indexOf(currencies, balanceSheetCurrency) === -1) {
+      balanceSheetCurrency = exchangeRates[0].fixed;
+    }
+  }
+
+
+  function updateExpenseCurrenciesIfNeeded() {
+    var currencies = _.concat(getExchangeRateCurrencies(), currency());
+    _.each(expenses, function(e) {
+      if (_.indexOf(currencies, e.currency()) === -1) {
+        e.currency(balanceSheetCurrency);
+      }
+    });
+  }
 
   function throwErrorIfInvalidExpenseCurrencies() {
     _.each(expenses, function(expense) {
@@ -614,15 +621,7 @@ var BalanceSheet = function(data) {
      */
     function currency(currency) {
       if (arguments.length > 0) {
-        if (currency !== undefined) {
-          var found = _.indexOf(getCurrencies(), currency) > -1;
-          if (!found) {
-            throw new Error("Currency '" + currency + "' does not have an exchange rate");
-          }
-          expenseCurrency = cleanUpCurrency(currency);
-        } else {
-          expenseCurrency = undefined;
-        }
+        expenseCurrency = cleanUpCurrency(currency);
       }
 
       return expenseCurrency || balanceSheetCurrency;
