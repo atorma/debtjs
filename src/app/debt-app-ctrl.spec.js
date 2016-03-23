@@ -22,7 +22,8 @@ describe("DebtAppCtrl", function() {
   
   
   beforeEach(function() {
-    balanceSheet = jasmine.createSpyObj("balanceSheet", ["createPerson", "createExpense", "currency", "getNonConvertibleCurrencies"]);
+    balanceSheet = jasmine.createSpyObj("balanceSheet", ["createPerson", "createExpense", "currency", "getExpenseCurrencies", "getNonConvertibleCurrencies"]);
+    balanceSheet.getExpenseCurrencies.and.returnValue([]);
     balanceSheet.getNonConvertibleCurrencies.and.returnValue([]);
 
     balanceSheetJson = '{"name": "test"}';
@@ -131,12 +132,15 @@ describe("DebtAppCtrl", function() {
     });
 
     it("finds expense currencies that cannot be converted to the sheet's currency and displays error if any results", function() {
-      balanceSheet.currency.and.returnValue("EUR");
+      var expenseCurrencies = ["EUR", "USD"];
+      balanceSheet.getExpenseCurrencies.and.returnValue(expenseCurrencies);
+      var balanceSheetCurrency = "EUR";
+      balanceSheet.currency.and.returnValue(balanceSheetCurrency);
       balanceSheet.getNonConvertibleCurrencies.and.returnValue([]);
 
       vm.balanceSheetUpdated();
 
-      expect(balanceSheet.getNonConvertibleCurrencies).toHaveBeenCalledWith("EUR");
+      expect(balanceSheet.getNonConvertibleCurrencies).toHaveBeenCalledWith(expenseCurrencies, balanceSheetCurrency);
       expect(vm.errorMessage).toBe(undefined);
 
 
@@ -144,7 +148,7 @@ describe("DebtAppCtrl", function() {
 
       vm.balanceSheetUpdated();
 
-      expect(balanceSheet.getNonConvertibleCurrencies).toHaveBeenCalledWith("EUR");
+      expect(balanceSheet.getNonConvertibleCurrencies).toHaveBeenCalledWith(expenseCurrencies, balanceSheetCurrency);
       expect(vm.errorMessage).toEqual("Cannot convert currencies 'FOO', 'BAR' to balance sheet's currency 'EUR'");
     });
 

@@ -58,9 +58,12 @@ var BalanceSheet = function(data) {
   _this.currency = currency;
   _this.getExchangeRates = getExchangeRates;
   _this.getCurrencies = getCurrencies;
+  _this.getExpenseCurrencies = getExpenseCurrencies;
+  _this.getExchangeRateCurrencies = getExchangeRateCurrencies;
   _this.addOrUpdateExchangeRate = addOrUpdateExchangeRate;
   _this.removeExchangeRate = removeExchangeRate;
   _this.convertCurrency = convertCurrency;
+  _this.getConvertibleCurrencies = getConvertibleCurrencies;
   _this.getNonConvertibleCurrencies = getNonConvertibleCurrencies;
   _this.throwErrorIfInvalidExpenseCurrencies = throwErrorIfInvalidExpenseCurrencies;
 
@@ -397,7 +400,18 @@ var BalanceSheet = function(data) {
     return new Decimal(toConvert.value*100).multiply(rate).divideBy(100).toNumber();
   }
 
-  function getConvertibleCurrencies(toCurrency) {
+  /**
+   * Returns currencies that can be converted to the given currency.
+   *
+   * @param {string[]} fromCurrencies - Currencies to convert
+   * @param {string} toCurrency - Currency to convert to
+   * @returns {string[]} - Convertible currencies in fromCurrencies
+   */
+  function getConvertibleCurrencies(fromCurrencies, toCurrency) {
+    if (!_.isArray(fromCurrencies)) {
+      return [];
+    }
+
     var convertible = [];
     _.each(getCurrencies(), function(c) {
       try {
@@ -408,8 +422,15 @@ var BalanceSheet = function(data) {
     return convertible;
   }
 
-  function getNonConvertibleCurrencies(toCurrency) {
-    return _.difference(getCurrencies(), getConvertibleCurrencies(toCurrency));
+  /**
+   * Finds currencies that can not be converted to the given currency.
+   *
+   * @param {string[]} fromCurrencies - Currencies to convert
+   * @param {string} toCurrency - Currency to convert to
+   * @returns {string[]} - Non-convertible currencies
+   */
+  function getNonConvertibleCurrencies(fromCurrencies, toCurrency) {
+    return _.difference(fromCurrencies, getConvertibleCurrencies(fromCurrencies, toCurrency));
   }
 
 

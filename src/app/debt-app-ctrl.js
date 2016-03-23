@@ -73,16 +73,26 @@ function DebtAppCtrl(balanceSheetService,
   }
 
   function findExpensesWithInvalidCurrencies() {
-    var nonConvertible = vm.balanceSheet.getNonConvertibleCurrencies(vm.balanceSheet.currency());
-    if (nonConvertible.length > 0) {
-      vm.errorMessage = "Cannot convert " + (nonConvertible.length == 1 ? "currency" : "currencies ");
-      _.each(nonConvertible, function(c, index) {
-        vm.errorMessage = vm.errorMessage + (index > 0 ? ", " : "") + "'" + c + "'";
-      });
-      vm.errorMessage = vm.errorMessage + " to balance sheet's currency '" + vm.balanceSheet.currency() + "'";
+    var nonConvertible = vm.balanceSheet.getNonConvertibleCurrencies(vm.balanceSheet.getExpenseCurrencies(), vm.balanceSheet.currency());
+
+    if (nonConvertible.length === 0 || vm.errorMessage) {
+      return;
     }
+    var messageTemplate = _.template("Cannot convert <%= currencyWord %> <%= currencyList %> to balance sheet's currency <%= balanceSheetCurrency %>");
+
+    var data = {
+      currencyWord: nonConvertible.length == 1 ? "currency" : "currencies",
+      currencyList: "",
+      balanceSheetCurrency: "'" + vm.balanceSheet.currency() + "'"
+    };
+
+    _.each(nonConvertible, function(c, index) {
+      data.currencyList = data.currencyList + (index > 0 ? ", " : "") + "'" + c + "'";
+    });
+
+    vm.errorMessage = messageTemplate(data);
   }
-  
+
   function handleErrorEvent(event, error) {
     vm.errorMessage = error.message;
   }

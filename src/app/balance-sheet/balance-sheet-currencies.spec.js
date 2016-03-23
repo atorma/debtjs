@@ -166,15 +166,30 @@ describe("Currencies", function () {
 
     });
 
+    describe("getConvertibleCurrencies()", function() {
+
+      it("returns array of currencies that can be converted to input currency", function() {
+        sheet.addOrUpdateExchangeRate({fixed: "GBP", variable: "EUR", rate: 1.2100});
+        sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
+
+        var currencies = ["EUR", "GBP", "USD"];
+        expect(sheet.getConvertibleCurrencies(currencies, "EUR")).toEqual(currencies);
+        expect(sheet.getConvertibleCurrencies(currencies, "USD")).toEqual(["EUR", "USD"]);
+        expect(sheet.getConvertibleCurrencies(currencies, "FOO")).toEqual([]);
+      });
+
+    });
+
     describe("getNonConvertibleCurrencies()", function() {
 
       it("returns array of currencies that cannot be converted to input currency", function() {
         sheet.addOrUpdateExchangeRate({fixed: "GBP", variable: "EUR", rate: 1.2100});
         sheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.1030});
 
-        expect(sheet.getNonConvertibleCurrencies("EUR")).toEqual([]);
-        expect(sheet.getNonConvertibleCurrencies("USD")).toEqual(["GBP"]);
-        expect(sheet.getNonConvertibleCurrencies("FOO")).toEqual(["EUR", "GBP", "USD"]);
+        var currencies = ["EUR", "GBP", "USD"];
+        expect(sheet.getNonConvertibleCurrencies(currencies, "EUR")).toEqual([]);
+        expect(sheet.getNonConvertibleCurrencies(currencies, "USD")).toEqual(["GBP"]);
+        expect(sheet.getNonConvertibleCurrencies(currencies, "FOO")).toEqual(currencies);
       });
 
     });
