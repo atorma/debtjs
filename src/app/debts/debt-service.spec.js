@@ -75,15 +75,6 @@ describe("debtService", function() {
 
     });
 
-    it("throws error if a participation cannot be converted to requested currency", function() {
-      balanceSheet.addOrUpdateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.109});
-      e1.currency = "EUR";
-
-      expect(function() {
-        debtService.computeDebts(participations, "DKK");
-      }).toThrow();
-    });
-
   });
 
 

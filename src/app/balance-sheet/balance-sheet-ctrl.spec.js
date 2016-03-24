@@ -90,6 +90,23 @@ describe("BalanceSheetCtrl", function() {
       expect(debtService.organizeByDebtor).toHaveBeenCalledWith(debts);
       expect(vm.debtsByDebtor).toBe(debtsByDebtor);
     });
+
+    it("displays message if debt computation failed", function() {
+      balanceSheet.addOrUpdateExchangeRate({
+        fixed: "USD",
+        variable: "EUR",
+        rate: 0.92
+      });
+      balanceSheet.currency = "EUR";
+
+      balanceSheet.participations = "all participations";
+      var nonSettledParticipations = "non-settled participations";
+      spyOn(balanceSheet, "getNonSettledParticipations").and.returnValue(nonSettledParticipations);
+
+      debtService.computeDebts.and.throwError("Something failed");
+      
+      expect(vm.debtComputationError).toEqual("Cannot compute debts.");
+    });
     
     it("is done on 'balance sheet updated' event", function() {
       vm.refresh = jasmine.createSpy("refresh");

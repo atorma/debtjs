@@ -298,38 +298,22 @@ describe("Currencies", function () {
       expect(person2.getBalance("GBP")).toBe(1.97); // The consequence of summing up converted and rounded shares: sums of persons' balances is not zero
     });
 
-    it("throws error if conversion not possible", function() {
-      expect(function() {
-        prt11.getPaid("FOO");
-      }).toThrowError(CurrencyConversionError);
-
-      expect(function() {
-        prt11.getShare("FOO");
-      }).toThrowError(CurrencyConversionError);
-
-      expect(function() {
-        expense1.getCost("FOO");
-      }).toThrowError(CurrencyConversionError);
-
-      expect(function() {
-        expense1.getSumOfShares("FOO");
-      }).toThrowError(CurrencyConversionError);
-
-      expect(function() {
-        expense1.getBalance("FOO");
-      }).toThrowError(CurrencyConversionError);
-
-      expect(function() {
-        person1.getCost("FOO");
-      }).toThrowError(CurrencyConversionError);
-
-      expect(function() {
-        person1.getSumOfShares("FOO");
-      }).toThrowError(CurrencyConversionError);
-
-      expect(function() {
-        person1.getBalance("FOO");
-      }).toThrowError(CurrencyConversionError);
+    it("returns NaN error if conversion not possible", function() {
+      expect(prt11.getPaid("FOO")).toBeNaN();
+    
+      expect(prt11.getShare("FOO")).toBeNaN();
+    
+      expect(expense1.getCost("FOO")).toBeNaN();
+    
+      expect(expense1.getSumOfShares("FOO")).toBeNaN();
+    
+      expect(expense1.getBalance("FOO")).toBeNaN();
+    
+      expect(person1.getCost("FOO")).toBeNaN();
+    
+      expect(person1.getSumOfShares("FOO")).toBeNaN();
+    
+      expect(person1.getBalance("FOO")).toBeNaN();
     });
 
     describe("of expenses and participations", function() {

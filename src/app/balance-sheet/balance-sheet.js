@@ -384,6 +384,18 @@ var BalanceSheet = function(data) {
     return new Decimal(toConvert.value*100).multiply(rate).divideBy(100).toNumber();
   }
 
+  function tryToConvertCurrency(toConvert) {
+    try {
+      return convertCurrency(toConvert);
+    } catch (e) {
+      if (e instanceof CurrencyConversionError) {
+        return NaN;
+      } else {
+        throw e;
+      }
+    }
+  }
+
   /**
    * Returns currencies that can be converted to the given currency.
    *
@@ -737,7 +749,7 @@ var BalanceSheet = function(data) {
      * @return {number} How much the person paid for the expense.
      */
     function getPaid(currency) {
-      return convertCurrency({
+      return tryToConvertCurrency({
         value: _this.paid,
         fixed: _this.expense.computedCurrency(),
         variable: currency || _this.expense.computedCurrency()
@@ -750,7 +762,7 @@ var BalanceSheet = function(data) {
      * @return {number} How much the person shares for the expense.
      */
     function getShare(currency) {
-      return convertCurrency({
+      return tryToConvertCurrency({
         value: _this.share,
         fixed: _this.expense.computedCurrency(),
         variable: currency || _this.expense.computedCurrency()

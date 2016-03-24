@@ -108,6 +108,12 @@
           Cannot compute debts. There are unbalanced expenses.
         </div>
       </md-list-item>
+      <md-list-item ng-if="vm.debtComputationError" class="md-2-line">
+        <md-icon class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
+        <div class="md-list-item-text">
+          {{vm.debtComputationError}}
+        </div>
+      </md-list-item>
     </md-list>
   </md-card>
 </section>

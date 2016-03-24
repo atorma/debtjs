@@ -23,9 +23,16 @@ function PersonDetailCtrl(balanceSheetService,
 
   var computeDebtsDebounced = debounce(function() {
     $timeout(function() {
-      var debtResult = computeDebts();
-      vm.debtRole = debtResult.role;
-      vm.debts = debtResult.debts;
+      try {
+        var debtResult = computeDebts();
+        vm.debtRole = debtResult.role;
+        vm.debts = debtResult.debts;
+        vm.debtComputationError = undefined;
+      } catch (e) {
+        vm.debtRole = undefined;
+        vm.debts = undefined;
+        vm.debtComputationError = "Cannot compute debts";
+      }
     });
   }, debtCalculationInterval);
 
@@ -104,7 +111,7 @@ function PersonDetailCtrl(balanceSheetService,
       result.role = "debtor";
     } else if (vm.balance < 0) {
       result.role = "creditor";
-    } else {
+    } else if (vm.balance === 0) {
       result.role = "settled";
       return result;
     }

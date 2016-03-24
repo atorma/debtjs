@@ -240,6 +240,15 @@ describe("PersonDetailCtrl", function() {
         expect(vm.debtRole).toEqual("unbalanced");
         expect(vm.debts).not.toBeDefined();
       });
+
+      it("displays error message if debt computation throws error", function() {
+        spyOn(balanceSheet, "isBalanced").and.returnValue(true);
+        spyOn(person, "getBalance").and.returnValue(-100);
+
+        debtService.computeDebts.and.throwError("Failure");
+
+        expect(vm.debtComputationError).toEqual("Cannot compute debts");
+      });
       
     });
 

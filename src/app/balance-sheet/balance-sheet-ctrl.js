@@ -24,7 +24,13 @@ function BalanceSheetCtrl(balanceSheetService, debtService, events, $scope) {
   
   function refresh() {
     vm.balanceSheet = balanceSheetService.balanceSheet;
-    vm.debtsByDebtor = computeDebts();
+    try {
+      vm.debtsByDebtor = computeDebts();
+      vm.debtComputationError = undefined;
+    } catch (e) {
+      vm.debtsByDebtor = undefined;
+      vm.debtComputationError = "Cannot compute debts";
+    }
   }
   
   function computeDebts() {

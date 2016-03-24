@@ -125,6 +125,10 @@
     <div ng-repeat="d in vm.debts" class="margin-bottom" style="margin-left: 16px;">
         <span>{{d.person.name}}: {{d.currency}} {{d.amount | money}}</span>
     </div>
+
+    <div ng-if="vm.debtComputationError" class="margin-bottom">
+      <md-icon class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon> {{vm.debtComputationError}}
+    </div>
     
   </div>
 </section>
