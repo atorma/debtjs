@@ -12,7 +12,6 @@
     <label for="currency" flex>Currency</label>
     <md-select id="currency" class="currency-select" style="margin-right: 15px;"
                ng-model="vm.balanceSheet.currency"
-               ng-model-options="{getterSetter: true}"
                ng-change="vm.updateSheet()">
       <md-option ng-value="currency" ng-repeat="currency in ::vm.balanceSheet.getCurrencies()">{{currency}}</md-option>
     </md-select>
@@ -35,7 +34,7 @@
             {{::expense.getCost() | money}}
           </span>
           <span ng-if="::vm.balanceSheet.currenciesEnabled()">
-            {{::expense.currency()}} {{::expense.getCost() | money}}
+            {{::expense.computedCurrency()}} {{::expense.getCost() | money}}
           </span>
         </div>
         <md-divider ng-if="!$last"></md-divider>
@@ -64,7 +63,7 @@
             {{::person.getBalance() | balance}}
           </span>
           <span ng-if="::vm.balanceSheet.currenciesEnabled()">
-            {{::vm.balanceSheet.currency()}} {{::person.getBalance(vm.balanceSheet.currency()) | balance}}
+            {{::vm.balanceSheet.currency}} {{::person.getBalance(vm.balanceSheet.currency) | balance}}
           </span>
         </div>
         <md-divider ng-if="!$last"></md-divider>

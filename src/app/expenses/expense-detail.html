@@ -29,7 +29,6 @@
       <label for="currency" flex>Currency</label>
       <md-select id="currency" class="currency-select" style="margin-right: 15px;"
                  ng-model="vm.expense.currency"
-                 ng-model-options="{getterSetter: true}"
                  ng-change="vm.updateExpense()">
         <md-option ng-value="currency" ng-repeat="currency in ::vm.balanceSheet.getCurrencies()">{{currency}}</md-option>
       </md-select>

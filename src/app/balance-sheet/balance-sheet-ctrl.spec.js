@@ -72,7 +72,7 @@ describe("BalanceSheetCtrl", function() {
         variable: "EUR",
         rate: 0.92
       });
-      balanceSheet.currency("EUR");
+      balanceSheet.currency = "EUR";
 
       balanceSheet.participations = "all participations";
       var nonSettledParticipations = "non-settled participations";

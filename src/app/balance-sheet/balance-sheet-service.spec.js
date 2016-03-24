@@ -32,7 +32,7 @@ describe("BalanceSheetService", function() {
         variable: "USD",
         rate: 1.1010
       }],
-      balanceSheetCurrency: "EUR"
+      currency: "EUR"
     };
     
     localStorageService = jasmine.createSpyObj("localStorageService", ["get", "set"]);

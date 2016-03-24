@@ -22,7 +22,7 @@ describe("DebtAppCtrl", function() {
   
   
   beforeEach(function() {
-    balanceSheet = jasmine.createSpyObj("balanceSheet", ["createPerson", "createExpense", "currency", "getExpenseCurrencies", "getNonConvertibleCurrencies"]);
+    balanceSheet = jasmine.createSpyObj("balanceSheet", ["createPerson", "createExpense", "computedCurrency", "getExpenseCurrencies", "getNonConvertibleCurrencies"]);
     balanceSheet.getExpenseCurrencies.and.returnValue([]);
     balanceSheet.getNonConvertibleCurrencies.and.returnValue([]);
 
@@ -135,7 +135,7 @@ describe("DebtAppCtrl", function() {
       var expenseCurrencies = ["EUR", "USD"];
       balanceSheet.getExpenseCurrencies.and.returnValue(expenseCurrencies);
       var balanceSheetCurrency = "EUR";
-      balanceSheet.currency.and.returnValue(balanceSheetCurrency);
+      balanceSheet.currency = "EUR";
       balanceSheet.getNonConvertibleCurrencies.and.returnValue([]);
 
       vm.balanceSheetUpdated();
