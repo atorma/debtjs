@@ -167,6 +167,14 @@ describe("ExpenseDetailCtrl", function() {
       
       expect(vm.sumOfShares).toBe(120);
     });
+
+    it("puts expense balanced status into scope variable", function() {
+      spyOn(expense, "isBalanced").and.returnValue(true);
+
+      vm.updateExpense();
+
+      expect(vm.isBalanced).toBe(true);
+    });
     
     it("is done on 'balance sheet updated' event", function() {
       vm.updateExpense = jasmine.createSpy("updateExpense");

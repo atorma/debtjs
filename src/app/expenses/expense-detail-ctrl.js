@@ -59,6 +59,7 @@ function ExpenseDetailCtrl(balanceSheetService,
     vm.isParticipant = getParticipationMap();
     vm.cost = vm.expense.getCost();
     vm.sumOfShares = vm.expense.getSumOfShares();
+    vm.isBalanced = vm.expense.isBalanced();
     $scope.$emit(events.BALANCE_SHEET_UPDATED);
     computeDebtsDebounced();
   }
