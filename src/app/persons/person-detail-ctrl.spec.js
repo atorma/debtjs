@@ -244,8 +244,9 @@ describe("PersonDetailCtrl", function() {
       it("displays error message if debt computation throws error", function() {
         spyOn(balanceSheet, "isBalanced").and.returnValue(true);
         spyOn(person, "getBalance").and.returnValue(-100);
-
         debtService.computeDebts.and.throwError("Failure");
+
+        vm.refresh();
 
         expect(vm.debtComputationError).toEqual("Cannot compute debts");
       });

@@ -104,8 +104,10 @@ describe("BalanceSheetCtrl", function() {
       spyOn(balanceSheet, "getNonSettledParticipations").and.returnValue(nonSettledParticipations);
 
       debtService.computeDebts.and.throwError("Something failed");
+
+      vm.refresh();
       
-      expect(vm.debtComputationError).toEqual("Cannot compute debts.");
+      expect(vm.debtComputationError).toEqual("Cannot compute debts");
     });
     
     it("is done on 'balance sheet updated' event", function() {
