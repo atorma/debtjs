@@ -23,8 +23,8 @@ function debtService(solveDebts) {
         return {
           person: p.person,
           expense: p.expense,
-          paid: p.getPaid(currency),
-          share: p.getShare(currency)
+          paid: p.getPaid(currency, {strictConversion: true}),
+          share: p.getShare(currency, {strictConversion: true})
         };
       });
     }

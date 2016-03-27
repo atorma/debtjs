@@ -515,7 +515,7 @@ var BalanceSheet = function(data) {
     /**
      *
      * @param {string} [currency] - The currency in which to get the total (default: balance sheet's default currency)
-     * @returns {number} - The total amount this person has paid
+     * @returns {number} - The total amount this person has paid. NaN if cannot convert currency.
      */
     function getCost(currency) {
       currency = currency || _this.computedCurrency();
@@ -527,7 +527,7 @@ var BalanceSheet = function(data) {
     /**
      *
      * @param {string} [currency] - The currency in which to get the total (default: balance sheet's default currency)
-     * @returns {number} - This person's total share of all the expenses
+     * @returns {number} - This person's total share of all the expenses. NaN if cannot convert currency.
      */
     function getSumOfShares(currency) {
       currency = currency || _this.computedCurrency();
@@ -552,7 +552,7 @@ var BalanceSheet = function(data) {
      * she has paid, that is others owe her money.
      *
      * @param {string} [currency] - The currency in which to get the balance (default: balance sheet's default currency)
-     * @returns {number} - The difference between the total share and cost paid by this person
+     * @returns {number} - The difference between the total share and cost paid by this person. NaN if cannot convert currency.
      */
     function getBalance(currency) {
       currency = currency || _this.computedCurrency();
@@ -639,7 +639,7 @@ var BalanceSheet = function(data) {
     /**
      *
      * @param {string} [currency] - Currency in which to get the value. Default is this expense's currency or if undefined, the balance sheet's default currency.
-     * @return {number} The cost of this expense.
+     * @return {number} The cost of this expense. NaN if cannot convert currency.
      */
     function getCost(currency) {
       currency = currency || _this.computedCurrency();
@@ -651,7 +651,7 @@ var BalanceSheet = function(data) {
     /**
      *
      * @param {string} [currency] - Currency in which to get the value. Default is this expense's currency or if undefined, the balance sheet's default currency.
-     * @return {number} The sum of shares of this expense.
+     * @return {number} The sum of shares of this expense. NaN if cannot convert currency.
      */
     function getSumOfShares(currency) {
       currency = currency || _this.computedCurrency();
@@ -667,7 +667,7 @@ var BalanceSheet = function(data) {
     /**
      *
      * @param {string} [currency] - Currency in which to get the value. Default is this expense's currency or if undefined, the balance sheet's default currency.
-     * @return {number} The balance of this expense.
+     * @return {number} The balance of this expense. NaN if cannot convert currency.
      */
     function getBalance(currency) {
       currency = currency || _this.computedCurrency();
@@ -732,24 +732,32 @@ var BalanceSheet = function(data) {
 
     // Data
 
-    _.extend(this, data);
+    _.extend(_this, data);
 
     // Methods
 
-    this.getPaid = getPaid;
-    this.getShare = getShare;
-    this.equals = equals;
-    this.exportData = exportData;
+    _this.getPaid = getPaid;
+    _this.getShare = getShare;
+    _this.equals = equals;
+    _this.exportData = exportData;
 
     ///////////////////////////////////////
 
     /**
      *
      * @param {string} [currency] - Currency in which to get the payment. Default is expense's currency.
+     * @param {object} [options] - Options
+     * @param {boolean} [options.strictConversion] - True to throw error if currency conversion fails. Default is false.
      * @return {number} How much the person paid for the expense.
      */
-    function getPaid(currency) {
-      return tryToConvertCurrency({
+    function getPaid(currency, options) {
+      options = _.extend({strictConversion: false}, options);
+      var currencyConversionFunc = tryToConvertCurrency;
+      if (options.strictConversion) {
+        currencyConversionFunc = convertCurrency;
+      }
+
+      return currencyConversionFunc({
         value: _this.paid,
         fixed: _this.expense.computedCurrency(),
         variable: currency || _this.expense.computedCurrency()
@@ -759,10 +767,18 @@ var BalanceSheet = function(data) {
     /**
      *
      * @param {string} [currency] - Currency in which to get the share. Default is expense's currency.
-     * @return {number} How much the person shares for the expense.
+     * @param {object} [options] - Options
+     * @param {boolean} [options.strictConversion] - True to throw error if currency conversion fails. Default is false.
+     * @return {number} How much the person shares for the expense. NaN if cannot convert currency.
      */
-    function getShare(currency) {
-      return tryToConvertCurrency({
+    function getShare(currency, options) {
+      options = _.extend({strictConversion: false}, options);
+      var currencyConversionFunc = tryToConvertCurrency;
+      if (options.strictConversion) {
+        currencyConversionFunc = convertCurrency;
+      }
+
+      return currencyConversionFunc({
         value: _this.share,
         fixed: _this.expense.computedCurrency(),
         variable: currency || _this.expense.computedCurrency()
