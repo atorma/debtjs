@@ -28,8 +28,10 @@ describe("Balance filter", function() {
     expect(balanceFilter(0)).toBe("0.00");
   });
   
-  it("for undefined input returns undefined", function() {
+  it("for other than number input returns the input", function() {
     expect(balanceFilter(undefined)).toBe(undefined);
+    expect(balanceFilter("?")).toBe("?");
+    expect(balanceFilter(NaN)).toBeNaN();
   });
   
 });
