@@ -1,6 +1,5 @@
 "use strict";
 
-var _ = require("lodash");
 var angular = require("angular");
 require("angular-mocks/ngMock");
 require("./debt-app-ctrl");
@@ -101,7 +100,9 @@ describe("DebtAppCtrl", function() {
   describe("init()", function() {
 
     it("initializes balance sheet service", function() {
-      var initializedSheet = {name: "Initialized sheet"};
+      var initializedSheet = jasmine.createSpyObj("initialized sheet", ["getExpenseCurrencies", "getNonConvertibleCurrencies"]);
+      initializedSheet.getNonConvertibleCurrencies.and.returnValue([]);
+      
       balanceSheetService.init.and.callFake(function() {
         balanceSheetService.balanceSheet = initializedSheet;
       });
@@ -110,6 +111,16 @@ describe("DebtAppCtrl", function() {
 
       expect(balanceSheetService.init).toHaveBeenCalled();
       expect(vm.balanceSheet).toBe(initializedSheet);
+    });
+
+    it("finds expense currencies that cannot be converted to the sheet's currency and displays error if any results", function() {
+      balanceSheet.currency = "EUR";
+      balanceSheet.getExpenseCurrencies.and.returnValue([]);
+      balanceSheet.getNonConvertibleCurrencies.and.returnValue(["FOO", "BAR"]);
+
+      vm.init();
+
+      expect(vm.errorMessage).toEqual("Cannot convert currencies 'FOO', 'BAR' to balance sheet's currency 'EUR'");
     });
 
   });

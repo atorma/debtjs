@@ -55,6 +55,7 @@ function DebtAppCtrl(balanceSheetService,
     $scope.$on(events.ERROR, handleErrorEvent);
     balanceSheetService.init();
     vm.balanceSheet = balanceSheetService.balanceSheet;
+    findExpensesWithInvalidCurrencies();
   }
 
   function balanceSheetUpdated() {
