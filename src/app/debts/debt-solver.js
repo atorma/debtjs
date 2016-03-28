@@ -3,6 +3,7 @@
 var angular = require("angular");
 var Decimal = require("simple-decimal-money");
 var Random = require("random-js");
+var _ = require("lodash");
 
 angular
   .module("debtApp")
@@ -62,10 +63,16 @@ function debtSolverFactory(solveLinearSystem) {
     if (!participations || participations.length === 0) {
       return [];
     }
+
     var balances = computeBalances(participations);
-    if (!hasNonZeroBalance(balances)) {
+    if (isEveryoneBalanced(balances)) {
       return [];
     }
+
+    if (!isSystemBalanced(balances)) {
+      throw new Error("Debt system is not balanced");
+    }
+
     var roles = getDebtorsAndCreditors(balances);
     var linearSystem = createDebtEquations(roles);
     var debtVector = solveDebts(linearSystem);
@@ -93,14 +100,14 @@ function debtSolverFactory(solveLinearSystem) {
     return balances;
   }
   
-  function hasNonZeroBalance(balances) {
-    var result = false;
-    angular.forEach(balances, function(b) {
-      if (b.balance !== 0) {
-        result = true;
-      }
-    });
-    return result;
+  function isEveryoneBalanced(balances) {
+    return _.every(balances, {balance: 0});
+  }
+
+  function isSystemBalanced(balances) {
+    return _.reduce(balances, function(sum, b) {
+        return sum.add(b.balance);
+    }, new Decimal(0)).toNumber() === 0;
   }
   
   function getDebtorsAndCreditors(balances) {
@@ -171,6 +178,11 @@ function debtSolverFactory(solveLinearSystem) {
   // Solve debts, ensuring a non-negative solution 
   function solveDebts(linearSystem) {
     var solution = solveLinearSystem(linearSystem);
+    if (solution.numberOfSolutions === 0) {
+      throw new Error("Debt system has no solutions");
+    }
+
+
     var numVars = solution.numberOfVariables;
     var numFreeVars = solution.numberOfFreeVariables;
     
