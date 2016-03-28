@@ -25,8 +25,8 @@
       <md-list-item class="md-2-line"
                     ng-repeat="expense in vm.balanceSheet.expenses"
                     ng-click="::$state.go('expense', {id: expense.id})">
-        <md-icon ng-if="!expense.isBalanced()" class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
-        <md-icon ng-if="::!expense.isBalanced()" class="md-primary" md-svg-icon="action:ic_shopping_basket_24px"></md-icon>
+        <md-icon ng-if="::!expense.isBalanced()" class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
+        <md-icon ng-if="::expense.isBalanced()" class="md-primary" md-svg-icon="action:ic_shopping_basket_24px"></md-icon>
         <div class="md-list-item-text" layout="row">
           <span ng-class="::{settled: expense.settled}">{{::expense.name}}</span>
           <span flex></span>
