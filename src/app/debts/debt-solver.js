@@ -76,8 +76,7 @@ function debtSolverFactory(solveLinearSystem) {
     var roles = getDebtorsAndCreditors(balances);
     var linearSystem = createDebtEquations(roles);
     var debtVector = solveDebts(linearSystem);
-    var debts = createDebts(debtVector, roles);
-    return debts;
+    return createDebts(debtVector, roles);
   }
   
   function computeBalances(participations) {
@@ -133,13 +132,13 @@ function debtSolverFactory(solveLinearSystem) {
     var c = roles.creditors.length;
     
     // Right-hand side vector, creditor balances converted to non-negative to allow binary coefficients
-    var b = []; 
-    for (var i = 0; i < d; i++) {
-      b[i] = (new Decimal(roles.debtors[i].balance)).multiply(100).toNumber();
-    }
-    for (var i = 0; i < c; i++) {
-      b[d + i] = (new Decimal(roles.creditors[i].balance)).multiply(-100).toNumber();
-    }
+    var b = [];
+    _.each(roles.debtors, function(debtor, i) {
+      b[i] = (new Decimal(debtor.balance)).multiply(100).toNumber();
+    });
+    _.each(roles.creditors, function(creditor, i) {
+      b[d + i] = (new Decimal(creditor.balance)).multiply(-100).toNumber();
+    });
     
     // Coefficient matrix
     var A = initMatrix(d + c, d*c); 
