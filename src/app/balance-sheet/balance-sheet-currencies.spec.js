@@ -263,42 +263,39 @@ describe("Currencies", function () {
       prt22 = sheet.createParticipation({person: person2, expense: expense2, paid: 13.5, share: 8.5});
     });
 
-    // We sum up converted payments and shares instead of converting sums of payments and shares
-    // in order to keep sums consistent with their constituents. Because shares can be arbitrary,
-    // we cannot just divide totals between participants.
-    it("can be converted to given currency if expense currency is defined and an exhange rate exists, and totals are based on rounded shares", function() {
+    it("can be converted to given currency while keeping the system balanded in the converted currency", function() {
       expense1.currency = "EUR";
       expense2.currency = "EUR";
 
+      expect(expense1.getCost("GBP")).toBe(19.75);
       expect(prt11.getPaid("GBP")).toBe(15.80);
       expect(prt21.getPaid("GBP")).toBe(3.95);
-      expect(expense1.getCost("GBP")).toBe(19.75);
 
+      expect(expense1.getSumOfShares("GBP")).toBe(19.75);
       expect(prt11.getShare("GBP")).toBe(9.87);
-      expect(prt21.getShare("GBP")).toBe(9.87);
-      expect(expense1.getSumOfShares("GBP")).toBe(19.74); // 19.75 if sum of shares was converted instead of summing up converted shares
+      expect(prt21.getShare("GBP")).toBe(9.88);
 
+      expect(expense2.getCost("GBP")).toBe(13.43);
       expect(prt12.getPaid("GBP")).toBe(2.76);
-      expect(prt22.getPaid("GBP")).toBe(10.66);
-      expect(expense2.getCost("GBP")).toBe(13.42); // 13.43 if sum of costs was converted instead of summing up converted payments
+      expect(prt22.getPaid("GBP")).toBe(10.67);
 
+      expect(expense2.getSumOfShares("GBP")).toBe(13.43);
       expect(prt12.getShare("GBP")).toBe(6.71);
-      expect(prt22.getShare("GBP")).toBe(6.71);
-      expect(expense2.getSumOfShares("GBP")).toBe(13.42); // 13.43 if sum of shares was converted instead of summing up converted shares
+      expect(prt22.getShare("GBP")).toBe(6.72);
 
-      expect(expense1.getBalance("GBP")).toBe(-0.01); // The consequence of summing up converted and rounded shares
+      expect(expense1.getBalance("GBP")).toBe(0);
       expect(expense2.getBalance("GBP")).toBe(0);
 
       expect(person1.getCost("GBP")).toBe(18.56);
       expect(person1.getSumOfShares("GBP")).toBe(16.58);
       expect(person1.getBalance("GBP")).toBe(-1.98);
 
-      expect(person2.getCost("GBP")).toBe(14.61);
-      expect(person2.getSumOfShares("GBP")).toBe(16.58);
-      expect(person2.getBalance("GBP")).toBe(1.97); // The consequence of summing up converted and rounded shares: sums of persons' balances is not zero
+      expect(person2.getCost("GBP")).toBe(14.62);
+      expect(person2.getSumOfShares("GBP")).toBe(16.60);
+      expect(person2.getBalance("GBP")).toBe(1.98);
     });
 
-    it("returns NaN error if conversion not possible", function() {
+    it("are NaN error if currency conversion not possible", function() {
       expect(prt11.getPaid("FOO")).toBeNaN();
     
       expect(prt11.getShare("FOO")).toBeNaN();
@@ -370,9 +367,9 @@ describe("Currencies", function () {
         expect(person1.getSumOfShares()).toBe(16.58);
         expect(person1.getBalance()).toBe(-1.98);
 
-        expect(person2.getCost()).toBe(14.61);
-        expect(person2.getSumOfShares()).toBe(16.58);
-        expect(person2.getBalance()).toBe(1.97);
+        expect(person2.getCost()).toBe(14.62);
+        expect(person2.getSumOfShares()).toBe(16.60);
+        expect(person2.getBalance()).toBe(1.98);
       });
 
     });

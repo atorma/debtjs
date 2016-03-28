@@ -743,46 +743,94 @@ var BalanceSheet = function(data) {
 
     ///////////////////////////////////////
 
+    function getCurrencyConversionFunction(options) {
+      if (options.strictConversion) {
+        return convertCurrency;
+      } else {
+        return tryToConvertCurrency;
+      }
+    }
+
+    /**
+     * Returns the value of property propName with currency conversion (if applicable) adjusted such
+     * that the expense is balanced in the target currency.
+     *
+     * @param {string} propName - The name of the monetary value property
+     * @param {string} currency - The target currency
+     * @param {object} options - Currrency conversion options
+     * @returns {number} - The property value with currency conversion
+     */
+    function getValue(propName, currency, options) {
+      if (!currency || currency === _this.expense.computedCurrency()) {
+        return _this[propName];
+      }
+
+      options = _.extend({strictConversion: false}, options);
+      var convert = getCurrencyConversionFunction(options);
+      var expenseParticipations = _this.expense.getParticipations();
+
+      if (_.last(expenseParticipations) === _this) {
+
+        var thisValueConverted = convert({
+          value: _this[propName],
+          fixed: _this.expense.computedCurrency(),
+          variable: currency
+        });
+
+        var originalSum = _.reduce(expenseParticipations, function(sum, prt) {
+          return sum.add(prt[propName]);
+        }, new Decimal(0)).toNumber();
+
+        var convertedSum = convert({
+          value: originalSum,
+          fixed: _this.expense.computedCurrency(),
+          variable: currency
+        });
+
+        var sumOfConverted = _.reduce(expenseParticipations, function(sum, prt) {
+          var value = convert({
+            value: prt[propName],
+            fixed: prt.expense.computedCurrency(),
+            variable: currency
+          });
+          return sum.add(value);
+        }, new Decimal(0));
+
+        var delta = sumOfConverted.subtract(convertedSum);
+
+        return new Decimal(thisValueConverted).subtract(delta).toNumber();
+
+      } else {
+
+        return convert({
+          value: _this[propName],
+          fixed: _this.expense.computedCurrency(),
+          variable: currency
+        });
+
+      }
+    }
+
     /**
      *
      * @param {string} [currency] - Currency in which to get the payment. Default is expense's currency.
      * @param {object} [options] - Options
-     * @param {boolean} [options.strictConversion] - True to throw error if currency conversion fails. Default is false.
+     * @param {boolean} [options.strictConversion] - True to throw error if currency conversion fails, false to return NaN. Default is false.
      * @return {number} How much the person paid for the expense.
      */
     function getPaid(currency, options) {
-      options = _.extend({strictConversion: false}, options);
-      var currencyConversionFunc = tryToConvertCurrency;
-      if (options.strictConversion) {
-        currencyConversionFunc = convertCurrency;
-      }
-
-      return currencyConversionFunc({
-        value: _this.paid,
-        fixed: _this.expense.computedCurrency(),
-        variable: currency || _this.expense.computedCurrency()
-      });
+      return getValue("paid", currency, options);
     }
 
     /**
      *
      * @param {string} [currency] - Currency in which to get the share. Default is expense's currency.
      * @param {object} [options] - Options
-     * @param {boolean} [options.strictConversion] - True to throw error if currency conversion fails. Default is false.
-     * @return {number} How much the person shares for the expense. NaN if cannot convert currency.
+     * @param {boolean} [options.strictConversion] - True to throw error if currency conversion fails, false to return NaN. Default is false.
+     * @return {number} How much the person shares for the expense.
      */
     function getShare(currency, options) {
-      options = _.extend({strictConversion: false}, options);
-      var currencyConversionFunc = tryToConvertCurrency;
-      if (options.strictConversion) {
-        currencyConversionFunc = convertCurrency;
-      }
-
-      return currencyConversionFunc({
-        value: _this.share,
-        fixed: _this.expense.computedCurrency(),
-        variable: currency || _this.expense.computedCurrency()
-      });
+      return getValue("share", currency, options);
     }
 
     function equals(other) {

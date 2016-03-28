@@ -66,7 +66,7 @@ describe("debtService", function() {
 
       expect(solveDebts).toHaveBeenCalledWith([
         jasmine.objectContaining({paid: 72.31, share: 36.16}),
-        jasmine.objectContaining({paid: 0, share: 36.16})
+        jasmine.objectContaining({paid: 0, share: 36.15})
       ]);
 
       _.each(result, function(debt) {
