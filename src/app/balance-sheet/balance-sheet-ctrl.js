@@ -6,7 +6,7 @@ var angular = require("angular");
 angular.module("debtApp")
   .controller("BalanceSheetCtrl", BalanceSheetCtrl);
 
-function BalanceSheetCtrl(balanceSheetService, debtService, events, $scope) {
+function BalanceSheetCtrl(balanceSheetService, debtService, events, $scope, $log) {
   var vm = this;
   
   vm.init = init;
@@ -28,6 +28,7 @@ function BalanceSheetCtrl(balanceSheetService, debtService, events, $scope) {
       vm.debtsByDebtor = computeDebts();
       vm.debtComputationError = undefined;
     } catch (e) {
+      $log.error(e);
       vm.debtsByDebtor = undefined;
       vm.debtComputationError = "Cannot compute debts";
     }

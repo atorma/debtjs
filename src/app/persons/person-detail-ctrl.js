@@ -15,8 +15,8 @@ function PersonDetailCtrl(balanceSheetService,
                           $stateParams,
                           $mdDialog,
                           $scope,
-                          $timeout)
-{
+                          $timeout,
+                          $log) {
 
   var vm = this;
   var confirmRemovePerson;
@@ -29,6 +29,7 @@ function PersonDetailCtrl(balanceSheetService,
         vm.debts = debtResult.debts;
         vm.debtComputationError = undefined;
       } catch (e) {
+        $log.error(e);
         vm.debtRole = undefined;
         vm.debts = undefined;
         vm.debtComputationError = "Cannot compute debts";
