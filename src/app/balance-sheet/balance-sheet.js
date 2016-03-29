@@ -616,14 +616,24 @@ var BalanceSheet = function(data) {
     });
 
 
-    function getTotal(participationMapping) {
-      return _myParticipations
+    function getTotal(participationMapping, currency) {
+      var total = _myParticipations
         .map(participationMapping)
         .reduce(function(total, value) {
           return total.add(value);
         }, new Decimal(0))
         .value()
         .toNumber();
+
+      if (!currency || currency === _this.computedCurrency()) {
+        return total;
+      } else {
+        return tryToConvertCurrency({
+          value: total,
+          fixed: _this.computedCurrency(),
+          variable: currency
+        });
+      }
     }
 
 
@@ -642,10 +652,9 @@ var BalanceSheet = function(data) {
      * @return {number} The cost of this expense. NaN if cannot convert currency.
      */
     function getCost(currency) {
-      currency = currency || _this.computedCurrency();
       return getTotal(function(pt) {
-        return pt.getPaid(currency);
-      });
+        return pt.paid;
+      }, currency);
     }
 
     /**
@@ -654,10 +663,9 @@ var BalanceSheet = function(data) {
      * @return {number} The sum of shares of this expense. NaN if cannot convert currency.
      */
     function getSumOfShares(currency) {
-      currency = currency || _this.computedCurrency();
       return getTotal(function(pt) {
-        return pt.getShare(currency);
-      });
+        return pt.share;
+      }, currency);
     }
 
     function isBalanced() {
@@ -670,7 +678,6 @@ var BalanceSheet = function(data) {
      * @return {number} The balance of this expense. NaN if cannot convert currency.
      */
     function getBalance(currency) {
-      currency = currency || _this.computedCurrency();
       return new Decimal( getSumOfShares(currency) ).subtract( getCost(currency) ).toNumber();
     }
 
