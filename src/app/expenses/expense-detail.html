@@ -22,7 +22,7 @@
   
     <div layout="row" layout-align="start center">
       <label for="cost" flex>Cost</label>
-      <div id="cost" style="margin: 15px; padding-right: 8px;">{{::vm.cost | money}}</div>
+      <div id="cost" style="margin: 15px; padding-right: 8px;">{{vm.cost | money}}</div>
     </div>
 
     <div ng-if="::vm.balanceSheet.currenciesEnabled()" layout="row" layout-align="start center">
