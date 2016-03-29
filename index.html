@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="debt.appcache">
+<html>
   <head>
     <title>DebtJS</title>
     
@@ -16,7 +16,7 @@
     <script src="debt.js"></script>
   </head>
 
-  <body ng-app="debtApp" ng-strict-di layout="column" ng-controller="DebtAppCtrl as vm" ng-cloak>
+  <body ng-app="debtApp" layout="column" ng-controller="DebtAppCtrl as vm" ng-cloak>
   
     <md-toolbar md-scroll-shrink="true">
       <div class="md-toolbar-tools">
@@ -47,6 +47,10 @@
             <p class="md-list-item-text">Save sheet to file</p>
           </md-list-item>
           <md-divider></md-divider>
+          <md-list-item ng-click="$state.go('currencies')">
+            <p class="md-list-item-text">Set up currencies</p>
+          </md-list-item>
+          <md-divider></md-divider>
           <md-list-item ng-click="vm.showHelp()">
             <p class="md-list-item-text">Help</p>
           </md-list-item>
@@ -57,22 +61,7 @@
       <div ui-view></div>
     </md-content>
 
-    <div ng-if="vm.balanceSheet">
-      <mfb-menu position="br" effect="zoomin" toggling-method="click"
-                template-url="ng-mfb-menu-md.tpl.html"
-                resting-icon="content:ic_add_24px" active-icon="content:ic_clear_24px">
-        <mfb-button ng-click="vm.createExpense()"
-                    template-url="ng-mfb-button-md.tpl.html"
-                    icon="action:ic_shopping_basket_24px" label="Create expense"
-                    mfb-button-close>
-        </mfb-button>
-        <mfb-button ng-click="vm.createPerson()"
-                    template-url="ng-mfb-button-md.tpl.html"
-                    icon="action:ic_face_24px" label="Create person"
-                    mfb-button-close>
-        </mfb-button>
-      </mfb-menu>
-    </div>
+    <div ng-if="vm.balanceSheet" ui-view="floatingButton"></div>
 
   </body>
 

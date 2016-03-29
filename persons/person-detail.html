@@ -22,7 +22,9 @@
   
     <div layout="row" layout-align="start center">
       <label for="balance" flex>Balance</label>
-      <div id="balance" style="margin: 15px; padding-right: 8px">{{vm.balance | balance}}</div>
+      <span id="balance" style="margin: 16px; padding-right: 8px">
+        <span ng-if="::vm.balanceSheet.currenciesEnabled()">{{::vm.person.computedCurrency()}}</span> {{vm.balance | balance}}
+      </span>
     </div>
         
   </div>
@@ -53,7 +55,8 @@
         </md-button>
       </div>
       
-      <div layout="row">
+      <div layout="row" layout-align="start center">
+        <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::expense.computedCurrency()}}</span>
         <md-input-container class="no-padding-left">
           <label>Paid</label>
           <input type="number" money-input style="width: 8em"
@@ -88,7 +91,8 @@
         <icon-button-strut hide-gt-sm></icon-button-strut>
       </div>
       
-      <div layout="row" >
+      <div layout="row" layout-align="start center">
+        <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::vm.person.computedCurrency()}}</span>
         <md-input-container class="no-padding-left">
           <label>Paid</label>
           <input type="number" money-input style="width: 8em" ng-model="vm.cost" ng-readonly="true" />
@@ -119,7 +123,11 @@
     </div>
 
     <div ng-repeat="d in vm.debts" class="margin-bottom" style="margin-left: 16px;">
-        <span>{{d.person.name}}: {{d.amount | money}}</span>
+        <span>{{d.person.name}}: {{d.currency}} {{d.amount | money}}</span>
+    </div>
+
+    <div ng-if="vm.debtComputationError" class="margin-bottom">
+      <md-icon class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon> {{vm.debtComputationError}}
     </div>
     
   </div>

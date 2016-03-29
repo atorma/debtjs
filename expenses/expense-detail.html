@@ -5,13 +5,13 @@
     <h1 flex>
       <md-input-container class="no-margin no-padding" md-no-float>
         <input type="text" placeholder="Expense name"
-               ng-model="vm.expense.name"
-               ng-change="vm.updateExpense()"
+               ng-model="::vm.expense.name"
+               ng-change="::vm.updateExpense()"
                ng-required="true"/>
       </md-input-container> 
     </h1>
     
-    <md-button class="md-icon-button" ng-click="vm.removeExpense()" aria-label="delete">
+    <md-button class="md-icon-button" ng-click="::vm.removeExpense()" aria-label="delete">
       <md-tooltip>Delete</md-tooltip>
       <md-icon md-svg-icon="action:ic_delete_24px"></md-icon>
     </md-button>
@@ -22,13 +22,22 @@
   
     <div layout="row" layout-align="start center">
       <label for="cost" flex>Cost</label>
-      <div id="cost" style="margin: 15px; padding-right: 8px">{{vm.cost | money}}</div>
+      <div id="cost" style="margin: 15px; padding-right: 8px;">{{vm.cost | money}}</div>
+    </div>
+
+    <div ng-if="::vm.balanceSheet.currenciesEnabled()" layout="row" layout-align="start center">
+      <label for="currency" flex>Currency</label>
+      <md-select id="currency" class="currency-select" style="margin-right: 15px;"
+                 ng-model="vm.expense.currency"
+                 ng-change="::vm.updateExpense()">
+        <md-option ng-value="::currency" ng-repeat="currency in ::vm.balanceSheet.getCurrencies()">{{::currency}}</md-option>
+      </md-select>
     </div>
     
     <div layout="row" layout-align="start center">
       <label for="sharing" flex>Share equally</label>
       <md-switch ng-model="vm.expense.sharing"
-                 ng-change="vm.updateExpense()"
+                 ng-change="::vm.updateExpense()"
                  ng-disabled="vm.expense.settled"
                  ng-true-value="'equal'" ng-false-value="'custom'"
                  id="sharing" class="md-primary" aria-label="Share equally">
@@ -38,7 +47,7 @@
     <div layout="row" layout-align="start center">
       <label for="settled" flex>Settled</label>
       <md-switch ng-model="vm.expense.settled"
-                 ng-change="vm.updateExpense()"
+                 ng-change="::vm.updateExpense()"
                  id="settled" class="md-primary" aria-label="Settled">
       </md-switch>
     </div>
@@ -59,36 +68,37 @@
 
       <div layout-fill flex-gt-sm layout="row" layout-align="start center">
         <md-checkbox class="md-primary no-margin"
-                     ng-model="vm.isParticipant[person.id]"
-                     ng-change="vm.setParticipation(person, vm.isParticipant[person.id])"
+                     ng-model="::vm.isParticipant[person.id]"
+                     ng-change="::vm.setParticipation(person, vm.isParticipant[person.id])"
                      ng-disabled="vm.expense.settled">
-          {{person.name}}
+          {{::person.name}}
         </md-checkbox>
         <span flex></span>
-        <md-button hide-gt-sm ng-href="#/persons/{{person.id}}" class="md-icon-button" aria-label="View details">
+        <md-button hide-gt-sm ng-href="#/persons/{{::person.id}}" class="md-icon-button" aria-label="View details">
           <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
         </md-button>
       </div>
 
-      <div layout="row">
+      <div layout="row" layout-align="start center">
+        <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span>
         <md-input-container class="no-padding-left">
           <label>Paid</label>
-          <input type="number" money-input style="width: 8em" ng-required="vm.isParticipant[person.id]"
-            ng-model="vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).paid"
-            ng-change="vm.updateExpense()"
+          <input type="number" money-input style="width: 8em" ng-required="::vm.isParticipant[person.id]"
+            ng-model="::vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).paid"
+            ng-change="::vm.updateExpense()"
             ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]" />
         </md-input-container>
         <md-input-container class="no-padding-left">
           <label>Share</label>
-          <input type="number" money-input style="width: 8em" ng-required="vm.isParticipant[person.id]"
-            ng-model="vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).share"
-            ng-change="vm.updateExpense()"
+          <input type="number" money-input style="width: 8em" ng-required="::vm.isParticipant[person.id]"
+            ng-model="::vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).share"
+            ng-change="::vm.updateExpense()"
             ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]"
             ng-readonly="vm.expense.sharing != 'custom'" />
         </md-input-container>
       </div>
 
-      <md-button hide-sm ng-href="#/persons/{{person.id}}" class="md-icon-button" aria-label="View details">
+      <md-button hide-sm ng-href="#/persons/{{::person.id}}" class="md-icon-button" aria-label="View details">
         <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
       </md-button>
 
@@ -99,21 +109,22 @@
       layout-gt-sm="row" layout-align-gt-sm="start center">
 
       <div layout-fill flex-gt-sm layout="row" layout-align="start center">
-        <span ng-if="!vm.expense.isBalanced()" style="color: red;">
+        <span ng-if="!vm.isBalanced" style="color: red;">
           <md-icon class="md-warn no-margin-left no-padding-left" md-svg-icon="alert:ic_warning_24px"></md-icon>&nbsp;Unbalanced
         </span>
-        <span ng-if="vm.expense.isBalanced()" class="label">Total</span>
+        <span ng-if="vm.isBalanced" class="label">Total</span>
         <icon-button-strut hide-gt-sm></icon-button-strut>
       </div>
 
-      <div layout="row" >
+      <div layout="row" layout-align="start center">
+        <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span>
         <md-input-container class="no-padding-left">
           <label>Paid</label>
-          <input type="number" money-input style="width: 8em" ng-model="vm.cost" ng-readonly="true" />
+          <input type="number" money-input style="width: 8em" ng-model="::vm.cost" ng-readonly="true" />
         </md-input-container>
         <md-input-container class="no-padding-left">
           <label>Share</label>
-          <input type="number" money-input style="width: 8em" ng-model="vm.sumOfShares" ng-readonly="true"/>
+          <input type="number" money-input style="width: 8em" ng-model="::vm.sumOfShares" ng-readonly="true"/>
         </md-input-container>
       </div>
 
@@ -138,9 +149,9 @@
       </div>
       <div ng-repeat="d in vm.debtsByDebtor">
         <p layout="column">
-          <span class="margin-bottom">{{d.debtor.name}} owes </span>
-          <span ng-repeat="c in d.debts" class="margin-bottom" style="margin-left: 16px;">
-            {{c.creditor.name}}: {{c.amount | money}}
+          <span class="margin-bottom">{{::d.debtor.name}} owes </span>
+          <span ng-repeat="c in ::d.debts" class="margin-bottom" style="margin-left: 16px;">
+            {{::c.creditor.name}}: <span ng-if="::vm.balanceSheet.currenciesEnabled()">{{::c.currency}}</span> {{::c.amount | money}}
           </span>
           <span class="invisible-linebreak"><br/></span>
         </p>
@@ -151,7 +162,7 @@
       <p>No debts!</p>
     </div>
 
-    <div ng-if="!vm.expense.isBalanced()">
+    <div ng-if="!vm.isBalanced">
       <p>Cannot compute debts. Expense is not balanced.</p>
     </div>
 

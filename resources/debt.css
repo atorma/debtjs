@@ -143,9 +143,9 @@ section {
 }
 
 icon-button-strut {
-  width: 48px; 
-  height: 48px; 
-  margin-left: 6px; 
+  width: 48px;
+  height: 48px;
+  margin-left: 6px;
   margin-right: 6px
 }
 
@@ -160,4 +160,17 @@ icon-button-strut {
 
 .invisible-linebreak {
   line-height: 0;
+}
+
+.exchange-rate span, .exchange-rate md-input-container {
+  margin-right: 24px;
+}
+
+.currency-label {
+  margin-bottom: 5px;
+  margin-right: 16px;
+}
+
+.currency-select {
+  padding: 15px 0;
 }
