@@ -1,22 +1,20 @@
 <md-dialog>
   <form name="form" novalidate>
-    <md-dialog-content>
+    <md-dialog-content class="md-dialog-content">
       <h2 class="md-title">Create person</h2>
-      <div>
+      <div layout="column">
         <md-input-container>
           <label>Name</label>
           <input type="text" ng-model="vm.person.name" ng-required="true" focus/>
         </md-input-container>
-        <md-checkbox ng-model="vm.options.createParticipations" class="md-primary no-margin">
+        <md-checkbox ng-model="vm.options.createParticipations" class="md-primary">
           Shares all expenses
         </md-checkbox>
       </div>
     </md-dialog-content>
-    <div class="md-actions">
-      <md-button type="button" class="md-primary"
-                 ng-click="vm.cancel()">Cancel</md-button>
-      <md-button type="submit" class="md-primary"
-                 ng-click="vm.ok()" ng-disabled="!form.$valid">Ok</md-button>
-    </div>
+    <md-dialog-actions>
+      <md-button type="button" ng-click="vm.cancel()">Cancel</md-button>
+      <md-button type="submit" class="md-primary" ng-click="vm.ok()" ng-disabled="!form.$valid">Ok</md-button>
+    </md-dialog-actions>
   </form>
 </md-dialog>
