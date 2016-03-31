@@ -30,8 +30,14 @@
 
     <div class="row" layout="row" layout-align="start center">
       <label for="cost" flex>Cost</label>
-      <div id="cost" class="margin-right">{{vm.cost | money}}</div>
+      <div id="cost" class="margin-right">
+        <span ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span> {{vm.cost | money}}
+        <span ng-if="vm.balanceSheet.currenciesEnabled() && vm.balanceSheet.currency !== vm.expense.computedCurrency()">
+          ({{vm.balanceSheet.currency}} {{vm.expense.getCost(vm.balanceSheet.currency) | money}})
+        </span>
+      </div>
     </div>
+
 
     <div class="row" layout="row" layout-align="start center">
       <label for="sharing" flex>Share equally</label>
