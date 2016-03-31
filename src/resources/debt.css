@@ -4,8 +4,7 @@
 .no-padding-bottom, .no-padding-bottom * {
   padding-bottom: 0;
 }
-
-.no-padding-top, .no-padding-top * {
+.no-padding-top, no-padding-top * {
   padding-top: 0;
 }
 
@@ -61,28 +60,27 @@
 .double-padding {
   padding: 16px 16px 16px 16px;
 }
+*/
 
-
-.no-margin-bottom, .no-margin-bottom * {
+.no-margin-bottom {
   margin-bottom: 0;
 }
 
-.no-margin-top, .no-margin-top * {
+.no-margin-top {
   margin-top: 0;
 }
 
-.no-margin-left, .no-margin-left * {
+.no-margin-left {
   margin-left: 0;
 }
 
-.no-margin-right, .no-margin-right * {
+.no-margin-right {
   margin-right: 0;
 }
 
-.no-margin, .no-margin * {
+.no-margin, .no-margin-deep, .no-margin-deep * {
   margin: 0;
 }
-*/
 
 .margin-bottom {
    margin-bottom: 8px;
@@ -124,9 +122,20 @@
   margin: 16px 16px 16px 16px;
 }
 
+md-input-container.md-title, md-input-container.md-title input {
+  padding-left: 0;
+}
 
 section {
   margin-bottom: 16px;
+}
+
+.md-subheader.section-header .md-subheader-inner {
+  padding-left: 0;
+}
+
+.row {
+  min-height: 48px;
 }
 
 /*
@@ -153,10 +162,9 @@ section {
 }
 
 icon-button-strut {
-  width: 48px;
-  height: 48px;
-  margin-left: 6px;
-  margin-right: 6px
+  width: 40px;
+  height: 40px;
+  margin: 0 6px;
 }
 
 .settled {
@@ -179,7 +187,6 @@ icon-button-strut {
 }
 
 .currency-label {
-  margin-bottom: 5px;
   margin-right: 16px;
 }
 

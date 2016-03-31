@@ -1,54 +1,53 @@
-<section>
+<section layout="column">
 
-  <div layout="row">
-  
-    <h1 flex>
-      <md-input-container class="no-margin no-padding" md-no-float>
-        <input type="text" placeholder="Expense name"
-               ng-model="::vm.expense.name"
-               ng-change="::vm.updateExpense()"
-               ng-required="true"/>
-      </md-input-container> 
-    </h1>
-    
-    <md-button class="md-icon-button" ng-click="::vm.removeExpense()" aria-label="delete">
+  <div layout="row" layout-align="start start">
+
+    <md-input-container class="md-title no-margin-top no-margin-bottom" flex md-no-float>
+      <input type="text" placeholder="Expense name"
+             ng-model="::vm.expense.name"
+             ng-change="::vm.updateExpense()"
+             ng-required="true"/>
+    </md-input-container>
+
+    <md-button class="md-icon-button"
+               ng-click="::vm.removeExpense()" aria-label="delete">
       <md-tooltip>Delete</md-tooltip>
       <md-icon md-svg-icon="action:ic_delete_24px"></md-icon>
     </md-button>
     
   </div>
   
-  <div layout="column" class="padding-left">
-  
-    <div layout="row" layout-align="start center">
-      <label for="cost" flex>Cost</label>
-      <div id="cost" style="margin: 15px; padding-right: 8px;">{{vm.cost | money}}</div>
-    </div>
+  <div layout="column">
 
-    <div ng-if="::vm.balanceSheet.currenciesEnabled()" layout="row" layout-align="start center">
+    <div ng-if="::vm.balanceSheet.currenciesEnabled()" class="row" layout="row" layout-align="start center">
       <label for="currency" flex>Currency</label>
-      <md-select id="currency" class="currency-select" style="margin-right: 15px;"
-                 ng-model="vm.expense.currency"
-                 ng-change="::vm.updateExpense()">
+      <md-select id="currency" aria-label="Currency" class="no-margin margin-right"
+                 ng-model="vm.expense.currency" ng-change="::vm.updateExpense()">
         <md-option ng-value="::currency" ng-repeat="currency in ::vm.balanceSheet.getCurrencies()">{{::currency}}</md-option>
       </md-select>
     </div>
-    
-    <div layout="row" layout-align="start center">
+
+
+    <div class="row" layout="row" layout-align="start center">
+      <label for="cost" flex>Cost</label>
+      <div id="cost" class="margin-right">{{vm.cost | money}}</div>
+    </div>
+
+    <div class="row" layout="row" layout-align="start center">
       <label for="sharing" flex>Share equally</label>
       <md-switch ng-model="vm.expense.sharing"
                  ng-change="::vm.updateExpense()"
                  ng-disabled="vm.expense.settled"
                  ng-true-value="'equal'" ng-false-value="'custom'"
-                 id="sharing" class="md-primary" aria-label="Share equally">
+                 id="sharing" class="md-primary no-margin" aria-label="Share equally">
       </md-switch>
     </div>
 
-    <div layout="row" layout-align="start center">
+    <div class="row" layout="row" layout-align="start center">
       <label for="settled" flex>Settled</label>
       <md-switch ng-model="vm.expense.settled"
                  ng-change="::vm.updateExpense()"
-                 id="settled" class="md-primary" aria-label="Settled">
+                 id="settled" class="md-primary no-margin" aria-label="Settled">
       </md-switch>
     </div>
 
@@ -58,23 +57,23 @@
 
 
 <section>
-  <md-subheader class="md-primary md-no-sticky padding-vertical">People</md-subheader>
+  <md-subheader class="md-primary section-header md-no-sticky">People</md-subheader>
 
-  <div layout="column" class="padding-left">
+  <div layout="column">
 
     <div ng-repeat="person in vm.balanceSheet.persons"
-      layout-sm="column" layout-align-sm="center start"
-      layout-gt-sm="row" layout-align-gt-sm="start center">
+         layout-xs="column" layout-align-xs="center start"
+         layout-gt-xs="row" layout-align-gt-xs="start center">
 
-      <div layout-fill flex-gt-sm layout="row" layout-align="start center">
-        <md-checkbox class="md-primary no-margin"
+      <div layout-fill flex-gt-xs layout="row" layout-align="start center">
+        <md-checkbox class="md-primary no-margin-deep"
                      ng-model="::vm.isParticipant[person.id]"
                      ng-change="::vm.setParticipation(person, vm.isParticipant[person.id])"
                      ng-disabled="vm.expense.settled">
           {{::person.name}}
         </md-checkbox>
         <span flex></span>
-        <md-button hide-gt-sm ng-href="#/persons/{{::person.id}}" class="md-icon-button" aria-label="View details">
+        <md-button hide-gt-xs ng-href="#/persons/{{::person.id}}" class="md-icon-button" aria-label="{{person.name}} details">
           <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
         </md-button>
       </div>
@@ -98,22 +97,22 @@
         </md-input-container>
       </div>
 
-      <md-button hide-sm ng-href="#/persons/{{::person.id}}" class="md-icon-button" aria-label="View details">
+      <md-button hide-xs ng-href="#/persons/{{::person.id}}" class="md-icon-button" aria-label="View person details">
         <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
       </md-button>
 
     </div>
 
     <div
-      layout-sm="column" layout-align-sm="center start"
-      layout-gt-sm="row" layout-align-gt-sm="start center">
+      layout-xs="column" layout-align-xs="center start"
+      layout-gt-xs="row" layout-align-gt-xs="start center">
 
-      <div layout-fill flex-gt-sm layout="row" layout-align="start center">
+      <div layout-fill flex-gt-xs layout="row" layout-align="start center">
         <span ng-if="!vm.isBalanced" style="color: red;">
           <md-icon class="md-warn no-margin-left no-padding-left" md-svg-icon="alert:ic_warning_24px"></md-icon>&nbsp;Unbalanced
         </span>
         <span ng-if="vm.isBalanced" class="label">Total</span>
-        <icon-button-strut hide-gt-sm></icon-button-strut>
+        <icon-button-strut hide-gt-xs></icon-button-strut>
       </div>
 
       <div layout="row" layout-align="start center">
@@ -128,7 +127,7 @@
         </md-input-container>
       </div>
 
-      <icon-button-strut hide-sm></icon-button-strut>
+      <icon-button-strut hide-xs></icon-button-strut>
 
     </div>
 
@@ -137,9 +136,9 @@
 
 
 <section>
-  <md-subheader class="md-primary md-no-sticky padding-vertical">Debts</md-subheader>
+  <md-subheader class="md-primary section-header md-no-sticky">Debts</md-subheader>
 
-  <div layout="column" class="padding-left">
+  <div layout="column">
 
     <div ng-if="vm.debtsByDebtor.length > 0">
       <p ng-if="!vm.expense.settled">To settle this expense individually:</p>
