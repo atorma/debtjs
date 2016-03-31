@@ -1,5 +1,6 @@
 @CHARSET "ISO-8859-1";
 
+/*
 .no-padding-bottom, .no-padding-bottom * {
   padding-bottom: 0;
 }
@@ -81,7 +82,7 @@
 .no-margin, .no-margin * {
   margin: 0;
 }
-
+*/
 
 .margin-bottom {
    margin-bottom: 8px;
@@ -103,23 +104,23 @@
   margin: 8px 8px 8px 8px;
 }
 
-.double-margin-bottom {
+.margin-bottom-double {
   margin-bottom: 16px;
 }
 
-.double-margin-top {
+.margin-top-double {
   margin-top: 16px;
 }
 
-.double-margin-left {
+.margin-left-double {
   margin-left: 16px;
 }
 
-.double-margin-right {
+.margin-right-double {
   margin-right: 16px;
 }
 
-.double-margin {
+.margin-double {
   margin: 16px 16px 16px 16px;
 }
 
@@ -128,7 +129,7 @@ section {
   margin-bottom: 16px;
 }
 
-
+/*
 .menu a, .menu a:visited {
   text-decoration: none;
   color: inherit;
@@ -140,6 +141,15 @@ section {
 
 .label {
   color: rgba(0,0,0,0.54);
+}
+*/
+
+/* Fix icon and text aligment when a 2-line list item is clickable. Requires an nbsp; or something to ensure content on line 2. */
+.md-2-line .md-list-item-inner {
+  height: 72px;
+}
+.md-2-line .md-list-item-inner md-icon {
+  align-self: flex-start;
 }
 
 icon-button-strut {
@@ -153,6 +163,7 @@ icon-button-strut {
   text-decoration: line-through;
 }
 
+/*
 .md-subheader.padding-vertical .md-subheader-inner {
   padding-left: 0;
   padding-right: 0;
@@ -161,6 +172,7 @@ icon-button-strut {
 .invisible-linebreak {
   line-height: 0;
 }
+*/
 
 .exchange-rate span, .exchange-rate md-input-container {
   margin-right: 24px;
