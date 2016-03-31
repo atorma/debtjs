@@ -9,7 +9,7 @@ var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var watchify = require('watchify');
 var browserify = require('browserify');
-var karma = require('karma').server;
+var karma = require('karma');
 var webserver = require('gulp-webserver');
 var _ = require('lodash');
 var manifest = require('gulp-manifest');
@@ -69,12 +69,13 @@ gulp.task('watch', function(cb) {
 });
 
 
-gulp.task('test', function() {
-  return karma.start({
+gulp.task('test', function(done) {
+  var server = new karma.Server({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true,
     autoWatch: false
-  });
+  }, done);
+  server.start();
 });
 
 gulp.task('develop', function(cb) {
@@ -82,11 +83,12 @@ gulp.task('develop', function(cb) {
 });
 
 gulp.task('tdd', ['develop'], function(done) {
-  karma.start({
+  var server = new karma.Server({
     configFile: __dirname + '/karma.conf.js',
     singleRun: false,
     autoWatch: true
   }, done);
+  server.start();
 });
 
 gulp.task('clean', function() {

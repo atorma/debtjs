@@ -12,6 +12,9 @@ module.exports = function(config) {
     frameworks: ['jasmine'],
     reporters: ['mocha'],
     browsers: ['PhantomJS'],
+    phantomjsLauncher: {
+      exitOnResourceError: true
+    },
     preprocessors: {
       '**/*.js': ['sourcemap']
     },
