@@ -86,7 +86,7 @@
 
       <div layout="row" layout-align="start center">
         <span class="margin-right-double" ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span>
-        <md-input-container class="no-padding-left">
+        <md-input-container>
           <label>Paid</label>
           <input type="number" money-input
                  ng-required="::vm.isParticipant[person.id]"
@@ -94,7 +94,7 @@
                  ng-change="::vm.updateExpense()"
                  ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]"/>
         </md-input-container>
-        <md-input-container class="no-padding-left">
+        <md-input-container>
           <label>Share</label>
           <input type="number" money-input
                  ng-required="::vm.isParticipant[person.id]"
@@ -117,7 +117,7 @@
 
       <div layout-fill flex-gt-xs layout="row" layout-align="start center">
         <span ng-if="!vm.isBalanced" style="color: red;">
-          <md-icon class="md-warn no-margin-left no-padding-left" md-svg-icon="alert:ic_warning_24px"></md-icon>&nbsp;Unbalanced
+          <md-icon class="md-warn no-margin-left" md-svg-icon="alert:ic_warning_24px"></md-icon>&nbsp;Unbalanced
         </span>
         <span ng-if="vm.isBalanced" class="label">Total</span>
         <icon-button-strut hide-gt-xs></icon-button-strut>
