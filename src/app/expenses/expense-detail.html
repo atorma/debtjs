@@ -9,8 +9,8 @@
              ng-required="true"/>
     </md-input-container>
 
-    <md-button class="md-icon-button"
-               ng-click="::vm.removeExpense()" aria-label="delete">
+    <md-button class="md-icon-button" aria-label="delete"
+               ng-click="::vm.removeExpense()">
       <md-tooltip>Delete</md-tooltip>
       <md-icon md-svg-icon="action:ic_delete_24px"></md-icon>
     </md-button>
@@ -79,7 +79,7 @@
           {{::person.name}}
         </md-checkbox>
         <span flex></span>
-        <md-button hide-gt-xs ng-href="#/persons/{{::person.id}}" class="md-icon-button" aria-label="{{person.name}} details">
+        <md-button hide-gt-xs ng-href="#/persons/{{::person.id}}" class="md-icon-button" aria-label="{{::person.name}} details">
           <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
         </md-button>
       </div>
@@ -88,22 +88,24 @@
         <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span>
         <md-input-container class="no-padding-left">
           <label>Paid</label>
-          <input type="number" money-input style="width: 8em" ng-required="::vm.isParticipant[person.id]"
-            ng-model="::vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).paid"
-            ng-change="::vm.updateExpense()"
-            ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]" />
+          <input type="number" money-input
+                 ng-required="::vm.isParticipant[person.id]"
+                 ng-model="::vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).paid"
+                 ng-change="::vm.updateExpense()"
+                 ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]"/>
         </md-input-container>
         <md-input-container class="no-padding-left">
           <label>Share</label>
-          <input type="number" money-input style="width: 8em" ng-required="::vm.isParticipant[person.id]"
-            ng-model="::vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).share"
-            ng-change="::vm.updateExpense()"
-            ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]"
-            ng-readonly="vm.expense.sharing != 'custom'" />
+          <input type="number" money-input
+                 ng-required="::vm.isParticipant[person.id]"
+                 ng-model="::vm.balanceSheet.getParticipation({person: person, expense: vm.expense}).share"
+                 ng-change="::vm.updateExpense()"
+                 ng-disabled="vm.expense.settled || !vm.isParticipant[person.id]"
+                 ng-readonly="vm.expense.sharing != 'custom'"/>
         </md-input-container>
       </div>
 
-      <md-button hide-xs ng-href="#/persons/{{::person.id}}" class="md-icon-button" aria-label="View person details">
+      <md-button hide-xs ng-href="#/persons/{{::person.id}}" class="md-icon-button" aria-label="{{::person.name}} details">
         <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
       </md-button>
 
@@ -123,13 +125,13 @@
 
       <div layout="row" layout-align="start center">
         <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span>
-        <md-input-container class="no-padding-left">
+        <md-input-container>
           <label>Paid</label>
-          <input type="number" money-input style="width: 8em" ng-model="::vm.cost" ng-readonly="true" />
+          <input type="number" money-input ng-model="::vm.cost" ng-readonly="true" />
         </md-input-container>
-        <md-input-container class="no-padding-left">
+        <md-input-container>
           <label>Share</label>
-          <input type="number" money-input style="width: 8em" ng-model="::vm.sumOfShares" ng-readonly="true"/>
+          <input type="number" money-input ng-model="::vm.sumOfShares" ng-readonly="true"/>
         </md-input-container>
       </div>
 
@@ -154,11 +156,10 @@
       </div>
       <div ng-repeat="d in vm.debtsByDebtor">
         <p layout="column">
-          <span class="margin-bottom">{{::d.debtor.name}} owes </span>
-          <span ng-repeat="c in ::d.debts" class="margin-bottom" style="margin-left: 16px;">
-            {{::c.creditor.name}}: <span ng-if="::vm.balanceSheet.currenciesEnabled()">{{::c.currency}}</span> {{::c.amount | money}}
+          <span class="margin-bottom">{{d.debtor.name}} owes </span>
+          <span ng-repeat="c in d.debts" class="margin-bottom margin-left-double">
+            {{c.creditor.name}}: <span ng-if="::vm.balanceSheet.currenciesEnabled()">{{c.currency}}</span> {{c.amount | money}}
           </span>
-          <span class="invisible-linebreak"><br/></span>
         </p>
       </div>
     </div>

@@ -182,6 +182,10 @@ icon-button-strut {
 }
 */
 
+input[money-input] {
+  width: 8rem;
+}
+
 .exchange-rate span, .exchange-rate md-input-container {
   margin-right: 24px;
 }
