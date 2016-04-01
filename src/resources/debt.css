@@ -16,7 +16,7 @@
   margin-right: 0;
 }
 
-.no-margin, .no-margin-deep, .no-margin-deep * {
+.no-margin {
   margin: 0;
 }
 
@@ -101,8 +101,18 @@ icon-button-strut {
   display: none;
 }
 
+.participation input {
+  width: 8rem;
+}
 .participation .md-errors-spacer {
   display: none;
+}
+.participation .currency-label {
+  margin-right: 16px;
+}
+.participation md-checkbox {
+  margin-bottom: 0;
+  margin-right: 16px;
 }
 
 .exchange-rate .md-errors-spacer {

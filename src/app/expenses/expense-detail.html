@@ -2,7 +2,7 @@
 
   <div layout="row" layout-align="start start">
 
-    <md-input-container class="md-title no-margin-top no-margin-bottom" flex md-no-float>
+    <md-input-container class="md-title" flex md-no-float>
       <input type="text" placeholder="Expense name"
              ng-model="::vm.expense.name"
              ng-change="::vm.updateExpense()"
@@ -72,8 +72,8 @@
          layout-xs="column" layout-align-xs="center start"
          layout-gt-xs="row" layout-align-gt-xs="start center">
 
-      <div layout-fill flex-gt-xs layout="row" layout-align="start center">
-        <md-checkbox class="md-primary no-margin-deep"
+      <div layout-fill flex-gt-xs class="participant" layout="row" layout-align="start center">
+        <md-checkbox class="md-primary"
                      ng-model="::vm.isParticipant[person.id]"
                      ng-change="::vm.setParticipation(person, vm.isParticipant[person.id])"
                      ng-disabled="vm.expense.settled">
@@ -87,7 +87,7 @@
       </div>
 
       <div layout="row" layout-align="start center">
-        <span class="margin-right-double" ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span>
+        <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span>
         <md-input-container>
           <label>Paid</label>
           <input type="number" money-input
@@ -127,7 +127,7 @@
       </div>
 
       <div layout="row" layout-align="start center">
-        <span class="margin-right-double" ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span>
+        <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span>
         <md-input-container>
           <label>Paid</label>
           <input type="number" money-input ng-model="::vm.cost" ng-readonly="true"/>
