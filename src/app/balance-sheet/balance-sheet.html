@@ -43,9 +43,9 @@
       </div>
     </md-list-item>
     <md-list-item ng-if="vm.balanceSheet.expenses.length == 0">
-      <div class="md-list-item-text">
+      <p class="md-list-item-text">
           No expenses.
-      </div>
+      </p>
     </md-list-item>
   </md-list>
 </section>
@@ -72,9 +72,9 @@
       </div>
     </md-list-item>
     <md-list-item ng-if="vm.balanceSheet.persons.length == 0">
-      <div class="md-list-item-text">
+      <p class="md-list-item-text">
         No people.
-      </div>
+      </p>
     </md-list-item>
   </md-list>
 </section>
@@ -93,26 +93,26 @@
     </md-list-item>
     <md-list-item ng-if="vm.balanceSheet.persons.length == 0 || vm.balanceSheet.expenses.length == 0">
       <div class="md-list-item-text">
-        <p>This card will show debts that settle all expenses with minimum number of transactions.</p>
+        <p>This section will show debts that settle all expenses with minimum number of transactions.</p>
         <p>You can also settle expenses individually.</p>
       </div>
     </md-list-item>
     <md-list-item ng-if="vm.debtsByDebtor.length == 0 && vm.balanceSheet.persons.length > 0 && vm.balanceSheet.expenses.length > 0">
-      <div class="md-list-item-text">
+      <p class="md-list-item-text">
         Everyone is settled up!
-      </div>
+      </p>
     </md-list-item>
     <md-list-item ng-if="::!vm.balanceSheet.isBalanced()" class="md-2-line">
       <md-icon class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
-      <div class="md-list-item-text">
+      <p class="md-list-item-text">
         Cannot compute debts. There are unbalanced expenses.
-      </div>
+      </p>
     </md-list-item>
     <md-list-item ng-if="vm.debtComputationError">
       <md-icon class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
-      <div class="md-list-item-text">
+      <p class="md-list-item-text">
         {{vm.debtComputationError}}
-      </div>
+      </p>
     </md-list-item>
   </md-list>
 </section>
