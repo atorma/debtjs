@@ -55,8 +55,8 @@
       </div>
       
       <div layout="row" layout-align="start center">
-        <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::expense.computedCurrency()}}</span>
-        <md-input-container class="no-padding-left">
+        <span class="margin-right-double" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::expense.computedCurrency()}}</span>
+        <md-input-container>
           <label>Paid</label>
           <input type="number" money-input
                  ng-required="::vm.isParticipant[expense.id]"
@@ -64,7 +64,7 @@
                  ng-change="::vm.updateExpense(expense)"
                  ng-disabled="expense.settled || !vm.isParticipant[expense.id]" />
         </md-input-container>
-        <md-input-container class="no-padding-left">
+        <md-input-container>
           <label>Share</label>
           <input type="number" money-input
                  ng-required="::vm.isParticipant[expense.id]"
@@ -91,7 +91,7 @@
       </div>
       
       <div layout="row" layout-align="start center">
-        <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::vm.person.computedCurrency()}}</span>
+        <span class="margin-right-double" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::vm.person.computedCurrency()}}</span>
         <md-input-container>
           <label>Paid</label>
           <input type="number" money-input ng-model="::vm.cost" ng-readonly="true" />

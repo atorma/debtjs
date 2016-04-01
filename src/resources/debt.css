@@ -171,16 +171,6 @@ icon-button-strut {
   text-decoration: line-through;
 }
 
-/*
-.md-subheader.padding-vertical .md-subheader-inner {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-.invisible-linebreak {
-  line-height: 0;
-}
-*/
 
 input[money-input] {
   width: 8rem;
@@ -188,12 +178,4 @@ input[money-input] {
 
 .exchange-rate span, .exchange-rate md-input-container {
   margin-right: 24px;
-}
-
-.currency-label {
-  margin-right: 16px;
-}
-
-.currency-select {
-  padding: 15px 0;
 }
