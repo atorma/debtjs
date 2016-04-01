@@ -1,67 +1,5 @@
 @CHARSET "ISO-8859-1";
 
-/*
-.no-padding-bottom, .no-padding-bottom * {
-  padding-bottom: 0;
-}
-.no-padding-top, no-padding-top * {
-  padding-top: 0;
-}
-
-.no-padding-left, .no-padding-left * {
-  padding-left: 0;
-}
-
-.no-padding-right, .no-padding-right * {
-  padding-right: 0;
-}
-
-.no-padding, .no-padding * {
-  padding: 0;
-}
-
-
-.padding-bottom {
-  padding-bottom: 8px;
-}
-
-.padding-top {
-  padding-top: 8px;
-}
-
-.padding-left {
-  padding-left: 8px;
-}
-
-.padding-right {
-  padding-right: 8px;
-}
-
-.padding {
-  padding: 8px 8px 8px 8px;
-}
-
-.double-padding-bottom {
-  padding-bottom: 16px;
-}
-
-.double-padding-top {
-  padding-top: 16px;
-}
-
-.double-padding-left {
-  padding-left: 16px;
-}
-
-.double-padding-right {
-  padding-right: 16px;
-}
-
-.double-padding {
-  padding: 16px 16px 16px 16px;
-}
-*/
-
 .no-margin-bottom {
   margin-bottom: 0;
 }
@@ -138,20 +76,6 @@ section {
   min-height: 48px;
 }
 
-/*
-.menu a, .menu a:visited {
-  text-decoration: none;
-  color: inherit;
-}
-
-.menu .selected {
-  background-color: #f6f6f6;
-}
-
-.label {
-  color: rgba(0,0,0,0.54);
-}
-*/
 
 /* Fix icon and text aligment when a 2-line list item is clickable. Requires an nbsp; or something to ensure content on line 2. */
 .md-2-line .md-list-item-inner {
@@ -171,11 +95,17 @@ icon-button-strut {
   text-decoration: line-through;
 }
 
-
-input[money-input] {
-  width: 8rem;
+.no-errors-spacer .md-errors-spacer {
+  display: none;
 }
 
+.participation .md-errors-spacer {
+  display: none;
+}
+
+.exchange-rate .md-errors-spacer {
+  display: none;
+}
 .exchange-rate span, .exchange-rate md-input-container {
   margin-right: 24px;
 }

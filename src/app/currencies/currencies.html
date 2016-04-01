@@ -1,26 +1,21 @@
 <section>
-  <md-subheader class="md-primary md-no-sticky padding-vertical">Exchange rates</md-subheader>
+  <md-subheader class="md-primary section-header md-no-sticky">Exchange rates</md-subheader>
 
-  <md-list>
-    <md-list-item ng-repeat="quotation in vm.exchangeRates">
-      <div class="md-list-item-text exchange-rate" flex layout="row" layout-align="start center">
-        <span flex="33">{{::quotation.fixed}} to {{::quotation.variable}}</span>
-        <md-input-container md-no-float="true" style="padding-bottom: 2px">
-          <input type="number"
-                 placeholder="exchange rate"
-                 ng-model="::quotation.rate"
-                 ng-change="::vm.updateExchangeRate(quotation)"
-                 min="0.0001"/>
-        </md-input-container>
-        <span flex></span>
-        <md-button ng-click="::vm.removeExchangeRate(quotation)">
-          <md-icon aria-label="Remove" md-svg-icon="action:ic_delete_24px"></md-icon>
-        </md-button>
-      </div>
-    </md-list-item>
-  </md-list>
+  <div ng-repeat="quotation in vm.exchangeRates" class="exchange-rate"
+       layout="row" layout-align="start center">
+    <span flex="33">{{::quotation.fixed}} to {{::quotation.variable}}</span>
+    <md-input-container md-no-float>
+      <input type="number" placeholder="Rate"
+             ng-model="::quotation.rate" ng-change="::vm.updateExchangeRate(quotation)"
+             required min="0.0001"/>
+    </md-input-container>
+    <span flex></span>
+    <md-button class="md-icon-button" ng-click="::vm.removeExchangeRate(quotation)">
+      <md-icon aria-label="Remove" md-svg-icon="action:ic_delete_24px"></md-icon>
+    </md-button>
+  </div>
 
-  <p ng-if="!vm.exchangeRates || vm.exchangeRates.length == 0" class="padding-left">
+  <p ng-if="!vm.exchangeRates || vm.exchangeRates.length == 0">
     Enable currencies by adding an exchange rate. Click the floating button below.
   </p>
 </section>

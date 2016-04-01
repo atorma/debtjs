@@ -1,22 +1,22 @@
 <md-dialog>
   <form name="form" novalidate>
-    <md-dialog-content>
+    <md-dialog-content class="md-dialog-content">
       <h2 class="md-title">Add exchange rate</h2>
-      <div layout="column" layout-align="center start">
+      <div layout="column" layout-align="center start" class="no-errors-spacer">
         <md-input-container>
           <label>Fixed currency</label>
           <input type="text"
                  ng-model="::vm.quotation.fixed"
                  required
-                 autofocus/>
+                 focus/>
         </md-input-container>
-        <md-input-container>
+        <md-input-container flex>
           <label>Variable currency</label>
           <input type="text"
                  ng-model="::vm.quotation.variable"
                  required/>
         </md-input-container>
-        <md-input-container>
+        <md-input-container flex>
           <label>Exchange rate</label>
           <input type="number"
                  ng-model="::vm.quotation.rate"
@@ -25,11 +25,11 @@
         </md-input-container>
       </div>
     </md-dialog-content>
-    <div class="md-actions">
+    <md-dialog-actions>
       <md-button type="button" class="md-primary"
                  ng-click="::vm.cancel()">Cancel</md-button>
       <md-button type="submit" class="md-primary"
                  ng-click="::vm.ok();" ng-disabled="!form.$valid">Ok</md-button>
-    </div>
+    </md-dialog-actions>
   </form>
 </md-dialog>

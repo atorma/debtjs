@@ -68,6 +68,7 @@
   <div layout="column">
 
     <div ng-repeat="person in vm.balanceSheet.persons"
+         class="participation"
          layout-xs="column" layout-align-xs="center start"
          layout-gt-xs="row" layout-align-gt-xs="start center">
 
@@ -79,7 +80,8 @@
           {{::person.name}}
         </md-checkbox>
         <span flex></span>
-        <md-button hide-gt-xs ng-href="#/persons/{{::person.id}}" class="md-icon-button" aria-label="{{::person.name}} details">
+        <md-button hide-gt-xs ng-href="#/persons/{{::person.id}}" class="md-icon-button"
+                   aria-label="{{::person.name}} details">
           <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
         </md-button>
       </div>
@@ -105,15 +107,16 @@
         </md-input-container>
       </div>
 
-      <md-button hide-xs ng-href="#/persons/{{::person.id}}" class="md-icon-button" aria-label="{{::person.name}} details">
+      <md-button hide-xs ng-href="#/persons/{{::person.id}}" class="md-icon-button"
+                 aria-label="{{::person.name}} details">
         <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
       </md-button>
 
     </div>
 
-    <div
-      layout-xs="column" layout-align-xs="center start"
-      layout-gt-xs="row" layout-align-gt-xs="start center">
+    <div class="participation"
+        layout-xs="column" layout-align-xs="center start"
+        layout-gt-xs="row" layout-align-gt-xs="start center">
 
       <div layout-fill flex-gt-xs layout="row" layout-align="start center">
         <span ng-if="!vm.isBalanced" style="color: red;">
@@ -127,7 +130,7 @@
         <span class="margin-right-double" ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span>
         <md-input-container>
           <label>Paid</label>
-          <input type="number" money-input ng-model="::vm.cost" ng-readonly="true" />
+          <input type="number" money-input ng-model="::vm.cost" ng-readonly="true"/>
         </md-input-container>
         <md-input-container>
           <label>Share</label>

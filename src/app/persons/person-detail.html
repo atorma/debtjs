@@ -35,10 +35,11 @@
   <md-subheader class="md-primary section-header md-no-sticky">Expenses</md-subheader>
 
   <div layout="column">
-    
+
     <div ng-repeat="expense in vm.balanceSheet.expenses"
-      layout-xs="column" layout-align-xs="center start"
-      layout-gt-xs="row" layout-align-gt-xs="start center">
+         class="participation"
+         layout-xs="column" layout-align-xs="center start"
+         layout-gt-xs="row" layout-align-gt-xs="start center">
 
       <div layout-fill flex-gt-xs layout="row" layout-align="start center">
         <md-checkbox class="md-primary no-margin-deep"
@@ -49,20 +50,22 @@
           <span ng-class="::{settled: expense.settled}">{{::expense.name}}</span>
         </md-checkbox>
         <span flex></span>
-        <md-button hide-gt-xs ng-href="#/expenses/{{::expense.id}}" class="md-icon-button" aria-label="{{::expense.name}} details">
+        <md-button hide-gt-xs ng-href="#/expenses/{{::expense.id}}" class="md-icon-button"
+                   aria-label="{{::expense.name}} details">
           <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
         </md-button>
       </div>
-      
+
       <div layout="row" layout-align="start center">
-        <span class="margin-right-double" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::expense.computedCurrency()}}</span>
+        <span class="margin-right-double"
+              ng-if="::vm.balanceSheet.currenciesEnabled()">{{::expense.computedCurrency()}}</span>
         <md-input-container>
           <label>Paid</label>
           <input type="number" money-input
                  ng-required="::vm.isParticipant[expense.id]"
                  ng-model="::vm.balanceSheet.getParticipation({person: vm.person, expense: expense}).paid"
                  ng-change="::vm.updateExpense(expense)"
-                 ng-disabled="expense.settled || !vm.isParticipant[expense.id]" />
+                 ng-disabled="expense.settled || !vm.isParticipant[expense.id]"/>
         </md-input-container>
         <md-input-container>
           <label>Share</label>
@@ -71,39 +74,40 @@
                  ng-model="::vm.balanceSheet.getParticipation({person: vm.person, expense: expense}).share"
                  ng-change="::vm.updateExpense(expense)"
                  ng-disabled="expense.settled || !vm.isParticipant[expense.id]"
-                 ng-readonly="::expense.sharing != 'custom'" />
+                 ng-readonly="::expense.sharing != 'custom'"/>
         </md-input-container>
       </div>
-  
-      <md-button hide-xs ng-href="#/expenses/{{::expense.id}}" class="md-icon-button" aria-label="{{::expense.name}} details">
+
+      <md-button hide-xs ng-href="#/expenses/{{::expense.id}}" class="md-icon-button"
+                 aria-label="{{::expense.name}} details">
         <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
       </md-button>
 
     </div>
-    
-    <div
-      layout-xs="column" layout-align-xs="center start"
-      layout-gt-xs="row" layout-align-gt-xs="start center">
-    
+
+    <div class="participation"
+        layout-xs="column" layout-align-xs="center start"
+        layout-gt-xs="row" layout-align-gt-xs="start center">
+
       <div layout-fill flex-gt-xs layout="row" layout-align="start center">
         <span class="label">Total</span>
         <icon-button-strut hide-gt-xs></icon-button-strut>
       </div>
-      
+
       <div layout="row" layout-align="start center">
         <span class="margin-right-double" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::vm.person.computedCurrency()}}</span>
         <md-input-container>
           <label>Paid</label>
-          <input type="number" money-input ng-model="::vm.cost" ng-readonly="true" />
+          <input type="number" money-input ng-model="::vm.cost" ng-readonly="true"/>
         </md-input-container>
         <md-input-container>
           <label>Share</label>
           <input type="number" money-input ng-model="::vm.sumOfShares" ng-readonly="true"/>
         </md-input-container>
       </div>
-      
+
       <icon-button-strut hide-xs></icon-button-strut>
-      
+
     </div>
     
   </div>
