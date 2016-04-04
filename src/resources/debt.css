@@ -1,5 +1,17 @@
 @CHARSET "ISO-8859-1";
 
+
+html {
+  background-color: lightgray;
+}
+
+body {
+  max-width: 960px;
+  margin: 0 auto;
+  overflow-y: hidden;
+  position: relative;
+}
+
 .no-margin-bottom {
   margin-bottom: 0;
 }
