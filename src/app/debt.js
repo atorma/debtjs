@@ -5,13 +5,12 @@ require("angular-material");
 require("angular-route");
 require("angular-ui-router");
 require("angular-local-storage");
-require("ng-mfb");
 require("ng-file-upload");
 
 var _ = require("lodash");
 
 angular
-  .module("debtApp", ["ngMaterial", "ui.router", "LocalStorageModule", "ng-mfb", "ngFileUpload"])
+  .module("debtApp", ["ngMaterial", "ui.router", "LocalStorageModule", "ngFileUpload"])
   .constant("events", {
     BALANCE_SHEET_UPDATED: "balance sheet updated",
     ERROR: "error"

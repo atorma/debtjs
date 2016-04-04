@@ -8,7 +8,7 @@ angular.module("debtApp")
   .controller("ExchangeRateDialogCtrl", ExchangeRateDialogCtrl);
 
 
-function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog) {
+function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog, debounce) {
   var vm = this;
 
   vm.init = init;
@@ -19,6 +19,16 @@ function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog) {
   init();
 
   function init() {
+    refresh();
+
+    // Workaround to allow FAB for creating an exchange rate to reside
+    // in a different scope (for layout).
+    $scope.$watch(function() {
+      return balanceSheetService.balanceSheet.getExchangeRates();
+    }, debounce(refresh, 50), true);
+  }
+
+  function refresh() {
     vm.exchangeRates = balanceSheetService.balanceSheet.getExchangeRates();
     vm.currencies = balanceSheetService.balanceSheet.getCurrencies();
   }

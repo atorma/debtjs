@@ -14,6 +14,10 @@ function config($stateProvider) {
         "": {
           controller: "CurrencyListCtrl as vm",
           templateUrl: "currencies/currencies.html"
+        },
+        "floatingButton": {
+          controller: "CurrencyListCtrl as vm",
+          templateUrl: "currencies/floating-button.html"
         }
       }
     })
