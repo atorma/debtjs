@@ -12,6 +12,15 @@ body {
   position: relative;
 }
 
+md-input-container input[type=number]::-webkit-inner-spin-button,
+md-input-container input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+md-input-container input[type=number] {
+  -moz-appearance: textfield;
+}
+
 .no-margin-bottom {
   margin-bottom: 0;
 }
