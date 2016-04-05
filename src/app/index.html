@@ -20,46 +20,54 @@
     <script src="debt.js"></script>
   </head>
 
-  <body ng-app="debtApp" <!-- @if env == 'production'  -->ng-strict-di<!-- @endif --> layout="column" ng-controller="DebtAppCtrl as vm" ng-cloak>
-  
+  <body ng-app="debtApp" <!-- @if env == 'production'  -->ng-strict-di<!-- @endif -->ng-controller="DebtAppCtrl as vm" ng-cloak>
+
     <md-toolbar md-scroll-shrink="true">
       <div class="md-toolbar-tools">
         <md-button ng-click="$state.go('balanceSheet')" class="md-icon-button" aria-label="Home">
           <md-icon md-svg-icon="action:ic_home_24px"></md-icon>
         </md-button>
+
         <span flex></span>
-        <md-button ng-click="vm.mainMenu.toggle()" class="md-icon-button" aria-label="Menu">
-          <md-icon md-svg-icon="navigation:ic_menu_24px"></md-icon>
-        </md-button>
+
+        <md-menu md-position-mode="target-right target">
+          <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button" aria-label="Open menu">
+            <md-icon md-menu-origin md-svg-icon="navigation:ic_more_vert_24px"></md-icon>
+          </md-button>
+          <md-menu-content>
+            <md-menu-item>
+              <md-button ng-click="vm.createNewSheet()">
+                <span md-menu-align-target>New sheet</span>
+              </md-button>
+            </md-menu-item>
+            <md-menu-item>
+              <md-button ngf-select ngf-change="vm.loadSheet($files)"><span md-menu-align-target>Load sheet from file</span></md-button>
+            </md-menu-item>
+            <md-menu-item>
+              <md-button ng-click="vm.exportSheet()">
+                <span md-menu-align-target>Save sheet to file</span>
+              </md-button>
+            </md-menu-item>
+            <md-menu-divider></md-menu-divider>
+            <md-menu-item>
+              <md-button ng-click="$state.go('currencies')">
+                <span md-menu-align-target>Set up currencies</span>
+              </md-button>
+            </md-menu-item>
+            <md-menu-divider></md-menu-divider>
+            <md-menu-item>
+              <md-button ng-click="vm.showHelp()">
+                <span md-menu-align-target>Help</span>
+              </md-button>
+            </md-menu-item>
+          </md-menu-content>
+        </md-menu>
       </div>
     </md-toolbar>
 
-    
     <md-toolbar ng-if="vm.errorMessage" class="md-warn" md-scroll-shrink="true">
       <div class="md-toolbar-tools">{{vm.errorMessage}}</div>
     </md-toolbar>
-
-    <md-sidenav md-component-id="main-menu" class="md-sidenav-right md-whiteframe-z2 menu">
-        <md-list>
-          <md-list-item ng-click="vm.createNewSheet()">
-            <p class="md-list-item-text">New sheet</p>
-          </md-list-item>
-          <md-list-item class="md-clickable">
-            <p class="md-list-item-text" ngf-select ngf-change="vm.loadSheet($files)">Load sheet from file</p>
-          </md-list-item>
-          <md-list-item ng-click="vm.exportSheet()">
-            <p class="md-list-item-text">Save sheet to file</p>
-          </md-list-item>
-          <md-divider></md-divider>
-          <md-list-item ng-click="$state.go('currencies')">
-            <p class="md-list-item-text">Set up currencies</p>
-          </md-list-item>
-          <md-divider></md-divider>
-          <md-list-item ng-click="vm.showHelp()">
-            <p class="md-list-item-text">Help</p>
-          </md-list-item>
-        </md-list>
-    </md-sidenav>
 
     <md-content flex layout-padding ng-if="vm.balanceSheet">
       <div ui-view></div>

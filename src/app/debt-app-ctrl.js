@@ -15,16 +15,11 @@ function DebtAppCtrl(balanceSheetService,
                      fileService,
                      events,
                      $mdDialog,
-                     $mdSidenav,
                      $state,
                      $scope,
                      $log) {
 
   var vm = this;
-
-  vm.mainMenu = {
-    toggle: toggleMenu
-  };
 
   vm.init = init;
   vm.createPerson = createPerson;
@@ -43,10 +38,6 @@ function DebtAppCtrl(balanceSheetService,
   init();
 
   /////////////////////////////////////////////////////////////
-
-  function toggleMenu() {
-    $mdSidenav("main-menu").toggle();
-  }
 
   function init() {
     $scope.$on(events.BALANCE_SHEET_UPDATED, debounce(function() {
@@ -123,9 +114,6 @@ function DebtAppCtrl(balanceSheetService,
         vm.balanceSheetUpdated();
         $state.go("balanceSheet");
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
-        vm.mainMenu.toggle();
-      }, function() {
-        vm.mainMenu.toggle();
       });
   }
 
@@ -142,11 +130,9 @@ function DebtAppCtrl(balanceSheetService,
       .then(function(result) {
         loadSheetFromJson(result);
       })
-      .catch(function() {
+      .catch(function(e) {
+        $log.error(e);
         vm.errorMessage = "Unable to read file";
-      })
-      .finally(function() {
-        vm.mainMenu.toggle();
       });
   }
 
@@ -167,9 +153,9 @@ function DebtAppCtrl(balanceSheetService,
     try {
       fileService.saveAsFile([json], balanceSheetService.balanceSheet.name + ".txt");
     } catch (e) {
+      $log.error(e);
       vm.errorMessage = "Error when saving file";
     }
-    vm.mainMenu.toggle();
   }
 
   function showHelp() {
@@ -181,6 +167,5 @@ function DebtAppCtrl(balanceSheetService,
         };
       }
     });
-    vm.mainMenu.toggle();
   }
 }
