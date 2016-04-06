@@ -1,9 +1,7 @@
 <section>
-  <md-subheader class="md-primary section-header md-no-sticky">Exchange rates</md-subheader>
-
   <div ng-repeat="quotation in vm.exchangeRates" class="exchange-rate"
        layout="row" layout-align="start center">
-    <span flex="33">{{::quotation.fixed}} to {{::quotation.variable}}</span>
+    <span flex-xs="66" flex="33">{{::quotation.fixed}} to {{::quotation.variable}}</span>
     <md-input-container md-no-float>
       <input type="number" placeholder="Rate"
              ng-model="::quotation.rate" ng-change="::vm.updateExchangeRate(quotation)"
