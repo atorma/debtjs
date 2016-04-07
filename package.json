@@ -1,6 +1,6 @@
 {
   "name": "debt",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A simple app for sharing expenses",
   "browser": "./src/app/debt.js",
   "directories": {

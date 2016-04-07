@@ -20,7 +20,9 @@ angular
   .config(configureIcons)
   .config(hrefSanitization)
   .config(decorateExceptionHandler)
-  .run(makeStateAvailableInScope);
+  .run(makeStateAvailableInScope)
+  .run(makeMdMediaAvailableInScope)
+;
 
 require("./debt-app-ctrl");
 require("./route-config");
@@ -82,4 +84,8 @@ function decorateExceptionHandler($provide, events) {
 function makeStateAvailableInScope($rootScope, $state, $stateParams) {
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
+}
+
+function makeMdMediaAvailableInScope($rootScope, $mdMedia) {
+  $rootScope.$mdMedia = $mdMedia;
 }
