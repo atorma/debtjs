@@ -16,8 +16,8 @@
 </section>
 
 <section>
-  <md-subheader class="md-primary section-header md-no-sticky">Expenses</md-subheader>
   <md-list>
+    <md-subheader class="md-primary section-header md-no-sticky">Expenses</md-subheader>
     <md-list-item class="md-2-line"
                   ng-repeat="expense in vm.balanceSheet.expenses"
                   ng-click="::$state.go('expense', {id: expense.id})">
@@ -51,8 +51,8 @@
 </section>
 
 <section>
-  <md-subheader class="md-primary section-header md-no-sticky">People</md-subheader>
   <md-list>
+    <md-subheader class="md-primary section-header md-no-sticky">People</md-subheader>
     <md-list-item class="md-2-line"
                   ng-repeat="person in vm.balanceSheet.persons"
                   ng-click="::$state.go('person', {id: person.id})">
@@ -81,8 +81,8 @@
 
 
 <section>
-  <md-subheader class="md-primary section-header md-no-sticky">Debts</md-subheader>
   <md-list>
+    <md-subheader class="md-primary section-header md-no-sticky">Debts</md-subheader>
     <md-list-item class="md-2-line" ng-repeat="d in vm.debtsByDebtor">
       <div class="md-list-item-text" layout="column">
         <span class="margin-bottom">{{d.debtor.name}} owes</span>
