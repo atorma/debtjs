@@ -235,6 +235,7 @@ gulp.task('watch:manifest', function() {
 gulp.task('webserver', function() {
   gulp.src(buildConfig.paths.build)
     .pipe(webserver({
+      host: '0.0.0.0',
       port: 8080,
       livereload: {
         enable: true,
