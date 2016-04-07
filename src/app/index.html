@@ -23,7 +23,7 @@
   <body ng-app="debtApp" ng-controller="DebtAppCtrl as vm" ng-cloak layout="column"
     <!-- @if env == 'production'  -->ng-strict-di<!-- @endif --> >
 
-    <md-toolbar md-scroll-shrink="true">
+    <md-toolbar md-scroll-shrink>
       <div class="md-toolbar-tools">
         <md-button ng-click="$state.go('balanceSheet')" class="md-icon-button" aria-label="Home">
           <md-icon md-svg-icon="action:ic_home_24px"></md-icon>
@@ -66,7 +66,7 @@
       </div>
     </md-toolbar>
 
-    <md-toolbar ng-if="vm.errorMessage" class="md-warn" md-scroll-shrink="false">
+    <md-toolbar ng-if="vm.errorMessage" class="md-warn">
       <div class="md-toolbar-tools">{{vm.errorMessage}}</div>
     </md-toolbar>
 
