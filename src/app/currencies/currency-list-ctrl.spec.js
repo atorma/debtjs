@@ -59,11 +59,6 @@ describe("CurrencyListCtrl", function() {
     expect(vm.exchangeRates).toEqual(balanceSheetService.balanceSheet.getExchangeRates());
   });
 
-  it("exposes list of currencies", function() {
-    expect(vm.currencies).toEqual(balanceSheetService.balanceSheet.getCurrencies());
-  });
-
-
   describe("updateExchangeRate()", function() {
 
     it("tries to update empty exchange rate in balance sheet", function() {
@@ -79,12 +74,6 @@ describe("CurrencyListCtrl", function() {
       expectEventEmitted(function() {
         vm.updateExchangeRate({fixed: "EUR", variable: "USD", rate: 1.01});
       }, events.BALANCE_SHEET_UPDATED);
-    });
-
-    it("updates list of currencies", function() {
-      vm.updateExchangeRate({fixed: "EUR", variable: "DKK", rate: 7.31});
-
-      expect(vm.currencies).toEqual(balanceSheetService.balanceSheet.getCurrencies());
     });
 
   });
@@ -106,14 +95,6 @@ describe("CurrencyListCtrl", function() {
       expectEventEmitted(vm.removeExchangeRate, events.BALANCE_SHEET_UPDATED);
     });
 
-    it("updates list of currencies", function() {
-      var updatedCurrencies = ["FOO"];
-      spyOn(balanceSheet, "getCurrencies").and.returnValue(updatedCurrencies);
-
-      vm.removeExchangeRate(balanceSheet.getExchangeRates()[0]);
-
-      expect(vm.currencies).toEqual(updatedCurrencies);
-    });
 
   });
 

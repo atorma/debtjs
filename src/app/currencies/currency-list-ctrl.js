@@ -8,7 +8,7 @@ angular.module("debtApp")
   .controller("ExchangeRateDialogCtrl", ExchangeRateDialogCtrl);
 
 
-function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog, debounce) {
+function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog, debounce, $log) {
   var vm = this;
 
   vm.init = init;
@@ -19,6 +19,8 @@ function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog, deboun
   init();
 
   function init() {
+    vm.balanceSheet = balanceSheetService.balanceSheet;
+    
     refresh();
 
     // Workaround to allow FAB for creating an exchange rate to reside
@@ -30,7 +32,6 @@ function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog, deboun
 
   function refresh() {
     vm.exchangeRates = balanceSheetService.balanceSheet.getExchangeRates();
-    vm.currencies = balanceSheetService.balanceSheet.getCurrencies();
   }
 
   function openExchangeRateDialog() {
@@ -45,16 +46,20 @@ function CurrencyListCtrl(balanceSheetService, events, $scope, $mdDialog, deboun
   }
 
   function updateExchangeRate(exchangeRate) {
-    balanceSheetService.balanceSheet.addOrUpdateExchangeRate(exchangeRate);
-    $scope.$emit(events.BALANCE_SHEET_UPDATED);
-    init();
+    try {
+      balanceSheetService.balanceSheet.addOrUpdateExchangeRate(exchangeRate);
+      $scope.$emit(events.BALANCE_SHEET_UPDATED);
+      refresh();
+    } catch (e) {
+      $log.error(e);
+    }
   }
 
   function removeExchangeRate(exchangeRate) {
     balanceSheetService.balanceSheet.removeExchangeRate(exchangeRate);
     _.remove(vm.exchangeRates, exchangeRate);
     $scope.$emit(events.BALANCE_SHEET_UPDATED);
-    init();
+    refresh();
   }
 
 }
