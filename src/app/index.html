@@ -23,58 +23,62 @@
   <body ng-app="debtApp" ng-controller="DebtAppCtrl as vm" ng-cloak layout="column"
     <!-- @if env == 'production'  -->ng-strict-di<!-- @endif --> >
 
-    <md-toolbar md-scroll-shrink>
-      <div class="md-toolbar-tools">
-        <md-button ng-click="$state.go('balanceSheet')" class="md-icon-button" aria-label="Home">
-          <md-icon md-svg-icon="action:ic_home_24px"></md-icon>
-        </md-button>
+    <div id="container" flex layout-fill layout="column">
 
-        <span flex></span>
-
-        <md-menu md-position-mode="target-right target">
-          <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button" aria-label="Open menu">
-            <md-icon md-menu-origin md-svg-icon="navigation:ic_more_vert_24px"></md-icon>
+      <md-toolbar md-scroll-shrink>
+        <div class="md-toolbar-tools">
+          <md-button ng-click="$state.go('balanceSheet')" class="md-icon-button" aria-label="Home">
+            <md-icon md-svg-icon="action:ic_home_24px"></md-icon>
           </md-button>
-          <md-menu-content>
-            <md-menu-item>
-              <md-button ng-click="vm.createNewSheet()">
-                <span md-menu-align-target>New sheet</span>
-              </md-button>
-            </md-menu-item>
-            <md-menu-item>
-              <md-button ngf-select ngf-change="vm.loadSheet($files)"><span md-menu-align-target>Load sheet from file</span></md-button>
-            </md-menu-item>
-            <md-menu-item>
-              <md-button ng-click="vm.exportSheet()">
-                <span md-menu-align-target>Save sheet to file</span>
-              </md-button>
-            </md-menu-item>
-            <md-menu-divider></md-menu-divider>
-            <md-menu-item>
-              <md-button ng-click="$state.go('currencies')">
-                <span md-menu-align-target>Set up currencies</span>
-              </md-button>
-            </md-menu-item>
-            <md-menu-divider></md-menu-divider>
-            <md-menu-item>
-              <md-button ng-click="vm.showHelp()">
-                <span md-menu-align-target>Help</span>
-              </md-button>
-            </md-menu-item>
-          </md-menu-content>
-        </md-menu>
-      </div>
-    </md-toolbar>
 
-    <md-toolbar ng-if="vm.errorMessage" class="md-warn">
-      <div class="md-toolbar-tools">{{vm.errorMessage}}</div>
-    </md-toolbar>
+          <span flex></span>
 
-    <md-content layout-padding ng-if="vm.balanceSheet">
-      <div ui-view></div>
-    </md-content>
+          <md-menu md-position-mode="target-right target">
+            <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button" aria-label="Open menu">
+              <md-icon md-menu-origin md-svg-icon="navigation:ic_more_vert_24px"></md-icon>
+            </md-button>
+            <md-menu-content>
+              <md-menu-item>
+                <md-button ng-click="vm.createNewSheet()">
+                  <span md-menu-align-target>New sheet</span>
+                </md-button>
+              </md-menu-item>
+              <md-menu-item>
+                <md-button ngf-select ngf-change="vm.loadSheet($files)"><span>Load sheet from file</span></md-button>
+              </md-menu-item>
+              <md-menu-item>
+                <md-button ng-click="vm.exportSheet()">
+                  <span>Save sheet to file</span>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              <md-menu-item>
+                <md-button ng-click="$state.go('currencies')">
+                  <span>Set up currencies</span>
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              <md-menu-item>
+                <md-button ng-click="vm.showHelp()">
+                  <span>Help</span>
+                </md-button>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+        </div>
+      </md-toolbar>
 
-    <div ng-if="vm.balanceSheet" ui-view="floatingButton"></div>
+      <md-toolbar ng-if="vm.errorMessage" class="md-warn">
+        <div class="md-toolbar-tools">{{vm.errorMessage}}</div>
+      </md-toolbar>
+
+      <md-content flex layout-padding ng-if="vm.balanceSheet">
+        <div ui-view></div>
+      </md-content>
+
+      <div ng-if="vm.balanceSheet" ui-view="floatingButton"></div>
+
+    </div>
 
   </body>
 
