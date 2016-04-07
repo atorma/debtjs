@@ -1,6 +1,9 @@
-<mfb-menu position="br" effect="none" toggling-method="hover"
-          label="Create person"
-          template-url="ng-mfb-menu-md.tpl.html"
-          resting-icon="action:ic_face_24px" active-icon="action:ic_face_24px"
-          main-action="vm.createPerson()">
-</mfb-menu>
+<md-fab-speed-dial class="md-fab-bottom-right">
+  <md-fab-trigger>
+    <md-button ng-click="::vm.createPerson()"
+               aria-label="Create person"
+               class="md-fab md-primary">
+      <md-icon md-svg-icon="action:ic_face_24px"></md-icon>
+    </md-button>
+  </md-fab-trigger>
+</md-fab-speed-dial>

@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# Time: Tue Mar 29 2016 22:59:27 GMT+0300 (Suomen kesäaika)
+# Time: Thu Apr 07 2016 08:33:50 GMT+0300 (Suomen kesäaika)
 
 
 CACHE:
@@ -12,6 +12,7 @@ balance-sheet/balance-sheet.html
 balance-sheet/floating-button.html
 currencies/currencies.html
 currencies/exchange-rate-dialog.html
+currencies/floating-button.html
 expenses/create-expense-dialog.html
 expenses/expense-detail.html
 expenses/floating-button.html
@@ -21,7 +22,7 @@ persons/person-detail.html
 resources/angular-material.css
 resources/debt.css
 resources/ic_account_balance_wallet_black_48dp.png
-resources/mfb.css
+resources/fonts/fonts.css
 resources/fonts/Roboto_400_italic.ttf
 resources/fonts/Roboto_400_italic.woff
 resources/fonts/Roboto_400_normal.svg
@@ -31,7 +32,6 @@ resources/fonts/Roboto_500_normal.ttf
 resources/fonts/Roboto_500_normal.woff
 resources/fonts/Roboto_700_normal.ttf
 resources/fonts/Roboto_700_normal.woff
-resources/fonts/fonts.css
 resources/icons/svg-sprite-action.svg
 resources/icons/svg-sprite-alert.svg
 resources/icons/svg-sprite-content.svg
