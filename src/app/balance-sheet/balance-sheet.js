@@ -293,8 +293,12 @@ var BalanceSheet = function(data) {
    */
   function addOrUpdateExchangeRate(quotation) {
     validateQuotation(quotation);
-    removeExchangeRate(quotation);
-    exchangeRates.push(quotation);
+    var existing = _.find(exchangeRates, _.pick(quotation, 'fixed', 'variable'));
+    if (existing) {
+      _.extend(existing, quotation);
+    } else {
+      exchangeRates.push(quotation);
+    }
     updateBalanceSheetCurrencyIfNeeded();
   }
 
@@ -305,8 +309,8 @@ var BalanceSheet = function(data) {
     if (!_.isString(quotation.variable) || _.trim(quotation.variable) === "") {
       throw new TypeError("Variable currency symbol must be a non-empty string");
     }
-    if (!_.isNumber(quotation.rate) || quotation.rate <= 0) {
-      throw new RangeError("Foreign currency rate must be a positive number");
+    if (!_.isNumber(quotation.rate) || quotation.rate < 0.0001) {
+      throw new RangeError("Foreign currency rate must be >= 0.0001");
     }
   }
 
@@ -337,7 +341,7 @@ var BalanceSheet = function(data) {
   function removeExchangeRate(currencyPair) {
     if (!currencyPair) return;
     currencyPair = cleanUpCurrencyPair(currencyPair);
-    _.remove(exchangeRates, {fixed: currencyPair.fixed, variable: currencyPair.variable});
+    _.remove(exchangeRates, _.pick(currencyPair, 'fixed', 'variable'));
     updateBalanceSheetCurrencyIfNeeded();
     updateExpenseCurrenciesIfNeeded();
   }
