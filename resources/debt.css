@@ -2,13 +2,16 @@
 
 
 html {
-  background-color: lightgray;
+  overflow-y: hidden !important;
 }
 
 body {
+  background-color: lightgray;
+}
+
+#container {
   max-width: 960px;
   margin: 0 auto;
-  overflow-y: hidden;
   position: relative;
 }
 

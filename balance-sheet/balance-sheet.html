@@ -21,19 +21,18 @@
     <md-list-item class="md-2-line"
                   ng-repeat="expense in vm.balanceSheet.expenses"
                   ng-click="::$state.go('expense', {id: expense.id})">
-      <md-icon ng-if="::expense.isBalanced()" class="md-primary" md-svg-icon="action:ic_shopping_basket_24px"></md-icon>
+      <md-icon hide-xs ng-if="::expense.isBalanced()" class="md-primary" md-svg-icon="action:ic_shopping_basket_24px"></md-icon>
       <md-icon ng-if="::!expense.isBalanced()" class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
       <div class="md-list-item-text" layout="column">
-        <h3 layout="row">
-          <span ng-class="::{settled: expense.settled}">{{::expense.name}}</span>
-          <span flex class="margin-right-double"></span>
+        <div layout="row" ng-class="{'md-body-1': $mdMedia('xs')}">
+          <span flex class="margin-right-double" ng-class="::{settled: expense.settled}">{{::expense.name}}</span>
           <span ng-if="::!vm.balanceSheet.currenciesEnabled()">
             {{::expense.getCost() | money}}
           </span>
           <span ng-if="::vm.balanceSheet.currenciesEnabled()">
             {{vm.balanceSheet.currency}} {{expense.getCost(vm.balanceSheet.currency) | money}}
           </span>
-        </h3>
+        </div>
         <p layout="row">
           <span flex>&nbsp;</span>
           <span ng-if="vm.balanceSheet.currenciesEnabled() && vm.balanceSheet.currency !== expense.computedCurrency()">
@@ -56,18 +55,17 @@
     <md-list-item class="md-2-line"
                   ng-repeat="person in vm.balanceSheet.persons"
                   ng-click="::$state.go('person', {id: person.id})">
-      <md-icon class="md-primary" md-svg-icon="action:ic_face_24px"></md-icon>
+      <md-icon hide-xs class="md-primary" md-svg-icon="action:ic_face_24px"></md-icon>
       <div class="md-list-item-text" >
-        <h3 layout="row">
-          <span>{{::person.name}}</span>
-          <span flex class="margin-right-double"></span>
+        <div layout="row" ng-class="{'md-body-1': $mdMedia('xs')}">
+          <span flex class="margin-right-double">{{::person.name}}</span>
           <span ng-if="::!vm.balanceSheet.currenciesEnabled()">
             {{::person.getBalance() | balance}}
           </span>
           <span ng-if="::vm.balanceSheet.currenciesEnabled()">
             {{vm.balanceSheet.currency}} {{person.getBalance(vm.balanceSheet.currency) | balance}}
           </span>
-        </h3>
+        </div>
         <p>&nbsp;</p>
       </div>
     </md-list-item>
