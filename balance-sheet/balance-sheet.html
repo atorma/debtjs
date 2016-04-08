@@ -34,6 +34,7 @@
           </span>
         </div>
         <p layout="row">
+          <span>{{expense.date | date:'longDate'}}</span>
           <span flex>&nbsp;</span>
           <span ng-if="vm.balanceSheet.currenciesEnabled() && vm.balanceSheet.currency !== expense.computedCurrency()">
             {{expense.computedCurrency()}} {{::expense.getCost() | money}}

@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# Time: Fri Apr 08 2016 01:58:46 GMT+0300 (Suomen kesäaika)
+# Time: Fri Apr 08 2016 21:39:52 GMT+0300 (Suomen kesäaika)
 
 
 CACHE:
@@ -8,11 +8,11 @@ help.html
 index.html
 libs.js
 offline.html
+balance-sheet/balance-sheet.html
+balance-sheet/floating-button.html
 currencies/currencies.html
 currencies/exchange-rate-dialog.html
 currencies/floating-button.html
-balance-sheet/balance-sheet.html
-balance-sheet/floating-button.html
 expenses/create-expense-dialog.html
 expenses/expense-detail.html
 expenses/floating-button.html

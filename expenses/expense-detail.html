@@ -19,8 +19,15 @@
   
   <div layout="column">
 
+    <div class="row" layout="row" layout-align="start center">
+      <span flex aria-hidden="true">Date</span>
+      <md-datepicker class="no-icon" md-placeholder="Date"
+                     ng-model="::vm.expense.date"
+                     ng-change="::vm.updateExpense()"></md-datepicker>
+    </div>
+
     <div ng-if="::vm.balanceSheet.currenciesEnabled()" class="row" layout="row" layout-align="start center">
-      <label for="currency" flex>Currency</label>
+      <span flex aria-hidden="true">Currency</span>
       <md-select id="currency" aria-label="Currency" class="no-margin margin-right"
                  ng-model="vm.expense.currency" ng-change="::vm.updateExpense()">
         <md-option ng-value="::currency" ng-repeat="currency in ::vm.balanceSheet.getCurrencies()">{{::currency}}</md-option>
@@ -29,8 +36,8 @@
 
 
     <div class="row" layout="row" layout-align="start center">
-      <label for="cost" flex>Cost</label>
-      <div id="cost" class="margin-right">
+      <span flex id="cost">Cost</span>
+      <div aria-labelledby="cost" class="margin-right">
         <span ng-if="::vm.balanceSheet.currenciesEnabled()">{{vm.expense.currency}}</span> {{vm.cost | money}}
         <span ng-if="vm.balanceSheet.currenciesEnabled() && vm.balanceSheet.currency !== vm.expense.computedCurrency()">
           ({{vm.balanceSheet.currency}} {{vm.expense.getCost(vm.balanceSheet.currency) | money}})
@@ -40,7 +47,7 @@
 
 
     <div class="row" layout="row" layout-align="start center">
-      <label for="sharing" flex>Share equally</label>
+      <span flex aria-hidden="true">Share equally</span>
       <md-switch ng-model="vm.expense.sharing"
                  ng-change="::vm.updateExpense()"
                  ng-disabled="vm.expense.settled"
@@ -50,7 +57,7 @@
     </div>
 
     <div class="row" layout="row" layout-align="start center">
-      <label for="settled" flex>Settled</label>
+      <span flex aria-hidden="true">Settled</span>
       <md-switch ng-model="vm.expense.settled"
                  ng-change="::vm.updateExpense()"
                  id="settled" class="md-primary no-margin" aria-label="Settled">

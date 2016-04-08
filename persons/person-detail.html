@@ -20,8 +20,8 @@
   <div layout="column">
   
     <div layout="row" layout-align="start center">
-      <label for="balance" flex>Balance</label>
-      <span id="balance" class="margin-right">
+      <span flex id="balance">Balance</span>
+      <span aria-labelledby="balance" class="margin-right">
         <span ng-if="::vm.balanceSheet.currenciesEnabled()">{{::vm.person.computedCurrency()}}</span> {{vm.balance | balance}}
       </span>
     </div>
