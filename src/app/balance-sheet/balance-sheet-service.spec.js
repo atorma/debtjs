@@ -8,7 +8,7 @@ describe("BalanceSheetService", function() {
 
   var balanceSheetService;
   var localStorageService;
-  var balanceSheetData;
+  var balanceSheetData, balanceSheetJson, balanceSheetJsonHolder;
 
   var SHEET_LOCAL_STORAGE_KEY = "balanceSheetData";
   
@@ -20,8 +20,8 @@ describe("BalanceSheetService", function() {
         {id: 2, name: "Malla"}
       ],
       expenses: [
-        {id: 3, name: "Food", currency: "USD", sharing: "equal", settled: false},
-        {id: 4, name: "Gas", currency: "EUR", sharing: "equal", settled: false}
+        {id: 3, name: "Food", date: new Date("2016-04-07T21:00:00.000Z"), currency: "USD", sharing: "equal", settled: false},
+        {id: 4, name: "Gas", date: new Date("2016-04-07T21:00:00.000Z"), currency: "EUR", sharing: "equal", settled: false}
       ],
       participations: [
         {personId: 1, expenseId: 3, paid: 10, share: 5},
@@ -34,9 +34,11 @@ describe("BalanceSheetService", function() {
       }],
       currency: "EUR"
     };
+    balanceSheetJson = JSON.stringify(balanceSheetData);
+    balanceSheetJsonHolder = {json: balanceSheetJson};
     
     localStorageService = jasmine.createSpyObj("localStorageService", ["get", "set"]);
-    localStorageService.get.and.returnValue(balanceSheetData);
+    localStorageService.get.and.returnValue(balanceSheetJsonHolder);
   });
   
   beforeEach(angular.mock.module("debtApp", function($provide) {
@@ -80,9 +82,12 @@ describe("BalanceSheetService", function() {
     
     it("with undefined sheet and throws error if importing sheet from localStorage data fails", function() {
       balanceSheetService.init();
-      
       balanceSheetService.balanceSheet = undefined;
+
       delete balanceSheetData.participations[0].personId;
+      balanceSheetJson = JSON.stringify(balanceSheetData);
+      localStorageService.get.and.returnValue({json: balanceSheetJson});
+
       expect(balanceSheetService.init).toThrow();
       expect(balanceSheetService.balanceSheet).not.toBeDefined();
     });
@@ -92,9 +97,12 @@ describe("BalanceSheetService", function() {
   describe("loads balanceSheet from JSON", function() {
 
     it("and saves the result if the JSON is valid", function() {
-      balanceSheetService.loadFromJson(JSON.stringify(balanceSheetData));
-      
-      expect(localStorageService.set).toHaveBeenCalledWith(SHEET_LOCAL_STORAGE_KEY, balanceSheetData);
+      balanceSheetService.loadFromJson(balanceSheetJson);
+
+      var jsonHolder = {
+        json: balanceSheetService.exportToJson()
+      };
+      expect(localStorageService.set).toHaveBeenCalledWith(SHEET_LOCAL_STORAGE_KEY, jsonHolder);
     });
     
     it("and throws error if the JSON is invalid", function() {
@@ -113,7 +121,8 @@ describe("BalanceSheetService", function() {
     balanceSheetService.init();
 
     var json = balanceSheetService.exportToJson();
-    var data = JSON.parse(json);
+    balanceSheetService.loadFromJson(json);
+    var data = balanceSheetService.balanceSheet.exportData();
     expect(data).toEqual(balanceSheetData);
   });
   
@@ -129,7 +138,7 @@ describe("BalanceSheetService", function() {
       expect(balanceSheetService.save).toThrow();
       expect(localStorageService.set).not.toHaveBeenCalled();
     });
-    
+
   });
 
   it("createNew() sets the sheet reference to a new sheet and saves it", function() {
@@ -139,9 +148,31 @@ describe("BalanceSheetService", function() {
     var newSheet = balanceSheetService.balanceSheet;
 
     expect(newSheet).not.toBe(oldSheet);
-    expect(localStorageService.set).toHaveBeenCalledWith(SHEET_LOCAL_STORAGE_KEY, newSheet.exportData());
+    var jsonHolder = {json: JSON.stringify(newSheet.exportData())};
+    expect(localStorageService.set).toHaveBeenCalledWith(SHEET_LOCAL_STORAGE_KEY, jsonHolder);
 
   });
 
 });
 
+
+describe("BalanceSheetService save to localStorage", function() {
+
+  var balanceSheetService;
+
+  beforeEach(angular.mock.module("debtApp"));
+
+  beforeEach(angular.mock.inject(function(_balanceSheetService_) {
+    balanceSheetService = _balanceSheetService_;
+  }));
+
+  it("saves and loads expense with date", function() {
+    balanceSheetService.createNew();
+    var expense = balanceSheetService.balanceSheet.createExpense();
+    expense.date = new Date("2016-04-07T21:00:00.000Z");
+    balanceSheetService.save();
+    balanceSheetService.init();
+    expect(balanceSheetService.balanceSheet.expenses[0].date).toEqual(expense.date);
+  });
+
+});

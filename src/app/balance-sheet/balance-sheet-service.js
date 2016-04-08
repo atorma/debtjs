@@ -8,6 +8,8 @@ angular.module("debtApp")
 
 function balanceSheetService(localStorageService) {
 
+  var DATE_REGEX = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/; // 2016-04-07T21:00:00.000Z
+
   var service = {
     balanceSheet: undefined,
     save: save,
@@ -21,7 +23,13 @@ function balanceSheetService(localStorageService) {
 
 
   function init() {
-    var data = localStorageService.get("balanceSheetData");
+    var jsonHolder = localStorageService.get("balanceSheetData");
+    var data;
+    if (jsonHolder) {
+       data = JSON.parse(jsonHolder.json, dateReviver);
+    } else {
+      data = {};
+    }
     service.balanceSheet = new BalanceSheet(data);
   }
 
@@ -30,20 +38,31 @@ function balanceSheetService(localStorageService) {
       throw new ReferenceError("No balance valid balance sheet");
     }
     service.balanceSheet.throwErrorIfInvalid();
-    localStorageService.set("balanceSheetData", service.balanceSheet.exportData());
+
+    // Store a JSON string in localStorage instead of allowing localStorageService to stringify
+    // the data so that we can control date parsing.
+    var jsonString = JSON.stringify(service.balanceSheet.exportData());
+    localStorageService.set("balanceSheetData", {json: jsonString});
   }
 
   function loadFromJson(json) {
-    var data = angular.fromJson(json);
+    var data = JSON.parse(json, dateReviver);
     var balanceSheet = new BalanceSheet(data);
     balanceSheet.throwErrorIfInvalid();
     service.balanceSheet = balanceSheet;
     save();
   }
 
+  function dateReviver(key, value) {
+    if (typeof value === 'string' && DATE_REGEX.test(value)) {
+      return new Date(value);
+    }
+    return value;
+  }
+
   function exportToJson() {
     var data = service.balanceSheet.exportData();
-    return angular.toJson(data);
+    return JSON.stringify(data);
   }
 
   function createNew() {
