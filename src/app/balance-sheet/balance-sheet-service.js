@@ -23,10 +23,12 @@ function balanceSheetService(localStorageService) {
 
 
   function init() {
-    var jsonHolder = localStorageService.get("balanceSheetData");
+    var localStorageData = localStorageService.get("balanceSheetData");
     var data;
-    if (jsonHolder) {
-       data = JSON.parse(jsonHolder.json, dateReviver);
+    if (localStorageData && localStorageData.json) {
+       data = JSON.parse(localStorageData.json, dateReviver);
+    } else if (localStorageData) {
+      data = localStorageData; // backwards compatibility
     } else {
       data = {};
     }

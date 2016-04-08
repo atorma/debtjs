@@ -91,7 +91,20 @@ describe("BalanceSheetService", function() {
       expect(balanceSheetService.init).toThrow();
       expect(balanceSheetService.balanceSheet).not.toBeDefined();
     });
-    
+
+    it("is backwards compatible with old balance sheet storage layout", function() {
+      localStorageService.get.and.returnValue(balanceSheetData);
+
+      balanceSheetService.init();
+
+      var sheet = balanceSheetService.balanceSheet;
+      expect(sheet).toBeDefined();
+      expect(sheet.persons.length).toBe(balanceSheetData.persons.length);
+      expect(sheet.expenses.length).toBe(balanceSheetData.expenses.length);
+      expect(sheet.participations.length).toBe(balanceSheetData.participations.length);
+      expect(sheet.getExchangeRates()).toEqual(balanceSheetData.exchangeRates);
+    });
+
   });
   
   describe("loads balanceSheet from JSON", function() {
