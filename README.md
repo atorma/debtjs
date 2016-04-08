@@ -8,12 +8,15 @@ You can use DebtJS at http://atorma.github.io/debtjs.
 
 Tested with
 
-* Google Chrome desktop version 43
-* Google Chrome Android version 43
-* Firefox desktop version 38
-* Firefox Android version 38
+* Google Chrome desktop version 49
+* Google Chrome Android version 49
+* Firefox desktop version 45
+* Firefox Android version 45
+    * Problems with input fields due to Angular Material bug (https://github.com/angular/material/issues/7945)
 * Internet Explorer desktop version 11
-    * Minor layout glitches
+    * UI performance problems due to Angular Material bug (https://github.com/angular/material/issues/7377)
+* Microsoft Edge     
+    * UI performance problems due to Angular Material bug (https://github.com/angular/material/issues/7377)
 
 Internet Explorer versions 10 and below do not work.   
   
