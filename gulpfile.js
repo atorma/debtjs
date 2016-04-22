@@ -1,5 +1,7 @@
 "use strict";
 
+// TODO cherry-pick icons
+
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var del = require('del');
@@ -17,7 +19,7 @@ var uglify = require('gulp-uglify');
 var ngAnnotate = require('gulp-ng-annotate');
 var preprocess = require('gulp-preprocess');
 var gulpIf = require('gulp-if');
-
+var cleanCss = require('gulp-clean-css');
 
 var buildConfig = require('./build.conf');
 
@@ -42,6 +44,8 @@ gulp.task('build-dev', function(cb) {
       'js-app',
       'js-tests',
       'html',
+      'css',
+      'lib-css',
       'resources',
       'lib-resources'
     ],
@@ -57,6 +61,8 @@ gulp.task('build-prod', function(cb) {
       'js-app',
       'js-tests',
       'html',
+      'css',
+      'lib-css',
       'resources',
       'lib-resources'
     ],
@@ -65,7 +71,13 @@ gulp.task('build-prod', function(cb) {
 });
 
 gulp.task('watch', function(cb) {
-  runSequence(['watch:js-app', 'watch:js-tests', 'watch:html', 'watch:resources'], cb);
+  runSequence([
+      'watch:js-app',
+      'watch:js-tests',
+      'watch:html',
+      'watch:css'
+    ],
+    cb);
 });
 
 
@@ -191,15 +203,26 @@ gulp.task('watch:html', function() {
   gulp.watch(buildConfig.paths.html, ['html']);
 });
 
+gulp.task('css', function() {
+  return gulp.src(buildConfig.paths.css)
+    .pipe(gulpIf(context.env === PROD, cleanCss()))
+    .pipe(gulp.dest(buildConfig.paths.build + '/resources'));
+});
+
+gulp.task('watch:css', function() {
+  gulp.watch(buildConfig.paths.css, ['css']);
+});
+
+gulp.task('lib-css', function() {
+  return gulp.src(buildConfig.paths.libCss)
+    .pipe(gulpIf(context.env === PROD, cleanCss()))
+    .pipe(gulp.dest(buildConfig.paths.build + '/resources'));
+});
+
 gulp.task('resources', function() {
   return gulp.src(buildConfig.paths.resources)
     .pipe(gulp.dest(buildConfig.paths.build + '/resources'));
 });
-
-gulp.task('watch:resources', function() {
-  gulp.watch(buildConfig.paths.resources, ['resources']);
-});
-
 
 gulp.task('lib-resources', function(done) {
   gulp.src(buildConfig.paths.libResources)
