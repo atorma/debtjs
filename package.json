@@ -43,7 +43,6 @@
     "karma-mocha-reporter": "1.1.1",
     "karma-phantomjs-launcher": "1.0.0",
     "karma-sourcemap-loader": "0.3.7",
-    "material-design-icons": "2.2.0",
     "run-sequence": "1.1.4",
     "vinyl-buffer": "1.0.0",
     "vinyl-source-stream": "1.1.0",

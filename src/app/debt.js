@@ -42,19 +42,30 @@ function configureLocalStorage(localStorageServiceProvider) {
 }
 
 function configureIcons($mdIconProvider) {
+
+  var iconFiles = [
+    'ic_add_24px.svg',
+    'ic_attach_money_24px.svg',
+    'ic_chevron_right_24px.svg',
+    'ic_close_24px.svg',
+    'ic_delete_24px.svg',
+    'ic_face_24px.svg',
+    'ic_home_24px.svg',
+    'ic_more_vert_24px.svg',
+    'ic_shopping_basket_24px.svg',
+    'ic_warning_24px.svg'
+  ];
   
-  var spriteNames = ['action', 'alert', 'content', 'navigation', 'editor'];
-  
-  var spriteProps = _.map(spriteNames, function(name) {
-    var fileName = 'svg-sprite-' + name + '.svg';
+  var iconProps = _.map(iconFiles, function(fileName) {
+    var iconName = fileName.substr(0, fileName.indexOf('.'));
     return {
       filePath: 'resources/icons/' + fileName,
-      spriteName: name
+      iconName: iconName
     };
   });
 
-  _.each(spriteProps, function(prop) {
-    $mdIconProvider.iconSet(prop.spriteName, prop.filePath);
+  _.each(iconProps, function(prop) {
+    $mdIconProvider.icon(prop.iconName, prop.filePath);
   });
 
 }

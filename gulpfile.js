@@ -224,21 +224,9 @@ gulp.task('resources', function() {
     .pipe(gulp.dest(buildConfig.paths.build + '/resources'));
 });
 
-gulp.task('lib-resources', function(done) {
-  gulp.src(buildConfig.paths.libResources)
+gulp.task('lib-resources', function() {
+  return gulp.src(buildConfig.paths.libResources)
     .pipe(gulp.dest(buildConfig.paths.build + '/resources'));
-
-  var materialDesignSpritePaths = _.map(materialDesignSprites, function(name) {
-    var fileName = 'svg-sprite-' + name + '.svg';
-    return 'node_modules/material-design-icons/sprites/svg-sprite/' + fileName;
-  });
-
-  _.each(materialDesignSpritePaths, function(path) {
-    gulp.src(path)
-      .pipe(gulp.dest(buildConfig.paths.build + '/resources/icons/'));
-  });
-
-  done();
 });
 
 gulp.task('manifest', function() {
