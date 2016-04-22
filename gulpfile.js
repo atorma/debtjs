@@ -22,10 +22,7 @@ var gulpIf = require('gulp-if');
 var cleanCss = require('gulp-clean-css');
 
 var buildConfig = require('./build.conf');
-
 var browserifyBundlers = require('./browserify-bundlers');
-
-var materialDesignSprites = ['action', 'alert', 'content', 'navigation', 'editor'];
 
 var DEV = "development";
 var PROD = "production";

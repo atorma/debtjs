@@ -10,7 +10,6 @@ var buildConfig = require('./build.conf');
 var packageJson = require('./package.json');
 var dependencies = _(packageJson && packageJson.dependencies || {})
   .keys()
-  .without('material-design-icons') //  Breaks browserify. This is an icon package and does not have package.json main or index.js
   .value();
 
 
