@@ -110,7 +110,7 @@ function browserifyBuild(params) {
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(gulpIf(params.ngAnnotate, ngAnnotate()))
-    .pipe(gulpIf(context.env == PROD, uglify()))
+    .pipe(gulpIf(params.uglify, uglify()))
     .pipe(sourcemaps.write('./', {sourceRoot: '..'}))
     .pipe(gulp.dest(buildConfig.paths.build));
 }
@@ -119,6 +119,7 @@ gulp.task('js-libs', function() {
   return browserifyBuild({
     bundler: browserifyBundlers.createLibBundler,
     ngAnnotate: false,
+    uglify: context.env === PROD,
     outputFileName: buildConfig.paths.libDestName
   });
 });
@@ -127,6 +128,7 @@ gulp.task('js-app', function() {
   return browserifyBuild({
     bundler: browserifyBundlers.createAppBundler,
     ngAnnotate: context.env === PROD,
+    uglify: context.env === PROD,
     outputFileName: buildConfig.paths.appDestName
   });
 });
@@ -145,6 +147,7 @@ gulp.task('watch:js-app', function() {
     return browserifyBuild({
       bundler: bundler,
       ngAnnotate: context.env === PROD,
+      uglify: context.env === PROD,
       outputFileName: buildConfig.paths.appDestName
     });
   }
@@ -153,7 +156,8 @@ gulp.task('watch:js-app', function() {
 gulp.task('js-tests', function() {
   return browserifyBuild({
     bundler: browserifyBundlers.createTestBundler,
-    ngAnnotate: context.env === PROD,
+    ngAnnotate: false,
+    uglify: false,
     outputFileName: buildConfig.paths.testDestName
   });
 });
@@ -170,7 +174,8 @@ gulp.task('watch:js-tests', function () {
   function build() {
     return browserifyBuild({
       bundler: watchifier,
-      ngAnnotate: context.env === PROD,
+      ngAnnotate: false,
+      uglify: false,
       outputFileName: buildConfig.paths.testDestName
     });
   }
