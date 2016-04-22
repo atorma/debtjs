@@ -1,5 +1,7 @@
 "use strict";
 
+require("./appcache-reload");
+
 var angular = require("angular");
 require("angular-material");
 require("angular-route");

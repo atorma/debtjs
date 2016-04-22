@@ -1,6 +1,6 @@
 {
   "name": "debt",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A simple app for sharing expenses",
   "browser": "./src/app/debt.js",
   "directories": {
@@ -18,7 +18,7 @@
     "blob-polyfill": "1.0.20150320",
     "lodash": "4.5.1",
     "ng-file-upload": "4.2.4",
-    "node-safe-filesaver": "^0.1.0",
+    "node-safe-filesaver": "0.1.0",
     "random-js": "1.0.4",
     "simple-decimal-money": "0.2.3"
   },

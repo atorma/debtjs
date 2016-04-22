@@ -151,7 +151,6 @@ gulp.task('watch:js-app', function() {
 });
 
 gulp.task('js-tests', function() {
-  context.env = DEV;
   return browserifyBuild({
     bundler: browserifyBundlers.createTestBundler,
     ngAnnotate: context.env === PROD,
