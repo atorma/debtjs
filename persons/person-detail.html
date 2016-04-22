@@ -12,7 +12,7 @@
     <md-button class="md-icon-button" aria-label="delete"
                ng-click="vm.removePerson()">
       <md-tooltip>Delete</md-tooltip>
-      <md-icon md-svg-icon="action:ic_delete_24px"></md-icon>
+      <md-icon md-svg-icon="ic_delete_24px"></md-icon>
     </md-button>
     
   </div>
@@ -52,7 +52,7 @@
         <span flex></span>
         <md-button hide-gt-xs ng-href="#/expenses/{{::expense.id}}" class="md-icon-button"
                    aria-label="{{::expense.name}} details">
-          <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
+          <md-icon md-svg-icon="ic_chevron_right_24px"></md-icon>
         </md-button>
       </div>
 
@@ -80,7 +80,7 @@
 
       <md-button hide-xs ng-href="#/expenses/{{::expense.id}}" class="md-icon-button"
                  aria-label="{{::expense.name}} details">
-        <md-icon md-svg-icon="navigation:ic_chevron_right_24px"></md-icon>
+        <md-icon md-svg-icon="ic_chevron_right_24px"></md-icon>
       </md-button>
 
     </div>
@@ -130,7 +130,7 @@
     </div>
 
     <div ng-if="vm.debtComputationError" class="margin-bottom">
-      <md-icon class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon> {{vm.debtComputationError}}
+      <md-icon class="md-warn" md-svg-icon="ic_warning_24px"></md-icon> {{vm.debtComputationError}}
     </div>
     
   </div>

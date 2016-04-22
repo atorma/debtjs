@@ -21,8 +21,8 @@
     <md-list-item class="md-2-line"
                   ng-repeat="expense in vm.balanceSheet.expenses"
                   ng-click="::$state.go('expense', {id: expense.id})">
-      <md-icon hide-xs ng-if="::expense.isBalanced()" class="md-primary" md-svg-icon="action:ic_shopping_basket_24px"></md-icon>
-      <md-icon ng-if="::!expense.isBalanced()" class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
+      <md-icon hide-xs ng-if="::expense.isBalanced()" class="md-primary" md-svg-icon="ic_shopping_basket_24px"></md-icon>
+      <md-icon ng-if="::!expense.isBalanced()" class="md-warn" md-svg-icon="ic_warning_24px"></md-icon>
       <div class="md-list-item-text" layout="column">
         <div layout="row" ng-class="{'md-body-1': $mdMedia('xs')}">
           <span flex class="margin-right-double" ng-class="::{settled: expense.settled}">{{::expense.name}}</span>
@@ -56,7 +56,7 @@
     <md-list-item class="md-2-line"
                   ng-repeat="person in vm.balanceSheet.persons"
                   ng-click="::$state.go('person', {id: person.id})">
-      <md-icon hide-xs class="md-primary" md-svg-icon="action:ic_face_24px"></md-icon>
+      <md-icon hide-xs class="md-primary" md-svg-icon="ic_face_24px"></md-icon>
       <div class="md-list-item-text" >
         <div layout="row" ng-class="{'md-body-1': $mdMedia('xs')}">
           <span flex class="margin-right-double">{{::person.name}}</span>
@@ -101,14 +101,14 @@
         Everyone is settled up!
       </p>
     </md-list-item>
-    <md-list-item ng-if="::!vm.balanceSheet.isBalanced()" class="md-2-line">
-      <md-icon class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
+    <md-list-item ng-if="::!vm.balanceSheet.isBalanced()">
+      <md-icon class="md-warn" md-svg-icon="ic_warning_24px"></md-icon>
       <p class="md-list-item-text">
         Cannot compute debts. There are unbalanced expenses.
       </p>
     </md-list-item>
     <md-list-item ng-if="vm.debtComputationError">
-      <md-icon class="md-warn" md-svg-icon="alert:ic_warning_24px"></md-icon>
+      <md-icon class="md-warn" md-svg-icon="ic_warning_24px"></md-icon>
       <p class="md-list-item-text">
         {{vm.debtComputationError}}
       </p>
