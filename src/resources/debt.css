@@ -152,3 +152,7 @@ md-datepicker.no-icon .md-datepicker-button {
 md-datepicker.no-icon .md-datepicker-input-container {
   margin-left: 0;
 }
+
+.row md-datepicker {
+  margin-right: -10px;
+}
