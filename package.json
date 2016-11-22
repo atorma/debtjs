@@ -42,6 +42,7 @@
     "karma-phantomjs-launcher": "1.0.0",
     "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "1.8.0",
+    "ng-annotate-loader": "^0.2.0",
     "run-sequence": "1.1.4",
     "webpack": "1.13.3",
     "webpack-dev-server": "1.16.2"

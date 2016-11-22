@@ -1,7 +1,6 @@
 "use strict";
 
 var _ = require('lodash');
-var angular = require("angular");
 var Decimal = require("simple-decimal-money");
 var CurrencyConversionError = require("./currency-conversion-error");
 
