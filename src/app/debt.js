@@ -4,7 +4,6 @@ require("./appcache-reload");
 
 var angular = require("angular");
 require("angular-material");
-require("angular-route");
 require("angular-ui-router");
 require("angular-local-storage");
 require("ng-file-upload");
