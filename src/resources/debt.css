@@ -1,5 +1,6 @@
 @CHARSET "ISO-8859-1";
 
+@import "fonts/fonts.css";
 
 html {
   overflow-y: hidden !important;
