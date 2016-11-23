@@ -1,5 +1,8 @@
 "use strict";
 
+require("angular-material/angular-material.css");
+require("../resources/debt.css");
+
 require("./appcache-reload");
 
 var angular = require("angular");

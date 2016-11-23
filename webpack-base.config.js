@@ -33,6 +33,14 @@ module.exports = {
       {
         test: /\.html$/,
         loader: 'ngtemplate?relativeTo=/src/app/!html'
+      },
+      {
+        test: /\.css/,
+        loader: 'style!css'
+      },
+      {
+        test: /\.(eot|ttf|woff|woff2)$/,
+        loader: 'file?name=fonts/[name].[ext]'
       }
     ]
   },
