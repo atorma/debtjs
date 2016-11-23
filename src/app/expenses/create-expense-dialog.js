@@ -1,6 +1,7 @@
 "use strict";
 
 var angular = require("angular");
+var createExpenseDialogTpl = require("./create-expense-dialog.html");
 
 angular.module("debtApp")
 .factory("openCreateExpenseDialog", openCreateExpenseDialog);
@@ -12,7 +13,7 @@ function openCreateExpenseDialog($mdDialog) {
   
   function open() {
     return $mdDialog.show({
-      templateUrl: "expenses/create-expense-dialog.html",
+      templateUrl: createExpenseDialogTpl,
       controller: DialogController,
       controllerAs: "vm"
     });

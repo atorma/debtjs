@@ -1,6 +1,8 @@
 "use strict";
 
 var angular = require("angular");
+var balanceSheetTpl = require("./balance-sheet.html");
+var floatingButtonTpl = require("./floating-button.html");
 
 angular.module("debtApp")
   .config(config);
@@ -12,11 +14,11 @@ function config($stateProvider) {
       url: "/",
       views: {
         "": {
-          templateUrl : "balance-sheet/balance-sheet.html",
+          templateUrl : balanceSheetTpl,
           controller : "BalanceSheetCtrl as vm"
         },
         "floatingButton": {
-          templateUrl : "balance-sheet/floating-button.html"
+          templateUrl : floatingButtonTpl
         }
       }
     });

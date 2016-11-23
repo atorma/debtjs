@@ -1,5 +1,6 @@
 'use strict';
 
+var path = require('path');
 var buildPaths = require('./build.conf').paths;
 var webpack = require('webpack');
 
@@ -28,7 +29,12 @@ module.exports = {
     filename: buildPaths.appDestName
   },
   module: {
-    loaders: []
+    loaders: [
+      {
+        test: /\.html$/,
+        loader: 'ngtemplate?relativeTo=/src/app/!html'
+      }
+    ]
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin('libs', buildPaths.libDestName)
