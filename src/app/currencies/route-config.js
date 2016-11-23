@@ -1,6 +1,8 @@
 "use strict";
 
 var angular = require("angular");
+var currenciesTpl = require("./currencies.html");
+var floatingButtonTpl = require("./floating-button.html");
 
 angular.module("debtApp")
   .config(config);
@@ -13,11 +15,11 @@ function config($stateProvider) {
       views: {
         "": {
           controller: "CurrencyListCtrl as vm",
-          templateUrl: "currencies/currencies.html"
+          templateUrl: currenciesTpl
         },
         "floatingButton": {
           controller: "CurrencyListCtrl as vm",
-          templateUrl: "currencies/floating-button.html"
+          templateUrl: floatingButtonTpl
         }
       }
     })

@@ -1,6 +1,8 @@
 "use strict";
 
 var angular = require("angular");
+var personDetailTpl = require("./person-detail.html");
+var floatingButtonTpl = require("./floating-button.html");
 
 angular.module("debtApp")
   .config(config);
@@ -11,11 +13,11 @@ function config($stateProvider) {
       url: "/persons/:id",
       views: {
         "": {
-          templateUrl: "persons/person-detail.html",
+          templateUrl: personDetailTpl,
           controller: "PersonDetailCtrl as vm"
         },
         "floatingButton": {
-          templateUrl: "persons/floating-button.html"
+          templateUrl: floatingButtonTpl
         }
       }
 

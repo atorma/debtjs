@@ -1,6 +1,7 @@
 "use strict";
 
 var angular = require("angular");
+var createPersonDialogTpl = require("./create-person-dialog.html");
 
 angular.module("debtApp")
 .factory("openCreatePersonDialog", openCreatePersonDialog);
@@ -12,7 +13,7 @@ function openCreatePersonDialog($mdDialog) {
   
   function open() {
     return $mdDialog.show({
-      templateUrl: "persons/create-person-dialog.html",
+      templateUrl: createPersonDialogTpl,
       controller: DialogController,
       controllerAs: "vm"
     });
