@@ -1,12 +1,12 @@
 'use strict';
 
 var webpack = require('webpack');
-var webpackBaseConf = require('./webpack-base.config');
+var makeWebpackConfig = require('./webpack.config.factory.js');
 
-var webpackConf = Object.create(webpackBaseConf);
-webpackConf.devtool = 'source-map';
-webpackBaseConf.module.loaders.push({test: /src.*\.js$/, loaders: ['ng-annotate']});
+var webpackConf = makeWebpackConfig({
+    devtool: 'source-map'
+});
+webpackConf.module.loaders.push({test: /src.*\.js$/, loaders: ['ng-annotate']});
 webpackConf.plugins.push(new webpack.optimize.UglifyJsPlugin());
-
 
 module.exports = webpackConf;

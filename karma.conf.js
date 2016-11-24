@@ -1,48 +1,38 @@
-var buildConfig = require('./build.conf');
 var webpack = require('webpack');
+var buildConfig = require('./build.conf');
 
-// Including ONLY those files that affect tests seems to be the key to get test watching to work in IntelliJ.
-module.exports = function(config) {
-  config.set({
-    files: buildConfig.paths.jsSpecsMain,
-    exclude: [],
-    frameworks: ['jasmine'],
-    reporters: ['mocha'],
-    browsers: ['Chrome'],
-    phantomjsLauncher: {
-      exitOnResourceError: true
-    },
-    preprocessors: {
-      'src/app/spec-index.js': ['webpack', 'sourcemap']
-    },
-    webpack: {
-      cache: true,
-      output: {
+var preprocessors = {};
+preprocessors['src/app/spec-index.js'] = ['webpack'];
+var webpackOpts = {
+    entry: undefined,
+    output: {
         filename: '[name].js'
-      },
-      module: {
-        loaders: [
-          {
-            test: /\.html$/,
-            loader: 'ngtemplate?relativeTo=/src/app/!html'
-          },
-          {
-            test: /\.css/,
-            loader: 'style!css'
-          },
-          {
-            test: /\.(eot|ttf|woff|woff2)$/,
-            loader: 'file?name=fonts/[name].[ext]'
-          }
-        ]
-      },
-      devtool: 'inline-source-map'
     },
-    port: 9876,
-    colors: true,
-    logLevel: config.LOG_INFO, // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    autoWatch: true,
-    singleRun: true
-  });
+    plugins: []
 };
+if (process.env.debug) {
+    webpackOpts.devtool = 'inline-source-map';
+    preprocessors['src/app/spec-index.js'].push('sourcemap');
+}
 
+var webpackConfig = require('./webpack.config.factory.js')(webpackOpts);
+
+module.exports = function (config) {
+    config.set({
+        files: buildConfig.paths.jsSpecsMain,
+        exclude: [],
+        frameworks: ['jasmine'],
+        reporters: ['dots'],
+        browsers: ['Chrome'],
+        phantomjsLauncher: {
+            exitOnResourceError: true
+        },
+        preprocessors: preprocessors,
+        webpack: webpackConfig,
+        port: 9876,
+        colors: true,
+        logLevel: config.LOG_INFO, // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+        autoWatch: true,
+        singleRun: true
+    });
+};
