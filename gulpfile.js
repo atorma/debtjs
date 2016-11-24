@@ -2,13 +2,18 @@
 
 var gulp = require('gulp');
 var gutil = require('gulp-util');
+var manifest = require('gulp-manifest');
+var preprocess = require('gulp-preprocess');
+var webserver = require('gulp-webserver');
+var fileList =  require('gulp-filelist');
+var transform = require('gulp-transform');
+var rename = require('gulp-rename');
 var del = require('del');
 var runSequence = require('run-sequence');
 var karma = require('karma');
-var webserver = require('gulp-webserver');
+
 var _ = require('lodash');
-var manifest = require('gulp-manifest');
-var preprocess = require('gulp-preprocess');
+
 var webpack = require('webpack');
 
 var buildConfig = require('./build.conf');
@@ -57,13 +62,29 @@ gulp.task('watch', function(cb) {
 });
 
 
-gulp.task('test', function(done) {
+gulp.task('test', ['create-spec-index'], function(done) {
   var server = new karma.Server({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true,
     autoWatch: false
   }, done);
   server.start();
+});
+
+gulp.task('create-spec-index', function () {
+  var src = _.concat(buildConfig.paths.jsMain, buildConfig.paths.jsSpecs, ['!'+buildConfig.paths.jsSpecsMain]);
+  return gulp.src(src)
+    .pipe(fileList('index.spec.json', {relative: buildConfig.paths.appDir}))
+    .pipe(transform(toSpecIndex, {encoding: 'utf8'}))
+    .pipe(rename('index.spec.js'))
+    .pipe(gulp.dest(buildConfig.paths.appDir));
+
+  function toSpecIndex(file) {
+    var fileList = JSON.parse(file);
+    return _.map(fileList, function (filePath) {
+      return "require('./" + filePath + "');";
+    }).join('\n');
+  }
 });
 
 gulp.task('develop', function(cb) {

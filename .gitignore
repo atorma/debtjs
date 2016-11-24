@@ -2,6 +2,7 @@
 build/
 node_modules/
 bower_components/
+src/app/index.spec.js
 
 # Eclipse project
 .settings
