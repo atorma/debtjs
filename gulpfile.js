@@ -5,16 +5,13 @@ var gutil = require('gulp-util');
 var manifest = require('gulp-manifest');
 var preprocess = require('gulp-preprocess');
 var webserver = require('gulp-webserver');
-var fileList =  require('gulp-filelist');
 var transform = require('gulp-transform');
 var rename = require('gulp-rename');
 var del = require('del');
 var runSequence = require('run-sequence');
 var karma = require('karma');
-
-var _ = require('lodash');
-
 var webpack = require('webpack');
+var WebpackDevServer = require('webpack-dev-server');
 
 var buildConfig = require('./build.conf');
 
@@ -22,162 +19,156 @@ var buildConfig = require('./build.conf');
 var DEV = "development";
 var PROD = "production";
 var context = {
-  env: DEV,
-  version: require('./package.json').version
+    env: DEV,
+    version: require('./package.json').version
 };
 
 
-gulp.task('build-dev', function(cb) {
-  context.env = DEV;
-  runSequence(
-    'clean',
-    [
-      'js',
-      'html',
-      'resources',
-      'lib-resources'
-    ],
-    cb);
+gulp.task('build-dev', function (cb) {
+    context.env = DEV;
+    runSequence(
+        'clean',
+        [
+            'js',
+            'html',
+            'resources',
+            'lib-resources'
+        ],
+        cb);
 });
 
-gulp.task('build-prod', function(cb) {
-  context.env = PROD;
-  runSequence(
-    'clean',
-    [
-      'js',
-      'html',
-      'resources',
-      'lib-resources'
-    ],
-    'manifest',
-    cb);
+gulp.task('build-prod', function (cb) {
+    context.env = PROD;
+    runSequence(
+        'clean',
+        [
+            'js',
+            'html',
+            'resources',
+            'lib-resources'
+        ],
+        'manifest',
+        cb);
 });
 
-gulp.task('watch', function(cb) {
-  runSequence([
-      'watch:html'
-    ],
-    cb);
+gulp.task('watch', function (cb) {
+    runSequence([
+            'watch:html'
+        ],
+        cb);
 });
 
 
-gulp.task('test', ['create-spec-index'], function(done) {
-  var server = new karma.Server({
-    configFile: __dirname + '/karma.conf.js',
-    singleRun: true,
-    autoWatch: false
-  }, done);
-  server.start();
+gulp.task('test', function (done) {
+    var server = new karma.Server({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true,
+        autoWatch: false
+    }, done);
+    server.start();
 });
 
-gulp.task('create-spec-index', function () {
-  var src = _.concat(buildConfig.paths.jsMain, buildConfig.paths.jsSpecs, ['!'+buildConfig.paths.jsSpecsMain]);
-  return gulp.src(src)
-    .pipe(fileList('index.spec.json', {relative: buildConfig.paths.appDir}))
-    .pipe(transform(toSpecIndex, {encoding: 'utf8'}))
-    .pipe(rename('index.spec.js'))
-    .pipe(gulp.dest(buildConfig.paths.appDir));
-
-  function toSpecIndex(file) {
-    var fileList = JSON.parse(file);
-    return _.map(fileList, function (filePath) {
-      return "require('./" + filePath + "');";
-    }).join('\n');
-  }
+gulp.task('develop', ['html', 'resources', 'lib-resources', 'watch'], function (cb) {
+    var webpackConfig = require('./webpack-dev.config');
+    new WebpackDevServer(webpack(webpackConfig), {
+        hot: false,
+        contentBase: buildConfig.paths.build
+    }).listen(8080, "localhost", function (err) {
+        if (err) {
+            throw new gutil.PluginError("webpack-dev-server", err);
+        }
+        gutil.log("[webpack-dev-server]", "http://localhost:8080/webpack-dev-server/index.html");
+        cb();
+    });
 });
 
-gulp.task('develop', function(cb) {
-  runSequence(['build-dev', 'watch'], ['webserver'], cb);
+gulp.task('tdd', function (cb) {
+    var server = new karma.Server({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: false,
+        autoWatch: true
+    }, cb);
+    server.start();
 });
 
-gulp.task('tdd', ['develop'], function(cb) {
-  var server = new karma.Server({
-    configFile: __dirname + '/karma.conf.js',
-    singleRun: false,
-    autoWatch: true
-  }, cb);
-  server.start();
-});
-
-gulp.task('clean', function() {
-  return del(buildConfig.paths.build + '/**');
+gulp.task('clean', function () {
+    return del(buildConfig.paths.build + '/**');
 });
 
 gulp.task('js', function (cb) {
-  var webpackConfig;
-  if (context.env === DEV) {
-    webpackConfig = require('./webpack-dev.config');
-  } else if (context.env === PROD) {
-    webpackConfig = require('./webpack-prod.config');
-  }
-
-  webpack(webpackConfig, function (err, stats) {
-    if (err) {
-      throw new gutil.PluginError("webpack", err);
+    var webpackConfig;
+    if (context.env === DEV) {
+        webpackConfig = require('./webpack-dev.config');
+    } else if (context.env === PROD) {
+        webpackConfig = require('./webpack-prod.config');
     }
-    gutil.log("[webpack]", stats.toString({
-      // output options
-    }));
-    cb();
-  });
-});
 
-gulp.task('html', function() {
-  return gulp.src(buildConfig.paths.html)
-    .pipe(preprocess({context: context}))
-    .pipe(gulp.dest(buildConfig.paths.build));
-});
-
-gulp.task('watch:html', function() {
-  gulp.watch(buildConfig.paths.html, ['html']);
-});
-
-gulp.task('resources', function() {
-  return gulp.src(buildConfig.paths.resources)
-    .pipe(gulp.dest(buildConfig.paths.build + '/resources'));
-});
-
-gulp.task('lib-resources', function() {
-  return gulp.src(buildConfig.paths.libResources)
-    .pipe(gulp.dest(buildConfig.paths.build + '/resources'));
-});
-
-gulp.task('manifest', function() {
-  return gulp.src(buildConfig.paths.manifestFiles)
-    .pipe(manifest({
-      timestamp: true,
-      preferOnline: true,
-      network: ['http://*', 'https://*', '*'],
-      filename: 'debt.appcache',
-      exclude: 'debt.appcache',
-      fallback: ['/ offline.html']
-    }))
-    .pipe(gulp.dest(buildConfig.paths.build));
-});
-
-gulp.task('watch:manifest', function() {
-  gulp.watch(buildConfig.paths.manifestFiles, ['manifest']);
-});
-
-
-gulp.task('webserver', function() {
-  gulp.src(buildConfig.paths.build)
-    .pipe(webserver({
-      host: '0.0.0.0',
-      port: 8080,
-      livereload: {
-        enable: true,
-        filter: function(fileName) {
-          if (fileName.match(/.map$/)) { // exclude all source maps from livereload
-            return false;
-          } else if (fileName.match(/.spec.js$/)) { // exclude test bundles
-            return false;
-          } else {
-            return true;
-          }
+    webpack(webpackConfig, function (err, stats) {
+        if (err) {
+            throw new gutil.PluginError("webpack", err);
         }
-      }
-    }));
+        gutil.log("[webpack]", stats.toString({
+            // output options
+        }));
+        cb();
+    });
+});
+
+gulp.task('html', function () {
+    return gulp.src(buildConfig.paths.html)
+        .pipe(preprocess({context: context}))
+        .pipe(gulp.dest(buildConfig.paths.build));
+});
+
+gulp.task('watch:html', function () {
+    gulp.watch(buildConfig.paths.html, ['html']);
+});
+
+gulp.task('resources', function () {
+    return gulp.src(buildConfig.paths.resources)
+        .pipe(gulp.dest(buildConfig.paths.build + '/resources'));
+});
+
+gulp.task('lib-resources', function () {
+    return gulp.src(buildConfig.paths.libResources)
+        .pipe(gulp.dest(buildConfig.paths.build + '/resources'));
+});
+
+gulp.task('manifest', function () {
+    return gulp.src(buildConfig.paths.manifestFiles)
+        .pipe(manifest({
+            timestamp: true,
+            preferOnline: true,
+            network: ['http://*', 'https://*', '*'],
+            filename: 'debt.appcache',
+            exclude: 'debt.appcache',
+            fallback: ['/ offline.html']
+        }))
+        .pipe(gulp.dest(buildConfig.paths.build));
+});
+
+gulp.task('watch:manifest', function () {
+    gulp.watch(buildConfig.paths.manifestFiles, ['manifest']);
+});
+
+
+gulp.task('webserver', function () {
+    gulp.src(buildConfig.paths.build)
+        .pipe(webserver({
+            host: '0.0.0.0',
+            port: 8080,
+            livereload: {
+                enable: true,
+                filter: function (fileName) {
+                    if (fileName.match(/.map$/)) { // exclude all source maps from livereload
+                        return false;
+                    } else if (fileName.match(/.spec.js$/)) { // exclude test bundles
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }));
 });
 
