@@ -1,10 +1,8 @@
 'use strict';
 
-var webpack = require('webpack');
-var webpackBaseConf = require('./webpack-base.config');
+var makeWebpackConfig = require('./webpack.config.factory.js');
 
-var webpackConf = Object.create(webpackBaseConf);
-webpackConf.devtool = 'eval';
-webpackConf.debug = true;
-
-module.exports = webpackConf;
+module.exports = makeWebpackConfig({
+    devtool: 'eval',
+    debug: true
+});
