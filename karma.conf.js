@@ -1,5 +1,5 @@
 var buildConfig = require('./build.conf');
-var webpackConfig = require('./webpack-dev.config');
+var webpack = require('webpack');
 
 // Including ONLY those files that affect tests seems to be the key to get test watching to work in IntelliJ.
 module.exports = function(config) {
@@ -13,14 +13,12 @@ module.exports = function(config) {
       exitOnResourceError: true
     },
     preprocessors: {
-      'src/app/index.spec.js': ['webpack']
+      'src/app/spec-index.js': ['webpack', 'sourcemap']
     },
     webpack: {
       cache: true,
       output: {
-        path: buildConfig.paths.build,
-        publicPath: '/',
-        filename: buildConfig.paths.appDestName
+        filename: '[name].js'
       },
       module: {
         loaders: [
@@ -37,14 +35,14 @@ module.exports = function(config) {
             loader: 'file?name=fonts/[name].[ext]'
           }
         ]
-      }
+      },
+      devtool: 'inline-source-map'
     },
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO, // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     autoWatch: true,
-    singleRun: true,
-    usePolling: true
+    singleRun: true
   });
 };
 
