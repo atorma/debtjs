@@ -1,6 +1,5 @@
 'use strict';
 
-var buildPaths = require('./build.conf').paths;
 var webpack = require('webpack');
 var webpackBaseConf = require('./webpack-base.config');
 
