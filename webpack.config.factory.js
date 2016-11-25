@@ -4,18 +4,20 @@ var path = require('path');
 var buildPaths = require('./build.conf').paths;
 var webpack = require('webpack');
 var _ = require('lodash');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-module.exports = function (options) {
+module.exports = function(options) {
     var defaults = {
         cache: true,
         entry: {
-            main: buildPaths.jsMain,
+            debt: buildPaths.jsMain,
             libs: [
                 'angular',
                 'angular-animate',
                 'angular-aria',
                 'angular-local-storage',
                 'angular-material',
+                'angular-material/angular-material.css',
                 'angular-ui-router',
                 'blob-polyfill',
                 'lodash',
@@ -33,12 +35,12 @@ module.exports = function (options) {
         module: {
             loaders: [
                 {
-                    test: /\.html$/,
+                    test: /src.*\.html$/,
                     loader: 'ngtemplate?relativeTo=/src/app/!html'
                 },
                 {
                     test: /\.css/,
-                    loader: 'style!css'
+                    loader: ExtractTextPlugin.extract('style', 'css')
                 },
                 {
                     test: /\.(eot|ttf|woff|woff2)$/,
@@ -47,7 +49,8 @@ module.exports = function (options) {
             ]
         },
         plugins: [
-            new webpack.optimize.CommonsChunkPlugin('libs', buildPaths.libDestName)
+            new webpack.optimize.CommonsChunkPlugin('libs', buildPaths.libDestName),
+            new ExtractTextPlugin("[name].css")
         ]
     };
 

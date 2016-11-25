@@ -17,7 +17,7 @@ if (process.env.debug) {
 
 var webpackConfig = require('./webpack.config.factory.js')(webpackOpts);
 
-module.exports = function (config) {
+module.exports = function(config) {
     config.set({
         files: buildConfig.paths.jsSpecsMain,
         exclude: [],
