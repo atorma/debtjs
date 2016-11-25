@@ -86,7 +86,6 @@ gulp.task('webpack', function (cb) {
 
 gulp.task('webpack-dev-server', function (cb) {
     var webpackConfig = require('./webpack-dev.config');
-    webpackConfig.devServer =
     new WebpackDevServer(webpack(webpackConfig), {
         hot: true,
         contentBase: buildConfig.paths.build
