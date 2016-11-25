@@ -29,7 +29,7 @@ gulp.task('build-dev', function (cb) {
     runSequence(
         'clean',
         [
-            'js',
+            'webpack',
             'html',
             'resources',
             'lib-resources'
@@ -42,7 +42,7 @@ gulp.task('build-prod', function (cb) {
     runSequence(
         'clean',
         [
-            'js',
+            'webpack',
             'html',
             'resources',
             'lib-resources'
@@ -95,7 +95,7 @@ gulp.task('clean', function () {
     return del(buildConfig.paths.build + '/**');
 });
 
-gulp.task('js', function (cb) {
+gulp.task('webpack', function (cb) {
     var webpackConfig;
     if (context.env === DEV) {
         webpackConfig = require('./webpack-dev.config');
