@@ -15,7 +15,7 @@ if (process.env.debug) {
     preprocessors['src/app/spec-index.js'].push('sourcemap');
 }
 
-var webpackConfig = require('./webpack.config.factory.js')(webpackOpts);
+var webpackConfig = require('./webpack.config.factory.js')({}, webpackOpts);
 
 module.exports = function(config) {
     config.set({
