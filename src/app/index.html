@@ -1,26 +1,12 @@
 <!DOCTYPE html>
-<!-- @if env == 'production'  -->
-<html manifest="debt.appcache">
-<!-- @endif -->
-<!-- @if env != 'production'  -->
-<html>
-<!-- @endif -->
+<% if (htmlWebpackPlugin.options.myOptions.appcache) { %><html manifest="<%= htmlWebpackPlugin.options.myOptions.appcache %>"><% } else { %><html><% } %>
   <head>
-    <title>DebtJS</title>
-    
+    <title><%= htmlWebpackPlugin.options.title %></title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
-  
-    <link rel="shortcut icon" href="resources/ic_account_balance_wallet_black_48dp.png" />
-    <link rel="stylesheet" href="libs.css" />
-    <link rel="stylesheet" href="debt.css" />
-    <script src="libs.js"></script>
-    <script src="debt.js"></script>
-
   </head>
 
-  <body ng-app="debtApp" ng-controller="DebtAppCtrl as vm" ng-cloak layout="column"
-    <!-- @if env == 'production'  -->ng-strict-di<!-- @endif --> >
+  <body ng-app="debtApp" ng-controller="DebtAppCtrl as vm" ng-cloak layout="column" <%= htmlWebpackPlugin.options.myOptions.ngStrictDi %> >
 
     <div id="container" flex layout-fill layout="column">
 

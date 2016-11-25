@@ -37,14 +37,7 @@ require("./expenses");
 require("./utils");
 require("./currencies");
 
-var CurrencyConversionError = require("./balance-sheet/currency-conversion-error");
-
-function configureLocalStorage(localStorageServiceProvider) {
-  localStorageServiceProvider.setPrefix("debtApp");
-}
-
 function configureIcons($mdIconProvider) {
-
   var iconFiles = [
     'ic_add_24px.svg',
     'ic_attach_money_24px.svg',
@@ -57,11 +50,10 @@ function configureIcons($mdIconProvider) {
     'ic_shopping_basket_24px.svg',
     'ic_warning_24px.svg'
   ];
-  
   var iconProps = _.map(iconFiles, function(fileName) {
     var iconName = fileName.substr(0, fileName.indexOf('.'));
     return {
-      filePath: 'resources/icons/' + fileName,
+      filePath: require('../resources/icons/' + fileName),
       iconName: iconName
     };
   });
@@ -69,13 +61,20 @@ function configureIcons($mdIconProvider) {
   _.each(iconProps, function(prop) {
     $mdIconProvider.icon(prop.iconName, prop.filePath);
   });
-
 }
+
+
+function configureLocalStorage(localStorageServiceProvider) {
+  localStorageServiceProvider.setPrefix("debtApp");
+}
+
 
 function hrefSanitization($compileProvider) {
   $compileProvider.aHrefSanitizationWhitelist(/^(blob||https?):/);
 }
 
+
+var CurrencyConversionError = require("./balance-sheet/currency-conversion-error");
 function decorateExceptionHandler($provide, events) {
   $provide.decorator('$exceptionHandler', function($delegate, $log, $injector) {
     return function(exception, cause) {
