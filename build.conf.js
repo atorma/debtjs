@@ -14,7 +14,6 @@ module.exports = {
     jsMain: [p('src/app/debt.js')],
     jsSpecsMain: [p('src/app/spec-index.js')],
     indexHtml: p('src/app/index.html'),
-    html: [p('src/app/index.html'), p('src/app/offline.html')],
     build: p('build')
   }
 };
