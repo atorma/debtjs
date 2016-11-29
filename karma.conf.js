@@ -5,10 +5,7 @@ var webpackConfig = require('./webpack-karma.config');
 var specEntryFilename = 'spec-index.js';
 
 var preprocessors = {};
-preprocessors[specEntryFilename] = ['webpack'];
-if (process.env.debug) {
-    preprocessors[specEntryFilename].push('sourcemap');
-}
+preprocessors[specEntryFilename] = ['webpack', 'sourcemap'];
 
 module.exports = function (config) {
     config.set({
