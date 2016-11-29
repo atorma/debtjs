@@ -1,26 +1,26 @@
 'use strict';
 
-var makeWebpackConfig = require('./webpack.config.factory.js');
-var AppCachePlugin = require('appcache-webpack-plugin');
+var merge = require('webpack-merge');
+var validate = require('webpack-validator');
+var configParts = require('./webpack.config.parts');
 
-var webpackConfig = makeWebpackConfig(
-    {
-        uglify: true,
-        makeCssBundles: true,
-        addFileHashes: true,
+var config = merge.smart(
+    configParts.setupCommon({
         appcache: 'debt.appcache',
         ngStrictDi: 'ng-strict-di'
-    },
+    }),
     {
-        devtool: 'source-map'
-    }
+        devtool: 'source-map',
+        output: {
+            filename: '[name].[chunkhash].js'
+        }
+    },
+    configParts.extractCSS(),
+    configParts.ngAnnotate(),
+    configParts.minify(),
+    configParts.setupAppCache({name: 'debt.appcache'})
 );
-webpackConfig.plugins.push(new AppCachePlugin({
-    network: ['http://*', 'https://*', '*'],
-    fallback: ['/offline.html'],
-    settings: ['prefer-online'],
-    output: 'debt.appcache',
-    exclude: [/\.map/]
-}));
 
-module.exports = webpackConfig;
+module.exports = validate(config, {
+    quiet: true
+});

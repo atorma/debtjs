@@ -1,25 +1,21 @@
-var webpack = require('webpack');
+var path = require('path');
 var buildConfig = require('./build.conf');
+var webpackConfig = require('./webpack-karma.config');
+
+var specEntryFilename = 'spec-index.js';
 
 var preprocessors = {};
-preprocessors['src/app/spec-index.js'] = ['webpack'];
-var webpackOpts = {
-    entry: undefined,
-    output: {
-        filename: '[name].js'
-    },
-    plugins: []
-};
+preprocessors[specEntryFilename] = ['webpack'];
 if (process.env.debug) {
-    webpackOpts.devtool = 'inline-source-map';
-    preprocessors['src/app/spec-index.js'].push('sourcemap');
+    preprocessors[specEntryFilename].push('sourcemap');
 }
 
-var webpackConfig = require('./webpack.config.factory.js')({}, webpackOpts);
-
-module.exports = function(config) {
+module.exports = function (config) {
     config.set({
-        files: buildConfig.paths.jsSpecsMain,
+        basePath: path.join(buildConfig.paths.src, 'app'),
+        files: [
+            {pattern: specEntryFilename, watch: false} // Webpack watches the file for us
+        ],
         exclude: [],
         frameworks: ['jasmine'],
         reporters: ['dots'],
