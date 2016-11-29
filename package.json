@@ -32,6 +32,7 @@
     "gulp-webserver": "0.9.1",
     "html-loader": "0.4.4",
     "html-webpack-plugin": "2.24.1",
+    "ignore-loader": "^0.1.2",
     "jasmine-core": "2.4.1",
     "karma": "0.13.22",
     "karma-chrome-launcher": "2.0.0",
@@ -47,7 +48,9 @@
     "style-loader": "0.13.1",
     "url-loader": "0.5.7",
     "webpack": "1.13.3",
-    "webpack-dev-server": "1.16.2"
+    "webpack-dev-server": "1.16.2",
+    "webpack-merge": "1.0.1",
+    "webpack-validator": "2.2.9"
   },
   "repository": {
     "type": "git",

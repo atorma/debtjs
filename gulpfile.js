@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var gulp = require('gulp');
 var gutil = require('gulp-util');
@@ -12,8 +12,8 @@ var WebpackDevServer = require('webpack-dev-server');
 var buildConfig = require('./build.conf');
 
 
-var DEV = "development";
-var PROD = "production";
+var DEV = 'development';
+var PROD = 'production';
 var context = {
     env: DEV,
     version: require('./package.json').version
@@ -68,16 +68,16 @@ gulp.task('clean', function () {
 gulp.task('webpack', function (cb) {
     var webpackConfig;
     if (context.env === DEV) {
-        webpackConfig = require('./webpack-dev.config');
+        webpackConfig = require('./webpack.config.js');
     } else if (context.env === PROD) {
         webpackConfig = require('./webpack-prod.config');
     }
 
     webpack(webpackConfig, function (err, stats) {
         if (err) {
-            throw new gutil.PluginError("webpack", err);
+            throw new gutil.PluginError('webpack', err);
         }
-        gutil.log("[webpack]", stats.toString({
+        gutil.log('[webpack]', stats.toString({
             // output options
         }));
         cb();
@@ -85,15 +85,14 @@ gulp.task('webpack', function (cb) {
 });
 
 gulp.task('webpack-dev-server', function (cb) {
-    var webpackConfig = require('./webpack-dev.config');
-    new WebpackDevServer(webpack(webpackConfig), {
-        hot: true,
-        contentBase: buildConfig.paths.build
-    }).listen(8080, "localhost", function (err) {
+    var webpackConfig = require('./webpack.config.js');
+    new WebpackDevServer(webpack(webpackConfig), webpackConfig.devServer)
+    .listen(webpackConfig.devServer.port, webpackConfig.devServer.host, function (err) {
         if (err) {
-            throw new gutil.PluginError("webpack-dev-server", err);
+            throw new gutil.PluginError('webpack-dev-server', err);
         }
-        gutil.log("[webpack-dev-server]", "http://localhost:8080");
+        var url = 'http://' + webpackConfig.devServer.host + ':' + webpackConfig.devServer.port;
+        gutil.log('[webpack-dev-server]', url);
         cb();
     });
 });
