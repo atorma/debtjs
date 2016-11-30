@@ -20,6 +20,11 @@ var context = {
 };
 
 
+gulp.task('publish', function (cb) {
+    runSequence('build-prod', 'gh-pages', cb);
+});
+
+
 gulp.task('build-dev', function (cb) {
     context.env = DEV;
     runSequence(
@@ -115,4 +120,9 @@ gulp.task('webserver', function () {
             }
         }
     }));
+});
+
+gulp.task('gh-pages', function (cb) {
+    var ghpages = require('gh-pages');
+    ghpages.publish(buildConfig.paths.build, cb);
 });
