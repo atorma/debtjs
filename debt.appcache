@@ -1,53 +1,24 @@
 CACHE MANIFEST
-# Time: Sat Apr 23 2016 01:43:10 GMT+0300 (Suomen kesäaika)
+# 8c90e02729ace8608ae7
 
-
-CACHE:
-debt.js
-help.html
+fonts/Roboto_400_normal.woff
+fonts/Roboto_400_normal.ttf
+fonts/Roboto_500_normal.woff
+fonts/Roboto_500_normal.ttf
+debt.cd037e84f17fb3115b88.js
+libs.4af4c6394b1359dc059a.js
+manifest.d5da55d49a37d1e4b07c.js
+debt.0a69052b247867ba2098a3973e2d5cc4.css
+ic_account_balance_wallet_black_48dp.png
 index.html
-libs.js
-offline.html
-currencies/currencies.html
-currencies/exchange-rate-dialog.html
-currencies/floating-button.html
-balance-sheet/balance-sheet.html
-balance-sheet/floating-button.html
-expenses/create-expense-dialog.html
-expenses/expense-detail.html
-expenses/floating-button.html
-persons/create-person-dialog.html
-persons/floating-button.html
-persons/person-detail.html
-resources/angular-material.css
-resources/debt.css
-resources/ic_account_balance_wallet_black_48dp.png
-resources/fonts/fonts.css
-resources/fonts/Roboto_400_normal.ttf
-resources/fonts/Roboto_400_normal.woff
-resources/fonts/Roboto_500_normal.ttf
-resources/fonts/Roboto_500_normal.woff
-resources/icons/ic_add_24px.svg
-resources/icons/ic_attach_money_24px.svg
-resources/icons/ic_chevron_right_24px.svg
-resources/icons/ic_close_24px.svg
-resources/icons/ic_delete_24px.svg
-resources/icons/ic_face_24px.svg
-resources/icons/ic_home_24px.svg
-resources/icons/ic_more_vert_24px.svg
-resources/icons/ic_shopping_basket_24px.svg
-resources/icons/ic_warning_24px.svg
-
 
 NETWORK:
 http://*
 https://*
 *
 
-
 FALLBACK:
-/ offline.html
-
+/offline.html
 
 SETTINGS:
 prefer-online
