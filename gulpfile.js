@@ -21,7 +21,7 @@ var context = {
 
 
 gulp.task('publish', function (cb) {
-    runSequence('build-prod', 'gh-pages', cb);
+    runSequence('test', 'build-prod', 'gh-pages', cb);
 });
 
 
