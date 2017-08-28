@@ -50,6 +50,16 @@ gulp.task('test', function (done) {
     server.start();
 });
 
+gulp.task('test:phantomjs', function (done) {
+    var server = new karma.Server({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true,
+        autoWatch: false,
+        browsers: ['PhantomJS']
+    }, done);
+    server.start();
+});
+
 gulp.task('develop', function (cb) {
     runSequence(
         'clean',
