@@ -35,6 +35,6 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
-      - run: gulp test:phantomjs
+      - run: npm run test:phantomjs
 
 
