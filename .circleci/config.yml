@@ -24,7 +24,7 @@ jobs:
           - v1-dependencies-{{ checksum "package.json" }}
           - v1-dependencies
 
-      - run: yarn install
+      - run: npm install
 
       - save_cache:
           paths:
@@ -32,6 +32,6 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
-      - run: yarn run test:phantomjs
+      - run: npm run test:phantomjs
 
 
