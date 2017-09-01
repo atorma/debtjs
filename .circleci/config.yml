@@ -25,10 +25,6 @@ jobs:
             - v6-dependencies
 
       - run:
-          name: Check npm
-          command: 'ls node_modules | grep npm'
-
-      - run:
           name: Install local npm v5.3.0 if not in cache
           command: '[ -d node_modules/npm ] && echo "local npm 5.3.0 found" || npm install npm@5.3.0 --no-save --prefix ./temp'
 
