@@ -8,7 +8,7 @@ jobs:
     docker:
       # specify the version you desire here
       # (npm 5 bundled with node starting from version 8)
-      - image: circleci/node:boron-browsers
+      - image: circleci/node:8-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
