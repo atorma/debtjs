@@ -21,12 +21,12 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v6-dependencies-{{ checksum "package-lock.json" }}
-            - v6-dependencies
+            - v7-dependencies-{{ checksum "package-lock.json" }}
+            - v7-dependencies
 
       - run:
           name: Install local npm v5.3.0 if not in cache
-          command: '[ -d node_modules/npm ] && echo "local npm 5.3.0 found" || npm install npm@5.3.0 --no-save --prefix ./temp'
+          command: '[ -d temp/node_modules/npm ] && echo "cached npm@5.3.0 found" || npm install npm@5.3.0 --no-save --prefix ./temp'
 
       - run:
           name: Copy local npm v5 as global npm
@@ -35,12 +35,13 @@ jobs:
       - run: npm install
 
       - save_cache:
-          key: v6-dependencies-{{ checksum "package-lock.json" }}
+          key: v7-dependencies-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
+            - temp/node_modules
 
       - save_cache:
-          key: v6-dependencies
+          key: v7-dependencies
           paths:
             - node_modules
 
