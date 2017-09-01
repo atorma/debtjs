@@ -29,22 +29,10 @@ jobs:
           command: '[ -d node_modules/npm ] && echo "local npm 5.3.0 found" || npm install npm@5.3.0 --no-save --prefix ./temp'
 
       - run:
-          name: Check npm
-          command: 'ls node_modules | grep npm'
-
-      - run:
           name: Copy local npm v5 as global npm
           command: 'sudo rm -rf /usr/local/lib/node_modules/npm ; sudo cp -rf temp/node_modules/npm /usr/local/lib/node_modules/npm'
 
-      - run:
-          name: Check npm
-          command: 'ls node_modules | grep npm'
-
       - run: npm install
-
-      - run:
-          name: Check npm
-          command: 'ls node_modules | grep npm'
 
       - save_cache:
           key: v6-dependencies-{{ checksum "package-lock.json" }}
