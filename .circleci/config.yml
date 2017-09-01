@@ -21,9 +21,8 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          - v1-dependencies
-
+            - v2-dependencies-{{ checksum "package-lock.json" }}
+            - v2-dependencies
 
       - run:
           name: Install npm v5 locally
@@ -36,9 +35,14 @@ jobs:
       - run: npm install
 
       - save_cache:
+          key: v2-dependencies-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - save_cache:
+          key: v2-dependencies
+          paths:
+            - node_modules
 
       # run tests!
       - run: npm run test:phantomjs
