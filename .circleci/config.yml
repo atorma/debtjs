@@ -21,26 +21,26 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "package-lock.json" }}
-            - v2-dependencies
+            - v3-dependencies-{{ checksum "package-lock.json" }}
+            - v3-dependencies
 
-      - run:
-          name: Install npm v5 locally
-          command: npm install npm@5
-
-      - run:
-          name: Copy local npm v5 as global npm
-          command: 'sudo rm -rf /usr/local/lib/node_modules/npm ; sudo cp -rf node_modules/npm /usr/local/lib/node_modules/npm'
+#      - run:
+#          name: Install npm v5 locally
+#          command: npm install npm@5
+#
+#      - run:
+#          name: Copy local npm v5 as global npm
+#          command: 'sudo rm -rf /usr/local/lib/node_modules/npm ; sudo cp -rf node_modules/npm /usr/local/lib/node_modules/npm'
 
       - run: npm install
 
       - save_cache:
-          key: v2-dependencies-{{ checksum "package-lock.json" }}
+          key: v3-dependencies-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
 
       - save_cache:
-          key: v2-dependencies
+          key: v3-dependencies
           paths:
             - node_modules
 
