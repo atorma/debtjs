@@ -15,12 +15,6 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
 
-    dependencies:
-      pre:
-        - npm install -g npm@5
-
-
-
     steps:
       - checkout
 
@@ -30,6 +24,7 @@ jobs:
           - v1-dependencies-{{ checksum "package.json" }}
           - v1-dependencies
 
+      - run: npm install npm@5
       - run: npm install
 
       - save_cache:
