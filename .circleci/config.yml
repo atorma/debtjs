@@ -18,13 +18,16 @@ jobs:
     steps:
       - checkout
 
+      - run:
+        name: Update npm to version 5
+        command: 'sudo npm install -g npm@5'
+
       # Download and cache dependencies
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
           - v1-dependencies
 
-      - run: npm install npm@5
       - run: npm install
 
       - save_cache:
