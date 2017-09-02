@@ -7,7 +7,7 @@
     "src": "src"
   },
   "scripts": {
-    "test:phantomjs": "karma start --browsers PhantomJS --no-auto-watch --single-run"
+    "test": "karma start --browsers Chrome,Firefox,PhantomJS --no-auto-watch --single-run"
   },
   "dependencies": {
     "angular": "1.5.3",
