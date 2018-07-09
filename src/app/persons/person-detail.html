@@ -61,7 +61,7 @@
               ng-if="::vm.balanceSheet.currenciesEnabled()">{{::expense.computedCurrency()}}</span>
         <md-input-container>
           <label>Paid</label>
-          <input type="number" money-input
+          <input type="text" money-input
                  ng-required="::vm.isParticipant[expense.id]"
                  ng-model="::vm.balanceSheet.getParticipation({person: vm.person, expense: expense}).paid"
                  ng-change="::vm.updateExpense(expense)"
@@ -69,7 +69,7 @@
         </md-input-container>
         <md-input-container>
           <label>Share</label>
-          <input type="number" money-input
+          <input type="text" money-input
                  ng-required="::vm.isParticipant[expense.id]"
                  ng-model="::vm.balanceSheet.getParticipation({person: vm.person, expense: expense}).share"
                  ng-change="::vm.updateExpense(expense)"
@@ -98,11 +98,11 @@
         <span class="currency-label" ng-if="::vm.balanceSheet.currenciesEnabled()">{{::vm.person.computedCurrency()}}</span>
         <md-input-container>
           <label>Paid</label>
-          <input type="number" money-input ng-model="::vm.cost" ng-readonly="true"/>
+          <input type="text" money-input ng-model="::vm.cost" ng-readonly="true"/>
         </md-input-container>
         <md-input-container>
           <label>Share</label>
-          <input type="number" money-input ng-model="::vm.sumOfShares" ng-readonly="true"/>
+          <input type="text" money-input ng-model="::vm.sumOfShares" ng-readonly="true"/>
         </md-input-container>
       </div>
 

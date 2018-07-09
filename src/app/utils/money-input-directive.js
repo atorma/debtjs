@@ -2,6 +2,7 @@
 
 var angular = require("angular");
 var Decimal = require("simple-decimal-money");
+var _ = require('lodash');
 
 angular.module("debtApp")
   .directive("moneyInput", moneyInput);
@@ -44,7 +45,7 @@ function moneyInput($filter) {
   }
 
   function formatMoney(value) {
-    if (value === undefined || value === null) {
+    if (_.isNil(value)) {
       return "";
     } else {
       return $filter("number")(value, 2);
@@ -52,6 +53,9 @@ function moneyInput($filter) {
   }
 
   function parseMoney(value) {
+    if (!_.isNumber(value) && _.isEmpty(value)) {
+      return null;
+    }
     return new Decimal(value).toNumber();
   }
 

@@ -18,7 +18,7 @@ describe("Money input directive", function() {
     $scope = $rootScope;
     $scope.value = undefined;
 
-    formElement = $compile('<form name="form"><input money-input type="number" name="value" ng-model="value"/></form>')($scope);
+    formElement = $compile('<form name="form"><input money-input type="text" name="value" ng-model="value"/></form>')($scope);
     inputElement = formElement.find("input");
     form = $scope.form;
   }));
@@ -33,11 +33,24 @@ describe("Money input directive", function() {
     expect(inputElement.val()).toEqual("-3.65");
   });
 
+  it("formats model value with thousand separator", function() {
+    $scope.value = 1500;
+    $scope.$digest();
+    expect(inputElement.val()).toEqual("1,500.00");
+  });
+
   it("parses and formats input value on blur", function() {
     form.value.$setViewValue("3.10");
     inputElement.triggerHandler("blur");
     expect($scope.value).toEqual(3.10);
     expect(inputElement.val()).toEqual("3.10");
+  });
+
+  it("correctly parses view values >= 1000", function() {
+    form.value.$setViewValue("1500");
+    inputElement.triggerHandler("blur");
+    expect($scope.value).toEqual(1500);
+    expect(inputElement.val()).toEqual("1,500.00");
   });
 
   it("formats undefined model value as empty", function() {
@@ -59,7 +72,9 @@ describe("Money input directive", function() {
     inputElement.triggerHandler("blur");
     expect($scope.value).toEqual(3.11);
     expect(inputElement.val()).toEqual("3.11");
+  });
 
+  it("parses empty string as null", function() {
     form.value.$setViewValue("");
     inputElement.triggerHandler("blur");
     expect($scope.value).toEqual(null);
