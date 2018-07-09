@@ -155,3 +155,7 @@ md-datepicker.no-icon .md-datepicker-input-container {
 .row md-datepicker {
   margin-right: -10px;
 }
+
+md-list-item.user-selectable > .md-button {
+  user-select: text;
+}

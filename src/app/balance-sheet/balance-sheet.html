@@ -18,7 +18,7 @@
 <section>
   <md-list>
     <md-subheader class="md-primary section-header md-no-sticky">Expenses</md-subheader>
-    <md-list-item class="md-2-line"
+    <md-list-item class="md-2-line user-selectable"
                   ng-repeat="expense in vm.balanceSheet.expenses"
                   ng-click="::$state.go('expense', {id: expense.id})">
       <md-icon hide-xs ng-if="::expense.isBalanced()" class="md-primary" md-svg-icon="ic_shopping_basket_24px"></md-icon>
@@ -42,7 +42,7 @@
         </p>
       </div>
     </md-list-item>
-    <md-list-item ng-if="vm.balanceSheet.expenses.length == 0">
+    <md-list-item class="user-selectable" ng-if="vm.balanceSheet.expenses.length == 0">
       <p class="md-list-item-text">
           No expenses.
       </p>
@@ -53,7 +53,7 @@
 <section>
   <md-list>
     <md-subheader class="md-primary section-header md-no-sticky">People</md-subheader>
-    <md-list-item class="md-2-line"
+    <md-list-item class="md-2-line user-selectable"
                   ng-repeat="person in vm.balanceSheet.persons"
                   ng-click="::$state.go('person', {id: person.id})">
       <md-icon hide-xs class="md-primary" md-svg-icon="ic_face_24px"></md-icon>
@@ -70,7 +70,7 @@
         <p>&nbsp;</p>
       </div>
     </md-list-item>
-    <md-list-item ng-if="vm.balanceSheet.persons.length == 0">
+    <md-list-item class="user-selectable" ng-if="vm.balanceSheet.persons.length == 0">
       <p class="md-list-item-text">
         No people.
       </p>
