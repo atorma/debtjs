@@ -17,6 +17,8 @@ angular
   .module("debtApp", ["ngMaterial", "ui.router", "LocalStorageModule", "ngFileUpload"])
   .constant("events", {
     BALANCE_SHEET_UPDATED: "balance sheet updated",
+    EXPENSE_CREATED: "expense created",
+    PERSON_CREATED: "person created",
     ERROR: "error"
   })
   .constant("debtCalculationInterval", 500)

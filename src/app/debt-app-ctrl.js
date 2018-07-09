@@ -92,16 +92,18 @@ function DebtAppCtrl(balanceSheetService,
   function createPerson() {
     openCreatePersonDialog()
       .then(function(dialogResult) {
-        balanceSheetService.balanceSheet.createPerson(dialogResult.person, dialogResult.options);
+        var person = balanceSheetService.balanceSheet.createPerson(dialogResult.person, dialogResult.options);
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
+        $scope.$broadcast(events.PERSON_CREATED, person);
       });
   }
 
   function createExpense() {
     openCreateExpenseDialog()
       .then(function(dialogResult) {
-        balanceSheetService.balanceSheet.createExpense(dialogResult.expense, dialogResult.options);
+        var expense = balanceSheetService.balanceSheet.createExpense(dialogResult.expense, dialogResult.options);
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
+        $scope.$broadcast(events.EXPENSE_CREATED, expense);
       });
   }
 

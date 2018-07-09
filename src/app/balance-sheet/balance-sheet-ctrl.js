@@ -5,7 +5,7 @@ var angular = require("angular");
 angular.module("debtApp")
   .controller("BalanceSheetCtrl", BalanceSheetCtrl);
 
-function BalanceSheetCtrl(balanceSheetService, debtService, events, $scope, $log) {
+function BalanceSheetCtrl(balanceSheetService, debtService, events, $scope, $log, $state) {
   var vm = this;
   
   vm.init = init;
@@ -19,6 +19,9 @@ function BalanceSheetCtrl(balanceSheetService, debtService, events, $scope, $log
   function init() {
     refresh();
     $scope.$on(events.BALANCE_SHEET_UPDATED, vm.refresh);
+    $scope.$on(events.EXPENSE_CREATED, function (event, expense) {
+      $state.go('expense', {id: expense.id});
+    });
   }
   
   function refresh() {
