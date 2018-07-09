@@ -93,7 +93,6 @@ function DebtAppCtrl(balanceSheetService,
     openCreatePersonDialog()
       .then(function(dialogResult) {
         balanceSheetService.balanceSheet.createPerson(dialogResult.person, dialogResult.options);
-        vm.balanceSheetUpdated();
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
       });
   }
@@ -102,7 +101,6 @@ function DebtAppCtrl(balanceSheetService,
     openCreateExpenseDialog()
       .then(function(dialogResult) {
         balanceSheetService.balanceSheet.createExpense(dialogResult.expense, dialogResult.options);
-        vm.balanceSheetUpdated();
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
       });
   }
@@ -111,9 +109,8 @@ function DebtAppCtrl(balanceSheetService,
     $mdDialog.show(confirmCreateNewSheet)
       .then(function() {
         balanceSheetService.createNew();
-        vm.balanceSheetUpdated();
-        $state.go("balanceSheet");
         $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
+        $state.go("balanceSheet");
       });
   }
 
@@ -138,9 +135,8 @@ function DebtAppCtrl(balanceSheetService,
 
   function loadSheetFromJson(json) {
     balanceSheetService.loadFromJson(json);
-    vm.balanceSheetUpdated();
-    $state.go("balanceSheet");
     $scope.$broadcast(events.BALANCE_SHEET_UPDATED);
+    $state.go("balanceSheet");
   }
 
   function exportSheet() {
